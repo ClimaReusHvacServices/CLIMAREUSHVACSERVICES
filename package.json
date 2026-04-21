@@ -1,0 +1,45 @@
+{
+  "name": "clima-reus-hvac-services",
+  "version": "1.0.0",
+  "description": "Plataforma profesional de servicios HVAC - Aire acondicionado e instalación",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:seed": "npx tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "next": "^15.0.0",
+    "typescript": "^5.3.3",
+    "next-auth": "^5.0.0-beta.17",
+    "@auth/prisma-adapter": "^2.0.0",
+    "prisma": "^5.8.0",
+    "@prisma/client": "^5.8.0",
+    "bcryptjs": "^2.4.3",
+    "zod": "^3.22.4",
+    "next-intl": "^3.5.0",
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.3.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/postcss": "^4.0.0",
+    "postcss": "^8.4.31",
+    "autoprefixer": "^10.4.16",
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.42",
+    "@types/react-dom": "^18.2.17",
+    "@types/bcryptjs": "^2.4.2",
+    "tsx": "^4.19.0",
+    "eslint": "^8.55.0",
+    "eslint-config-next": "^15.0.0"
+  }
+}
