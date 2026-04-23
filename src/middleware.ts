@@ -1,65 +1,57 @@
 import { auth } from "@/auth/config";
+import createIntlMiddleware from "next-intl/middleware";
+import { routing } from "@/i18n/routing";
 import { NextRequest, NextResponse } from "next/server";
 
-// Rutas públicas que no requieren autenticación
-const publicRoutes = ["/login", "/register", "/forgot-password"];
+const intlMiddleware = createIntlMiddleware(routing);
 
-// Rutas protegidas por rol
-const roleBasedRoutes = {
+const publicPaths = ["/login", "/register", "/forgot-password"];
+
+const roleMap: Record<string, string[]> = {
   admin: ["/admin"],
   cliente: ["/dashboard", "/orders", "/profile"],
   trabajador: ["/worker"],
 };
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
 
-  // Extraer el locale del pathname
-  const localeMatch = pathname.match(/^\/([a-z]{2})/);
-  const locale = localeMatch ? localeMatch[1] : "es";
+  const localeMatch = pathname.match(/^\/([a-z]{2})(\/|$)/);
+  const locale = localeMatch?.[1] ?? routing.defaultLocale;
+  const pathWithoutLocale = pathname.replace(new RegExp(`^/${locale}`), "") || "/";
 
-  // Obtener la sesión del usuario
+  const isPublic = publicPaths.some(
+    (p) => pathWithoutLocale === p || pathWithoutLocale.startsWith(p + "/")
+  );
+
   const session = await auth();
 
-  // Eliminar el locale del pathname para comparaciones
-  const pathWithoutLocale = pathname.replace(`/${locale}`, "");
-
-  // Permitir acceso a rutas públicas
-  if (publicRoutes.some((route) => pathWithoutLocale.startsWith(route))) {
-    // Si está autenticado y trata de acceder a login/register, redirigir al dashboard
-    if (session) {
-      return NextResponse.redirect(
-        new URL(`/${locale}/dashboard`, request.url)
-      );
-    }
-    return NextResponse.next();
+  // Authenticated user trying to access login/register → send to home
+  if (isPublic && session) {
+    return NextResponse.redirect(new URL(`/${locale}/`, req.url));
   }
 
-  // Si no está autenticado, redirigir a login
-  if (!session) {
-    return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
+  // Unauthenticated user trying to access protected route → send to login
+  if (!isPublic && !session) {
+    return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
   }
 
-  // Verificar acceso basado en rol
-  const userRole = session.user?.role;
-
-  for (const [role, routes] of Object.entries(roleBasedRoutes)) {
-    if (routes.some((route) => pathWithoutLocale.startsWith(route))) {
-      if (userRole !== role) {
-        // Redirigir a una página de acceso denegado o al dashboard
-        return NextResponse.redirect(
-          new URL(`/${locale}/unauthorized`, request.url)
-        );
+  // Role-based protection
+  if (session) {
+    const role = session.user?.role;
+    for (const [r, paths] of Object.entries(roleMap)) {
+      if (paths.some((p) => pathWithoutLocale === p || pathWithoutLocale.startsWith(p + "/"))) {
+        if (role !== r) {
+          return NextResponse.redirect(new URL(`/${locale}/unauthorized`, req.url));
+        }
       }
     }
   }
 
-  return NextResponse.next();
+  // Let next-intl handle locale headers (fixes useLocale() returning wrong value)
+  return intlMiddleware(req);
 }
 
-// Configurar en cuales rutas ejecutar el middleware
 export const config = {
-  matcher: [
-    "/((?!api|_next|_vercel|.*\\.[^/]+$).)*",
-  ],
+  matcher: ["/((?!api|_next|_vercel|.*\\.[^/]+$).)*"],
 };
