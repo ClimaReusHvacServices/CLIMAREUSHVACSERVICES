@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale } from "next-intl";
+import { usePathname } from "@/i18n/routing";
 import { useState, useRef, useEffect } from "react";
 import { Globe, ChevronDown } from "lucide-react";
 
@@ -12,6 +13,7 @@ const languages = [
 
 export function LanguageSwitcher() {
   const locale = useLocale();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -26,13 +28,8 @@ export function LanguageSwitcher() {
   }, []);
 
   const handleLanguageChange = (newLocale: string) => {
-    const segments = window.location.pathname.split("/");
-    // segments[0] = "", segments[1] = locale, rest = path
-    if (segments.length >= 2) {
-      segments[1] = newLocale;
-    }
-    window.location.href = segments.join("/") || "/";
     setIsOpen(false);
+    window.location.href = `/${newLocale}${pathname}`;
   };
 
   const current = languages.find((l) => l.code === locale);
