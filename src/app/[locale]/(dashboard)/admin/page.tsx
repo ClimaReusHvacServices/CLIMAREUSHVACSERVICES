@@ -2,6 +2,7 @@ import { auth } from "@/auth/config";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { Link } from "@/i18n/routing";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Users, Package, Banknote, Wrench, ShoppingBag, UserCog, BarChart3 } from "lucide-react";
 
 async function getAdminStats() {
@@ -27,34 +28,43 @@ const statusColors: Record<string, string> = {
   cancelada:   "bg-red-100 text-red-700",
 };
 
-export default async function AdminDashboard() {
+export default async function AdminDashboard({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const session = await auth();
   if (!session || session.user?.role !== "admin") redirect("/");
 
   const stats = await getAdminStats();
+  const t = await getTranslations("admin");
+  const tStatus = await getTranslations("status");
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Panel de Administrador</h1>
-        <p className="text-gray-500 mt-1">Bienvenido, {session.user?.firstName}.</p>
+        <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
+        <p className="text-gray-500 mt-1">{t("welcome")}, {session.user?.firstName}.</p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard icon={<Users size={22} className="text-primary-600" />} label="Total Usuarios" value={stats.totalUsers} bg="border-primary-500" />
-        <StatCard icon={<Package size={22} className="text-accent-500" />} label="Total Pedidos" value={stats.totalOrders} bg="border-accent-400" />
-        <StatCard icon={<Banknote size={22} className="text-green-600" />} label="Ingresos Totales" value={`€${stats.totalRevenue.toFixed(2)}`} bg="border-green-400" />
-        <StatCard icon={<Wrench size={22} className="text-orange-500" />} label="Trabajadores Activos" value={stats.activeWorkers} bg="border-orange-400" />
+        <StatCard icon={<Users size={22} className="text-primary-600" />} label={t("totalUsers")} value={stats.totalUsers} bg="border-primary-500" />
+        <StatCard icon={<Package size={22} className="text-accent-500" />} label={t("totalOrders")} value={stats.totalOrders} bg="border-accent-400" />
+        <StatCard icon={<Banknote size={22} className="text-green-600" />} label={t("totalRevenue")} value={`€${stats.totalRevenue.toFixed(2)}`} bg="border-green-400" />
+        <StatCard icon={<Wrench size={22} className="text-orange-500" />} label={t("activeWorkers")} value={stats.activeWorkers} bg="border-orange-400" />
       </div>
 
       {/* Acciones rapidas */}
       <div className="bg-white rounded-xl shadow-sm p-6">
-        <h2 className="text-base font-bold text-gray-900 mb-4">Acciones Rapidas</h2>
+        <h2 className="text-base font-bold text-gray-900 mb-4">{t("quickActions")}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <QuickLink href="/admin/users" icon={<UserCog size={20} className="text-primary-600" />} label="Gestionar Usuarios" desc="Crear, editar o eliminar" />
-          <QuickLink href="/admin/workers" icon={<Wrench size={20} className="text-accent-500" />} label="Gestionar Trabajadores" desc="Asignar tareas" />
-          <QuickLink href="/admin/orders" icon={<ShoppingBag size={20} className="text-orange-500" />} label="Ver Pedidos" desc="Seguimiento completo" />
+          <QuickLink href="/admin/users" icon={<UserCog size={20} className="text-primary-600" />} label={t("manageUsers")} desc={t("manageUsersDesc")} />
+          <QuickLink href="/admin/workers" icon={<Wrench size={20} className="text-accent-500" />} label={t("manageWorkers")} desc={t("manageWorkersDesc")} />
+          <QuickLink href="/admin/orders" icon={<ShoppingBag size={20} className="text-orange-500" />} label={t("viewOrders")} desc={t("viewOrdersDesc")} />
         </div>
       </div>
 
@@ -63,17 +73,17 @@ export default async function AdminDashboard() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
             <BarChart3 size={18} className="text-primary-600" />
-            Pedidos Recientes
+            {t("recentOrders")}
           </h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="text-left py-3 px-3 font-semibold text-gray-500 text-xs uppercase">Numero</th>
-                <th className="text-left py-3 px-3 font-semibold text-gray-500 text-xs uppercase">Cliente</th>
-                <th className="text-left py-3 px-3 font-semibold text-gray-500 text-xs uppercase">Estado</th>
-                <th className="text-left py-3 px-3 font-semibold text-gray-500 text-xs uppercase">Total</th>
+                <th className="text-left py-3 px-3 font-semibold text-gray-500 text-xs uppercase">{t("colNumber")}</th>
+                <th className="text-left py-3 px-3 font-semibold text-gray-500 text-xs uppercase">{t("colClient")}</th>
+                <th className="text-left py-3 px-3 font-semibold text-gray-500 text-xs uppercase">{t("colStatus")}</th>
+                <th className="text-left py-3 px-3 font-semibold text-gray-500 text-xs uppercase">{t("colTotal")}</th>
               </tr>
             </thead>
             <tbody>
@@ -87,7 +97,7 @@ export default async function AdminDashboard() {
                   <td className="py-3 px-3 text-gray-700">{row.cliente}</td>
                   <td className="py-3 px-3">
                     <span className={`inline-block px-2 py-1 rounded-lg text-xs font-semibold ${statusColors[row.estado]}`}>
-                      {row.estado.replace("_", " ")}
+                      {tStatus(row.estado as any)}
                     </span>
                   </td>
                   <td className="py-3 px-3 font-medium text-gray-900">{row.total}</td>

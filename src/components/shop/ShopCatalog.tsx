@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Wind, Wrench, Package, Tag, Clock, Star, ShoppingCart, ArrowRight, CheckCircle2 } from "lucide-react";
 
@@ -53,13 +54,6 @@ function formatPrice(val: any): string {
   return `€${Number(val).toFixed(2)}`;
 }
 
-function handleSolicitar(name: string) {
-  toast.success(`Solicitud enviada para: ${name}`, {
-    description: "Nos pondremos en contacto contigo en menos de 24 horas.",
-    duration: 5000,
-  });
-}
-
 interface ShopCatalogProps {
   products: Product[];
   services: Service[];
@@ -69,12 +63,20 @@ interface ShopCatalogProps {
 type Tab = "paquetes" | "productos" | "servicios";
 
 export function ShopCatalog({ products, services, packages }: ShopCatalogProps) {
+  const t = useTranslations("shop");
   const [activeTab, setActiveTab] = useState<Tab>("paquetes");
 
+  function handleSolicitar(name: string) {
+    toast.success(`${t("requestSent")}: ${name}`, {
+      description: t("requestDesc"),
+      duration: 5000,
+    });
+  }
+
   const tabs: { key: Tab; label: string; icon: React.ReactNode }[] = [
-    { key: "paquetes", label: "Paquetes completos", icon: <Package size={16} /> },
-    { key: "productos", label: "Equipos", icon: <Wind size={16} /> },
-    { key: "servicios", label: "Servicios", icon: <Wrench size={16} /> },
+    { key: "paquetes", label: t("tabPackages"), icon: <Package size={16} /> },
+    { key: "productos", label: t("tabProducts"), icon: <Wind size={16} /> },
+    { key: "servicios", label: t("tabServices"), icon: <Wrench size={16} /> },
   ];
 
   return (
@@ -100,13 +102,13 @@ export function ShopCatalog({ products, services, packages }: ShopCatalogProps) 
       {/* Paquetes */}
       {activeTab === "paquetes" && (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {packages.length === 0 && <EmptyState label="No hay paquetes disponibles" />}
+          {packages.length === 0 && <EmptyState label={t("noPackages")} />}
           {packages.map((pkg) => (
             <div key={pkg.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow flex flex-col">
               {pkg.discountPercentage && (
                 <div className="bg-accent-400 text-white text-xs font-bold px-3 py-1.5 flex items-center gap-1">
                   <Tag size={12} />
-                  {Number(pkg.discountPercentage).toFixed(0)}% de descuento incluido
+                  {Number(pkg.discountPercentage).toFixed(0)}% {t("discount")}
                 </div>
               )}
               <div className="p-5 flex-1">
@@ -127,7 +129,7 @@ export function ShopCatalog({ products, services, packages }: ShopCatalogProps) 
                   {pkg.product.warranty && (
                     <div className="flex items-center gap-2 text-xs text-gray-500">
                       <Star size={14} className="text-yellow-400 shrink-0" />
-                      <span>Garantia {pkg.product.warranty}</span>
+                      <span>{t("warranty")} {pkg.product.warranty}</span>
                     </div>
                   )}
                 </div>
@@ -138,7 +140,7 @@ export function ShopCatalog({ products, services, packages }: ShopCatalogProps) 
                   className="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm"
                 >
                   <ShoppingCart size={15} />
-                  Solicitar este paquete
+                  {t("requestPackage")}
                 </button>
               </div>
             </div>
@@ -149,7 +151,7 @@ export function ShopCatalog({ products, services, packages }: ShopCatalogProps) 
       {/* Productos */}
       {activeTab === "productos" && (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {products.length === 0 && <EmptyState label="No hay productos disponibles" />}
+          {products.length === 0 && <EmptyState label={t("noProducts")} />}
           {products.map((product) => (
             <div key={product.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow flex flex-col">
               <div className="h-36 bg-gradient-to-br from-primary-50 to-accent-50 flex items-center justify-center">
@@ -176,7 +178,7 @@ export function ShopCatalog({ products, services, packages }: ShopCatalogProps) 
                 {product.warranty && (
                   <div className="flex items-center gap-1 text-xs text-gray-400 mb-3">
                     <Star size={12} className="text-yellow-400" />
-                    Garantia {product.warranty}
+                    {t("warranty")} {product.warranty}
                   </div>
                 )}
               </div>
@@ -186,7 +188,7 @@ export function ShopCatalog({ products, services, packages }: ShopCatalogProps) 
                   className="w-full flex items-center justify-center gap-2 bg-accent-400 hover:bg-accent-500 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm"
                 >
                   <ArrowRight size={15} />
-                  Solicitar informacion
+                  {t("requestInfo")}
                 </button>
               </div>
             </div>
@@ -197,7 +199,7 @@ export function ShopCatalog({ products, services, packages }: ShopCatalogProps) 
       {/* Servicios */}
       {activeTab === "servicios" && (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {services.length === 0 && <EmptyState label="No hay servicios disponibles" />}
+          {services.length === 0 && <EmptyState label={t("noServices")} />}
           {services.map((service) => (
             <div key={service.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow flex flex-col">
               <div className="flex items-center gap-3 mb-3">
@@ -207,7 +209,7 @@ export function ShopCatalog({ products, services, packages }: ShopCatalogProps) 
                 <div>
                   <h3 className="font-bold text-gray-900 text-sm">{service.name}</h3>
                   <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${difficultyColors[service.difficulty] ?? "bg-gray-50 text-gray-600"}`}>
-                    Dificultad: {service.difficulty}
+                    {t("difficulty")}: {service.difficulty}
                   </span>
                 </div>
               </div>
@@ -224,7 +226,7 @@ export function ShopCatalog({ products, services, packages }: ShopCatalogProps) 
                 className="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm"
               >
                 <ShoppingCart size={15} />
-                Solicitar servicio
+                {t("requestService")}
               </button>
             </div>
           ))}

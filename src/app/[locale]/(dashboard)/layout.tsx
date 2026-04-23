@@ -2,14 +2,25 @@ import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { UserAvatar } from "@/components/common/UserAvatar";
 import { auth } from "@/auth/config";
 import { Link } from "@/i18n/routing";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import {
   LayoutDashboard, Users, Wrench, ShoppingBag, Package,
   ClipboardList, UserCircle, Store,
 } from "lucide-react";
 
-export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const session = await auth();
   const user = session?.user;
+  const t = await getTranslations("nav");
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#eef0ec" }}>
@@ -39,26 +50,26 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <nav className="p-3 space-y-0.5">
             {user?.role === "admin" && (
               <>
-                <p className="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Administración</p>
-                <NavLink href="/admin" icon={<LayoutDashboard size={16} />} label="Dashboard" />
-                <NavLink href="/admin/users" icon={<Users size={16} />} label="Usuarios" />
-                <NavLink href="/admin/workers" icon={<Wrench size={16} />} label="Trabajadores" />
-                <NavLink href="/admin/orders" icon={<ShoppingBag size={16} />} label="Pedidos" />
-                <NavLink href="/admin/products" icon={<Package size={16} />} label="Productos" />
+                <p className="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">{t("adminSection")}</p>
+                <NavLink href="/admin" icon={<LayoutDashboard size={16} />} label={t("adminHome")} />
+                <NavLink href="/admin/users" icon={<Users size={16} />} label={t("users")} />
+                <NavLink href="/admin/workers" icon={<Wrench size={16} />} label={t("workers")} />
+                <NavLink href="/admin/orders" icon={<ShoppingBag size={16} />} label={t("orders")} />
+                <NavLink href="/admin/products" icon={<Package size={16} />} label={t("products")} />
               </>
             )}
             {user?.role === "cliente" && (
               <>
-                <p className="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Mi cuenta</p>
-                <NavLink href="/dashboard" icon={<Store size={16} />} label="Tienda" />
-                <NavLink href="/orders" icon={<ClipboardList size={16} />} label="Mis Pedidos" />
-                <NavLink href="/profile" icon={<UserCircle size={16} />} label="Mi Perfil" />
+                <p className="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">{t("clienteSection")}</p>
+                <NavLink href="/dashboard" icon={<Store size={16} />} label={t("shop")} />
+                <NavLink href="/orders" icon={<ClipboardList size={16} />} label={t("myOrders")} />
+                <NavLink href="/profile" icon={<UserCircle size={16} />} label={t("myProfile")} />
               </>
             )}
             {user?.role === "trabajador" && (
               <>
-                <p className="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Trabajo</p>
-                <NavLink href="/worker" icon={<ClipboardList size={16} />} label="Mis Tareas" />
+                <p className="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">{t("trabajadorSection")}</p>
+                <NavLink href="/worker" icon={<ClipboardList size={16} />} label={t("myTasks")} />
               </>
             )}
           </nav>
