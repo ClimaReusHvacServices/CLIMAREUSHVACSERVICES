@@ -27,9 +27,10 @@ export function LanguageSwitcher({ variant = "light" }: { variant?: "light" | "d
 
   const handleLanguageChange = (newLocale: string) => {
     setIsOpen(false);
-    const currentPath = window.location.pathname;
-    const withoutLocale = currentPath.replace(new RegExp(`^/${locale}`), "") || "/";
-    window.location.href = `/${newLocale}${withoutLocale}`;
+    const segments = window.location.pathname.split("/").filter(Boolean);
+    const knownLocales = ["es", "en", "ca"];
+    const afterLocale = knownLocales.includes(segments[0]) ? segments.slice(1).join("/") : segments.join("/");
+    window.location.href = `/${newLocale}${afterLocale ? `/${afterLocale}` : ""}`;
   };
 
   const current = languages.find((l) => l.code === locale);

@@ -6,6 +6,7 @@ import { useRouter, Link } from "@/i18n/routing";
 import { InputField } from "@/components/common/InputField";
 import { Button } from "@/components/common/Button";
 import { validateRegisterData } from "@/utils/validation";
+import { AlertTriangle, CheckCircle } from "lucide-react";
 
 export function RegisterForm() {
   const t = useTranslations();
@@ -93,13 +94,13 @@ export function RegisterForm() {
         {/* Mensajes */}
         {generalError && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm flex items-start gap-2">
-            <span className="text-lg">⚠️</span>
+            <AlertTriangle size={18} className="shrink-0 mt-0.5" />
             <span>{generalError}</span>
           </div>
         )}
         {generalSuccess && (
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-700 text-sm flex items-start gap-2">
-            <span className="text-lg">✅</span>
+            <CheckCircle size={18} className="shrink-0 mt-0.5" />
             <span>{generalSuccess}</span>
           </div>
         )}

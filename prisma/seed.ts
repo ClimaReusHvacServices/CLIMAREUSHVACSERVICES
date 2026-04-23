@@ -31,7 +31,7 @@ async function main() {
         emailVerifiedAt: new Date(),
       },
     });
-    console.log("✅ Admin creado:", adminUser.email);
+    console.log("Admin creado:", adminUser.email);
 
     const clienteUser = await db.user.upsert({
       where: { email: "cliente@ejemplo.es" },
@@ -53,7 +53,7 @@ async function main() {
         emailVerifiedAt: new Date(),
       },
     });
-    console.log("✅ Cliente creado:", clienteUser.email);
+    console.log("Cliente creado:", clienteUser.email);
 
     const trabajadorUser = await db.user.upsert({
       where: { email: "trabajador@climareus.es" },
@@ -75,7 +75,7 @@ async function main() {
         emailVerifiedAt: new Date(),
       },
     });
-    console.log("✅ Trabajador creado:", trabajadorUser.email);
+    console.log("Trabajador creado:", trabajadorUser.email);
 
     // ── PERFILES EXTENDIDOS ───────────────────────────────────
 
@@ -97,7 +97,7 @@ async function main() {
         hourlyRate: new Prisma.Decimal("45.00"),
       },
     });
-    console.log("✅ Trabajador extendido creado");
+    console.log("Trabajador extendido creado");
 
     // ── PRODUCTOS ─────────────────────────────────────────────
 
@@ -119,7 +119,7 @@ async function main() {
         isActive: true,
       },
     });
-    console.log("✅ Producto 1 creado:", ac1.name);
+    console.log("Producto 1 creado:", ac1.name);
 
     const ac2 = await db.product.upsert({
       where: { sku: "AC-LG-24-2024" },
@@ -139,7 +139,7 @@ async function main() {
         isActive: true,
       },
     });
-    console.log("✅ Producto 2 creado:", ac2.name);
+    console.log("Producto 2 creado:", ac2.name);
 
     // ── SERVICIOS ─────────────────────────────────────────────
 
@@ -172,7 +172,7 @@ async function main() {
         isActive: true,
       },
     });
-    console.log("✅ Servicios creados");
+    console.log("Servicios creados");
 
     // ── PAQUETES PRODUCTO + SERVICIO ──────────────────────────
 
@@ -203,7 +203,7 @@ async function main() {
         isActive: true,
       },
     });
-    console.log("✅ Paquetes creados");
+    console.log("Paquetes creados");
 
     // ── DIRECCIÓN DEL CLIENTE ─────────────────────────────────
 
@@ -258,23 +258,23 @@ async function main() {
         totalPrice: new Prisma.Decimal("750.00"),
       },
     });
-    console.log("✅ Pedido de ejemplo creado");
+    console.log("Pedido de ejemplo creado");
 
-    console.log("\n✅✅✅ SEED COMPLETADO CORRECTAMENTE ✅✅✅");
-    console.log("\n📋 CUENTAS DE PRUEBA DISPONIBLES:");
-    console.log("  👤 Admin");
+    console.log("\nSEED COMPLETADO CORRECTAMENTE");
+    console.log("\nCUENTAS DE PRUEBA DISPONIBLES:");
+    console.log("  Admin");
     console.log("     Email:    admin@climareus.es");
     console.log("     Password: Admin123!@");
     console.log("     Rol:      admin");
-    console.log("\n  👥 Cliente");
+    console.log("\n  Cliente");
     console.log("     Email:    cliente@ejemplo.es");
     console.log("     Password: Cliente123!@");
     console.log("     Rol:      cliente");
-    console.log("\n  🔧 Trabajador");
+    console.log("\n  Trabajador");
     console.log("     Email:    trabajador@climareus.es");
     console.log("     Password: Trabajador123!@");
     console.log("     Rol:      trabajador");
-    console.log("\n✅ Base de datos lista para usar en Vercel y desarrollo local.");
+    console.log("\nBase de datos lista para usar en Vercel y desarrollo local.");
   } catch (error) {
     console.error("Error en seed:", error);
     process.exit(1);
