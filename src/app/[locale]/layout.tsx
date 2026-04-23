@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth/config";
 import { Toaster } from "@/components/common/Toaster";
@@ -26,7 +26,7 @@ export default async function RootLayout({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const messages = await getMessages();
+  const messages = (await import(`@/i18n/messages/${locale}.json`)).default;
   const session = await auth();
 
   return (

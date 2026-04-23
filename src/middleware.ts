@@ -55,7 +55,9 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set("x-next-intl-locale", locale);
+  return NextResponse.next({ request: { headers: requestHeaders } });
 }
 
 export const config = {
