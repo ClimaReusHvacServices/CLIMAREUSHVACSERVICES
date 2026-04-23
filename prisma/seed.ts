@@ -1,4 +1,4 @@
-import { PrismaClient, UserRole } from "@prisma/client";
+import { PrismaClient, UserRole, Prisma } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 // Usamos PrismaClient directo (no el singleton del app) para el seed
@@ -28,9 +28,10 @@ async function main() {
         role: UserRole.admin,
         isActive: true,
         emailVerified: true,
+        emailVerifiedAt: new Date(),
       },
     });
-    console.log("Admin creado:", adminUser.email);
+    console.log("✅ Admin creado:", adminUser.email);
 
     const clienteUser = await db.user.upsert({
       where: { email: "cliente@ejemplo.es" },
@@ -43,12 +44,16 @@ async function main() {
         lastName: "García",
         phoneNumber: "+34 612 345 678",
         address: "Calle Principal, 123",
+        city: "Reus",
+        postalCode: "43201",
+        country: "España",
         role: UserRole.cliente,
         isActive: true,
         emailVerified: true,
+        emailVerifiedAt: new Date(),
       },
     });
-    console.log("Cliente creado:", clienteUser.email);
+    console.log("✅ Cliente creado:", clienteUser.email);
 
     const trabajadorUser = await db.user.upsert({
       where: { email: "trabajador@climareus.es" },
@@ -61,12 +66,16 @@ async function main() {
         lastName: "Martínez",
         phoneNumber: "+34 623 456 789",
         address: "Calle de Trabajo, 456",
+        city: "Reus",
+        postalCode: "43201",
+        country: "España",
         role: UserRole.trabajador,
         isActive: true,
         emailVerified: true,
+        emailVerifiedAt: new Date(),
       },
     });
-    console.log("Trabajador creado:", trabajadorUser.email);
+    console.log("✅ Trabajador creado:", trabajadorUser.email);
 
     // ── PERFILES EXTENDIDOS ───────────────────────────────────
 
@@ -85,9 +94,10 @@ async function main() {
         certifications: ["Certificado HVAC", "Certificado Frigorista"],
         yearsExperience: 5,
         isAvailable: true,
-        hourlyRate: 45.0,
+        hourlyRate: new Prisma.Decimal("45.00"),
       },
     });
+    console.log("✅ Trabajador extendido creado");
 
     // ── PRODUCTOS ─────────────────────────────────────────────
 
@@ -102,14 +112,14 @@ async function main() {
         sku: "AC-SAMSUNG-18-2024",
         manufacturer: "Samsung",
         modelNumber: "AR18JSNHBKX",
-        price: 850.0,
-        discountPrice: 750.0,
+        price: new Prisma.Decimal("850.00"),
+        discountPrice: new Prisma.Decimal("750.00"),
         stock: 15,
         warranty: "2 años",
         isActive: true,
       },
     });
-    console.log("Producto creado:", ac1.name);
+    console.log("✅ Producto 1 creado:", ac1.name);
 
     const ac2 = await db.product.upsert({
       where: { sku: "AC-LG-24-2024" },
@@ -122,14 +132,14 @@ async function main() {
         sku: "AC-LG-24-2024",
         manufacturer: "LG",
         modelNumber: "DuaLinverter24000",
-        price: 1200.0,
-        discountPrice: 1050.0,
+        price: new Prisma.Decimal("1200.00"),
+        discountPrice: new Prisma.Decimal("1050.00"),
         stock: 8,
         warranty: "3 años",
         isActive: true,
       },
     });
-    console.log("Producto creado:", ac2.name);
+    console.log("✅ Producto 2 creado:", ac2.name);
 
     // ── SERVICIOS ─────────────────────────────────────────────
 
@@ -141,7 +151,7 @@ async function main() {
         name: "Instalación Profesional",
         description: "Instalación completa: montaje, cableado, pruebas y limpieza",
         type: "instalacion",
-        basePrice: 200.0,
+        basePrice: new Prisma.Decimal("200.00"),
         estimatedDuration: 240,
         difficulty: "media",
         isActive: true,
@@ -156,13 +166,13 @@ async function main() {
         name: "Mantenimiento y Limpieza",
         description: "Limpieza de filtros, comprobación de refrigerante y ajustes",
         type: "mantenimiento",
-        basePrice: 80.0,
+        basePrice: new Prisma.Decimal("80.00"),
         estimatedDuration: 60,
         difficulty: "baja",
         isActive: true,
       },
     });
-    console.log("Servicios creados");
+    console.log("✅ Servicios creados");
 
     // ── PAQUETES PRODUCTO + SERVICIO ──────────────────────────
 
@@ -174,8 +184,8 @@ async function main() {
         description: "Aire acondicionado Samsung con instalación incluida",
         productId: ac1.id,
         serviceId: svcInstall.id,
-        packagePrice: 950.0,
-        discountPercentage: 5.0,
+        packagePrice: new Prisma.Decimal("950.00"),
+        discountPercentage: new Prisma.Decimal("5.00"),
         isActive: true,
       },
     });
@@ -188,12 +198,12 @@ async function main() {
         description: "Aire acondicionado LG con instalación incluida",
         productId: ac2.id,
         serviceId: svcInstall.id,
-        packagePrice: 1250.0,
-        discountPercentage: 5.0,
+        packagePrice: new Prisma.Decimal("1250.00"),
+        discountPercentage: new Prisma.Decimal("5.00"),
         isActive: true,
       },
     });
-    console.log("Paquetes creados");
+    console.log("✅ Paquetes creados");
 
     // ── DIRECCIÓN DEL CLIENTE ─────────────────────────────────
 
@@ -226,10 +236,10 @@ async function main() {
         addressId: clientAddress.id,
         status: "pendiente",
         paymentStatus: "pendiente",
-        subtotal: 750.0,
-        taxAmount: 157.5,
-        shippingCost: 0,
-        totalAmount: 907.5,
+        subtotal: new Prisma.Decimal("750.00"),
+        taxAmount: new Prisma.Decimal("157.50"),
+        shippingCost: new Prisma.Decimal("0.00"),
+        totalAmount: new Prisma.Decimal("907.50"),
         installationRequired: false,
         notes: "Pedido de ejemplo",
       },
@@ -243,18 +253,28 @@ async function main() {
         orderId: order.id,
         productId: ac1.id,
         quantity: 1,
-        unitPrice: 750.0,
-        discount: 0,
-        totalPrice: 750.0,
+        unitPrice: new Prisma.Decimal("750.00"),
+        discount: new Prisma.Decimal("0.00"),
+        totalPrice: new Prisma.Decimal("750.00"),
       },
     });
-    console.log("Pedido de ejemplo creado");
+    console.log("✅ Pedido de ejemplo creado");
 
-    console.log("\n✅ Seed completado correctamente!");
-    console.log("\nCuentas de prueba:");
-    console.log("  Admin:      admin@climareus.es     / Admin123!@");
-    console.log("  Cliente:    cliente@ejemplo.es     / Cliente123!@");
-    console.log("  Trabajador: trabajador@climareus.es / Trabajador123!@");
+    console.log("\n✅✅✅ SEED COMPLETADO CORRECTAMENTE ✅✅✅");
+    console.log("\n📋 CUENTAS DE PRUEBA DISPONIBLES:");
+    console.log("  👤 Admin");
+    console.log("     Email:    admin@climareus.es");
+    console.log("     Password: Admin123!@");
+    console.log("     Rol:      admin");
+    console.log("\n  👥 Cliente");
+    console.log("     Email:    cliente@ejemplo.es");
+    console.log("     Password: Cliente123!@");
+    console.log("     Rol:      cliente");
+    console.log("\n  🔧 Trabajador");
+    console.log("     Email:    trabajador@climareus.es");
+    console.log("     Password: Trabajador123!@");
+    console.log("     Rol:      trabajador");
+    console.log("\n✅ Base de datos lista para usar en Vercel y desarrollo local.");
   } catch (error) {
     console.error("Error en seed:", error);
     process.exit(1);

@@ -29,9 +29,7 @@ declare module "next-auth" {
     phoneNumber?: string;
     address?: string;
   }
-}
 
-declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     role: UserRole;
@@ -166,13 +164,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id;
-        session.user.role = token.role;
-        session.user.username = token.username;
-        session.user.firstName = token.firstName;
-        session.user.lastName = token.lastName;
-        session.user.phoneNumber = token.phoneNumber;
-        session.user.address = token.address;
+        const t = token as unknown as {
+          id: string;
+          role: UserRole;
+          username: string;
+          firstName: string;
+          lastName: string;
+          phoneNumber?: string;
+          address?: string;
+        };
+        session.user.id = t.id;
+        session.user.role = t.role;
+        session.user.username = t.username;
+        session.user.firstName = t.firstName;
+        session.user.lastName = t.lastName;
+        session.user.phoneNumber = t.phoneNumber;
+        session.user.address = t.address;
       }
       return session;
     },
