@@ -1,7 +1,6 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import { usePathname } from "@/i18n/routing";
 import { useState, useRef, useEffect } from "react";
 import { Globe, ChevronDown } from "lucide-react";
 
@@ -11,9 +10,8 @@ const languages = [
   { code: "ca", name: "Català" },
 ];
 
-export function LanguageSwitcher() {
+export function LanguageSwitcher({ variant = "light" }: { variant?: "light" | "dark" }) {
   const locale = useLocale();
-  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -29,7 +27,9 @@ export function LanguageSwitcher() {
 
   const handleLanguageChange = (newLocale: string) => {
     setIsOpen(false);
-    window.location.href = `/${newLocale}${pathname}`;
+    const currentPath = window.location.pathname;
+    const withoutLocale = currentPath.replace(new RegExp(`^/${locale}`), "") || "/";
+    window.location.href = `/${newLocale}${withoutLocale}`;
   };
 
   const current = languages.find((l) => l.code === locale);
@@ -38,7 +38,7 @@ export function LanguageSwitcher() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors hover:bg-white/20"
+        className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors hover:bg-white/20 ${variant === "dark" ? "text-white" : "text-gray-700"}`}
       >
         <Globe size={16} />
         <span>{current?.name ?? locale}</span>

@@ -20,7 +20,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             Clima Reus HVAC
           </div>
           <div className="flex items-center gap-3">
-            <LanguageSwitcher />
+            <LanguageSwitcher variant="dark" />
             {user && (
               <UserAvatar
                 firstName={user.firstName}
