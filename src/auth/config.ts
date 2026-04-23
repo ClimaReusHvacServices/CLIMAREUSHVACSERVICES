@@ -53,9 +53,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new Error("Email y contraseña son obligatorios");
         }
 
-        const user = await db.user.findUnique({
-          where: { email: credentials.email as string },
-        });
+        const identifier = credentials.email as string;
+        const isEmail = identifier.includes("@");
+
+        const user = isEmail
+          ? await db.user.findUnique({ where: { email: identifier } })
+          : await db.user.findUnique({ where: { username: identifier } });
 
         if (!user) throw new Error("Usuario no encontrado");
         if (!user.isActive) throw new Error("Cuenta inactiva");

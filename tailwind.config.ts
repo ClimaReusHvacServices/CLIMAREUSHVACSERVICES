@@ -9,6 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Verde esmeralda — acción principal, botones, CTAs
         primary: {
           50:  "#f0faf5",
           100: "#d4f0e3",
@@ -21,10 +22,19 @@ const config: Config = {
           800: "#003d30",
           900: "#002920",
         },
-      },
-      backgroundColor: {
-        body: "#f5f7f4",
-        dash: "#eef0ec",
+        // Azul cerúleo — acentos, links, elementos secundarios
+        accent: {
+          50:  "#f0f8fc",
+          100: "#daeef7",
+          200: "#b5ddef",
+          300: "#84c8e4",
+          400: "#4CAAC9",
+          500: "#2d8fb0",
+          600: "#1d7291",
+          700: "#185d77",
+          800: "#124e63",
+          900: "#0d3c4d",
+        },
       },
       fontFamily: {
         sans: ["system-ui", "-apple-system", "sans-serif"],

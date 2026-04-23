@@ -1,8 +1,8 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import { useRouter, usePathname } from "@/i18n/routing";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { Globe, ChevronDown } from "lucide-react";
 
 const languages = [
   { code: "es", name: "Español" },
@@ -12,51 +12,53 @@ const languages = [
 
 export function LanguageSwitcher() {
   const locale = useLocale();
-  const router = useRouter();
-  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleLanguageChange = (newLocale: string) => {
-    router.push(pathname, { locale: newLocale as any });
+    const segments = window.location.pathname.split("/");
+    // segments[0] = "", segments[1] = locale, rest = path
+    if (segments.length >= 2) {
+      segments[1] = newLocale;
+    }
+    window.location.href = segments.join("/") || "/";
     setIsOpen(false);
   };
 
-  const currentLanguage = languages.find((lang) => lang.code === locale);
+  const current = languages.find((l) => l.code === locale);
 
   return (
-    <div className="relative">
+    <div className="relative" ref={ref}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+        className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors hover:bg-white/20"
       >
-        <span className="text-lg">🌐</span>
-        {currentLanguage?.name}
-        <svg
-          className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 14l-7 7m0 0l-7-7m7 7V3"
-          />
-        </svg>
+        <Globe size={16} />
+        <span>{current?.name ?? locale}</span>
+        <ChevronDown size={14} className={`transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50">
+        <div className="absolute right-0 mt-1 w-40 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50">
           {languages.map((lang) => (
             <button
               key={lang.code}
               onClick={() => handleLanguageChange(lang.code)}
-              className={`block w-full text-left px-4 py-2 text-sm ${
+              className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
                 locale === lang.code
-                  ? "bg-primary-100 text-primary-700 font-semibold"
+                  ? "bg-primary-50 text-primary-700 font-semibold"
                   : "text-gray-700 hover:bg-gray-50"
-              } transition-colors`}
+              }`}
             >
               {lang.name}
             </button>

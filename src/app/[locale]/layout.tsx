@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth/config";
+import { Toaster } from "@/components/common/Toaster";
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <NextIntlClientProvider messages={messages}>
             <div className="min-h-screen flex flex-col">{children}</div>
+            <Toaster />
           </NextIntlClientProvider>
         </SessionProvider>
       </body>

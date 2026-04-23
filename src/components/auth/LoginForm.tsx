@@ -6,14 +6,12 @@ import { useTranslations } from "next-intl";
 import { useRouter, Link } from "@/i18n/routing";
 import { InputField } from "@/components/common/InputField";
 import { Button } from "@/components/common/Button";
-import { validateLoginData } from "@/utils/validation";
+import { toast } from "sonner";
 
 export function LoginForm() {
   const t = useTranslations();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [generalError, setGeneralError] = useState("");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -26,19 +24,17 @@ export function LoginForm() {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setGeneralError("");
-    setErrors({});
 
-    const validation = validateLoginData(formData);
-    if (!validation.success) {
-      setErrors(validation.errors!);
+    if (!formData.email.trim()) {
+      toast.error("Introduce tu email o nombre de usuario");
+      return;
+    }
+    if (!formData.password) {
+      toast.error("Introduce tu contraseña");
       return;
     }
 
@@ -46,19 +42,18 @@ export function LoginForm() {
 
     try {
       const result = await signIn("credentials", {
-        email: formData.email,
+        email: formData.email.trim(),
         password: formData.password,
         redirect: false,
       });
 
       if (result?.error) {
-        setGeneralError(t("auth.loginError"));
+        toast.error(t("auth.loginError"));
       } else if (result?.ok) {
         router.push("/");
       }
-    } catch (error) {
-      setGeneralError(t("errors.serverError"));
-      console.error("Login error:", error);
+    } catch {
+      toast.error(t("errors.serverError"));
     } finally {
       setIsLoading(false);
     }
@@ -67,31 +62,19 @@ export function LoginForm() {
   return (
     <div className="w-full max-w-md">
       <div className="bg-white rounded-2xl shadow-lg p-8 space-y-6">
-        {/* Título */}
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">
-            {t("auth.login")}
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t("auth.login")}</h1>
         </div>
 
-        {/* Error general */}
-        {generalError && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm flex items-start gap-2">
-            <span>⚠️</span>
-            <span>{generalError}</span>
-          </div>
-        )}
-
-        {/* Formulario */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <InputField
-            label={t("auth.email")}
-            type="email"
+            label="Email o nombre de usuario"
+            type="text"
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            error={errors.email}
-            placeholder="ejemplo@correo.com"
+            placeholder="ejemplo@correo.com o tu_usuario"
+            autoComplete="username"
             required
           />
 
@@ -101,8 +84,8 @@ export function LoginForm() {
             name="password"
             value={formData.password}
             onChange={handleInputChange}
-            error={errors.password}
             placeholder="••••••••"
+            autoComplete="current-password"
             required
           />
 
@@ -120,7 +103,7 @@ export function LoginForm() {
                 {t("auth.rememberMe")}
               </label>
             </div>
-            <Link href="/forgot-password" className="text-sm text-primary-600 hover:text-primary-700">
+            <Link href="/forgot-password" className="text-sm text-accent-500 hover:text-accent-600">
               {t("auth.forgotPassword")}
             </Link>
           </div>
@@ -130,10 +113,9 @@ export function LoginForm() {
           </Button>
         </form>
 
-        {/* Link registro — solo uno */}
         <div className="text-center text-sm text-gray-600">
           {t("auth.noAccount")}{" "}
-          <Link href="/register" className="text-primary-600 hover:text-primary-700 font-semibold">
+          <Link href="/register" className="text-accent-500 hover:text-accent-600 font-semibold">
             {t("auth.signUp")}
           </Link>
         </div>

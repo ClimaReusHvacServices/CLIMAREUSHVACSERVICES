@@ -1,91 +1,83 @@
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
-import { auth, signOut } from "@/auth/config";
+import { UserAvatar } from "@/components/common/UserAvatar";
+import { auth } from "@/auth/config";
 import { Link } from "@/i18n/routing";
+import {
+  LayoutDashboard, Users, Wrench, ShoppingBag, Package,
+  ClipboardList, UserCircle, Store,
+} from "lucide-react";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
+  const user = session?.user;
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#eef0ec" }}>
-      {/* Header */}
-      <header className="bg-primary-700 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div className="text-2xl font-bold text-white tracking-tight">
+      {/* Navbar */}
+      <header className="bg-primary-700 shadow-md sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
+          <div className="text-xl font-bold text-white tracking-tight">
             Clima Reus HVAC
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <LanguageSwitcher />
-            <span className="text-primary-100 text-sm font-medium">
-              {session?.user?.firstName} {session?.user?.lastName}
-            </span>
-            <form
-              action={async () => {
-                "use server";
-                await signOut({ redirectTo: "/login" });
-              }}
-            >
-              <button
-                type="submit"
-                className="px-4 py-1.5 text-sm font-medium bg-primary-600 hover:bg-primary-500 text-white rounded-lg transition-colors"
-              >
-                Cerrar sesión
-              </button>
-            </form>
+            {user && (
+              <UserAvatar
+                firstName={user.firstName}
+                lastName={user.lastName}
+                email={user.email}
+                role={user.role}
+              />
+            )}
           </div>
         </div>
       </header>
 
-      <div className="flex flex-1">
+      <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 bg-white shadow-sm min-h-screen border-r border-primary-100">
-          <nav className="p-4 space-y-1">
-            {session?.user?.role === "admin" && (
+        <aside className="w-60 bg-white shadow-sm min-h-[calc(100vh-4rem)] border-r border-gray-100 shrink-0">
+          <nav className="p-3 space-y-0.5">
+            {user?.role === "admin" && (
               <>
-                <p className="px-3 py-2 text-xs font-semibold text-primary-500 uppercase tracking-wider">Administración</p>
-                <Link href="/admin" className="block px-4 py-2.5 rounded-lg hover:bg-primary-50 text-gray-700 hover:text-primary-700 font-medium transition-colors">
-                  Dashboard
-                </Link>
-                <Link href="/admin/users" className="block px-4 py-2.5 rounded-lg hover:bg-primary-50 text-gray-600 hover:text-primary-700 transition-colors">
-                  Usuarios
-                </Link>
-                <Link href="/admin/workers" className="block px-4 py-2.5 rounded-lg hover:bg-primary-50 text-gray-600 hover:text-primary-700 transition-colors">
-                  Trabajadores
-                </Link>
-                <Link href="/admin/orders" className="block px-4 py-2.5 rounded-lg hover:bg-primary-50 text-gray-600 hover:text-primary-700 transition-colors">
-                  Pedidos
-                </Link>
-                <Link href="/admin/products" className="block px-4 py-2.5 rounded-lg hover:bg-primary-50 text-gray-600 hover:text-primary-700 transition-colors">
-                  Productos
-                </Link>
+                <p className="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Administración</p>
+                <NavLink href="/admin" icon={<LayoutDashboard size={16} />} label="Dashboard" />
+                <NavLink href="/admin/users" icon={<Users size={16} />} label="Usuarios" />
+                <NavLink href="/admin/workers" icon={<Wrench size={16} />} label="Trabajadores" />
+                <NavLink href="/admin/orders" icon={<ShoppingBag size={16} />} label="Pedidos" />
+                <NavLink href="/admin/products" icon={<Package size={16} />} label="Productos" />
               </>
             )}
-            {session?.user?.role === "cliente" && (
+            {user?.role === "cliente" && (
               <>
-                <p className="px-3 py-2 text-xs font-semibold text-primary-500 uppercase tracking-wider">Mi cuenta</p>
-                <Link href="/dashboard" className="block px-4 py-2.5 rounded-lg hover:bg-primary-50 text-gray-700 hover:text-primary-700 font-medium transition-colors">
-                  Mi Dashboard
-                </Link>
-                <Link href="/orders" className="block px-4 py-2.5 rounded-lg hover:bg-primary-50 text-gray-600 hover:text-primary-700 transition-colors">
-                  Mis Pedidos
-                </Link>
-                <Link href="/profile" className="block px-4 py-2.5 rounded-lg hover:bg-primary-50 text-gray-600 hover:text-primary-700 transition-colors">
-                  Mi Perfil
-                </Link>
+                <p className="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Mi cuenta</p>
+                <NavLink href="/dashboard" icon={<Store size={16} />} label="Tienda" />
+                <NavLink href="/orders" icon={<ClipboardList size={16} />} label="Mis Pedidos" />
+                <NavLink href="/profile" icon={<UserCircle size={16} />} label="Mi Perfil" />
               </>
             )}
-            {session?.user?.role === "trabajador" && (
+            {user?.role === "trabajador" && (
               <>
-                <p className="px-3 py-2 text-xs font-semibold text-primary-500 uppercase tracking-wider">Trabajo</p>
-                <Link href="/worker" className="block px-4 py-2.5 rounded-lg hover:bg-primary-50 text-gray-700 hover:text-primary-700 font-medium transition-colors">
-                  Mis Tareas
-                </Link>
+                <p className="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Trabajo</p>
+                <NavLink href="/worker" icon={<ClipboardList size={16} />} label="Mis Tareas" />
               </>
             )}
           </nav>
         </aside>
 
-        <main className="flex-1 p-8">{children}</main>
+        <main className="flex-1 p-6 min-w-0">{children}</main>
       </div>
     </div>
+  );
+}
+
+function NavLink({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) {
+  return (
+    <Link
+      href={href as any}
+      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors text-sm font-medium group"
+    >
+      <span className="text-gray-400 group-hover:text-primary-600 transition-colors">{icon}</span>
+      {label}
+    </Link>
   );
 }
