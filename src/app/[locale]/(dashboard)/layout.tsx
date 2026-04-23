@@ -16,9 +16,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
       {/* Navbar */}
       <header className="bg-primary-700 shadow-md sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
-          <div className="text-xl font-bold text-white tracking-tight">
+          <Link href="/" className="text-xl font-bold text-white tracking-tight hover:text-white/80 transition-colors">
             Clima Reus HVAC
-          </div>
+          </Link>
           <div className="flex items-center gap-3">
             <LanguageSwitcher variant="dark" />
             {user && (
