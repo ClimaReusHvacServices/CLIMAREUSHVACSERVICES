@@ -1,8 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
 import { db } from "@/db";
-import { verifyPassword, hashPassword } from "@/utils/password";
+import { verifyPassword } from "@/utils/password";
 import { UserRole } from "@prisma/client";
 
 declare module "next-auth" {
@@ -85,11 +84,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         };
       },
     }),
-
-    GoogleProvider({
-      clientId: process.env.AUTH_GOOGLE_ID || "",
-      clientSecret: process.env.AUTH_GOOGLE_SECRET || "",
-    }),
   ],
 
   pages: {
@@ -98,8 +92,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
 
   callbacks: {
-    async jwt({ token, user, account, profile }) {
-      // Credentials sign-in: user es el objeto de authorize()
+    async jwt({ token, user, account }) {
       if (user && account?.provider === "credentials") {
         token.id = user.id;
         token.role = user.role as UserRole;
@@ -109,56 +102,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.phoneNumber = user.phoneNumber;
         token.address = user.address;
       }
-
-      // Google sign-in: buscar o crear usuario en nuestra BD
-      if (account?.provider === "google" && profile?.email) {
-        const existingUser = await db.user.findUnique({
-          where: { email: profile.email },
-        });
-
-        if (existingUser) {
-          token.id = existingUser.id;
-          token.role = existingUser.role;
-          token.username = existingUser.username;
-          token.firstName = existingUser.firstName;
-          token.lastName = existingUser.lastName;
-          token.phoneNumber = existingUser.phoneNumber ?? undefined;
-          token.address = existingUser.address ?? undefined;
-        } else {
-          // Generar username único desde el email
-          const baseUsername = profile.email.split("@")[0].slice(0, 18).replace(/[^a-zA-Z0-9_-]/g, "_");
-          let username = baseUsername;
-          let attempt = 1;
-          while (await db.user.findUnique({ where: { username } })) {
-            username = `${baseUsername}${attempt++}`;
-          }
-
-          const googleProfile = profile as Record<string, string>;
-          const newUser = await db.user.create({
-            data: {
-              email: profile.email,
-              username,
-              firstName: googleProfile.given_name || profile.name?.split(" ")[0] || "",
-              lastName: googleProfile.family_name || profile.name?.split(" ").slice(1).join(" ") || "",
-              password: hashPassword(`google-${Date.now()}`),
-              role: UserRole.cliente,
-              profileImageUrl: googleProfile.picture || undefined,
-              emailVerified: true,
-              isActive: true,
-            },
-          });
-
-          // Crear registro de Cliente
-          await db.cliente.create({ data: { userId: newUser.id } });
-
-          token.id = newUser.id;
-          token.role = newUser.role;
-          token.username = newUser.username;
-          token.firstName = newUser.firstName;
-          token.lastName = newUser.lastName;
-        }
-      }
-
       return token;
     },
 
