@@ -45,3 +45,15 @@ Thumbs.db
 # Prisma
 .env
 prisma/dev.db
+
+# Media / Images
+Imagenes/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
