@@ -17,6 +17,7 @@ export default function Hero({
   subtitle = "Especialistas en instalación, mantenimiento y reparación de aire acondicionado",
 }: HeroProps) {
   const [index, setIndex] = useState(0);
+  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     const t = setInterval(() => {
@@ -24,6 +25,16 @@ export default function Hero({
     }, 6000);
     return () => clearInterval(t);
   }, [images.length]);
+
+  useEffect(() => {
+    const onScroll = () => {
+      // subtle parallax offset based on scroll position
+      const y = window.scrollY || window.pageYOffset;
+      setOffset(y * 0.15);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <section className="relative h-[72vh] min-h-[420px] w-full overflow-hidden text-white">
@@ -34,10 +45,13 @@ export default function Hero({
             className={`absolute inset-0 bg-center bg-cover transition-opacity duration-1000 ease-out ${
               i === index ? "opacity-100 scale-100" : "opacity-0 scale-105"
             }`}
-            style={{ backgroundImage: `url('${src}')` }}
+            style={{
+              backgroundImage: `url('${src}')`,
+              transform: `translateY(${i === index ? -offset * 0.2 : 0}px)`,
+            }}
           />
         ))}
-        <div className="absolute inset-0 bg-gradient-to-r from-accent-800/70 to-primary-700/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-accent-800/60 to-primary-700/25" />
       </div>
 
       <div className="relative z-10 container mx-auto h-full flex items-center">
