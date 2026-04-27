@@ -291,12 +291,12 @@ export function ProductsSection({ products }: { products: ProductItem[] }) {
 
         {/* Bottom CTA */}
         <div className="text-center mt-12">
-          <a
-            href="#contact"
+          <Link
+            href="/oferta"
             className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-bold text-white border-2 border-white/30 hover:bg-white/10 hover:border-white/60 transition-all"
           >
-            Ver todos los servicios
-          </a>
+            Ver todos los equipos →
+          </Link>
         </div>
       </div>
 
