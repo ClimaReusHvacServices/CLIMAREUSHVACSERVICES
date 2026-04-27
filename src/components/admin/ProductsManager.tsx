@@ -147,7 +147,6 @@ export function ProductsManager({ products, services, packages }: {
   const allCurrent = tab === "products" ? filteredProducts : tab === "services" ? filteredServices : filteredPackages;
   const totalPages = Math.ceil(allCurrent.length / PAGE_SIZE);
   const current = allCurrent.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const totalCurrent = tab === "products" ? products.length : tab === "services" ? services.length : packages.length;
   const from = allCurrent.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const to = Math.min(page * PAGE_SIZE, allCurrent.length);
 
@@ -273,7 +272,7 @@ export function ProductsManager({ products, services, packages }: {
           ] as const).map(({ key, label, icon }) => (
             <button
               key={key}
-              onClick={() => { setTab(key); setSearch(""); }}
+              onClick={() => { setTab(key); setSearch(""); setPage(1); }}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${tab === key ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
             >
               {icon} {label}
@@ -288,7 +287,7 @@ export function ProductsManager({ products, services, packages }: {
             <input
               type="text"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
               placeholder={t("search")}
               className="pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-accent-400 focus:ring-1 focus:ring-accent-100 transition-colors w-44"
             />
@@ -347,7 +346,7 @@ export function ProductsManager({ products, services, packages }: {
                   </td>
                 </tr>
               ) : tab === "products" ? (
-                (filteredProducts as ProductRow[]).map((p) => (
+                (current as ProductRow[]).map((p) => (
                   <tr key={p.id} className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
                     <td className="py-3 px-4">
                       <p className="font-medium text-gray-900">{p.name}</p>
@@ -374,7 +373,7 @@ export function ProductsManager({ products, services, packages }: {
                   </tr>
                 ))
               ) : tab === "services" ? (
-                (filteredServices as ServiceRow[]).map((s) => (
+                (current as ServiceRow[]).map((s) => (
                   <tr key={s.id} className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-900">{s.name}</td>
                     <td className="py-3 px-4 text-gray-600">
@@ -396,7 +395,7 @@ export function ProductsManager({ products, services, packages }: {
                   </tr>
                 ))
               ) : (
-                (filteredPackages as PackageRow[]).map((pkg) => (
+                (current as PackageRow[]).map((pkg) => (
                   <tr key={pkg.id} className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-900">{pkg.name}</td>
                     <td className="py-3 px-4 text-gray-600">{pkg.product.name}</td>
@@ -419,9 +418,10 @@ export function ProductsManager({ products, services, packages }: {
             </tbody>
           </table>
         </div>
-        {current.length > 0 && (
-          <div className="px-4 py-2.5 border-t border-gray-100 bg-gray-50/40 text-xs text-gray-400">
-            {current.length} / {totalCurrent}
+        {allCurrent.length > 0 && (
+          <div className="px-4 py-3 border-t border-gray-100 bg-gray-50/40 flex flex-wrap items-center justify-between gap-3">
+            <span className="text-xs text-gray-400">{from}–{to} / {allCurrent.length}</span>
+            <Pagination page={page} totalPages={totalPages} onChange={setPage} />
           </div>
         )}
       </div>
