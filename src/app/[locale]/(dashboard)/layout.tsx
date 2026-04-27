@@ -25,7 +25,7 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#eef0ec" }}>
       {/* Navbar */}
-      <header className="shadow-md sticky top-0 z-40" style={{ background: "linear-gradient(to right, #003d30, #124e63)" }}>
+      <header className="shadow-md sticky top-0 z-40" style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
           <Link href="/" className="text-xl font-bold text-white tracking-tight hover:text-white/80 transition-colors">
             Clima Reus HVAC
