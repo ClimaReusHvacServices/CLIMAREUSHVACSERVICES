@@ -3,9 +3,9 @@ import { redirect } from "next/navigation";
 import { db } from "@/db";
 import dynamic from "next/dynamic";
 import { ProductsSection } from "@/components/landing/ProductsSection";
+import BrandsSection from "@/components/landing/BrandsSection";
 
 const Hero = dynamic(() => import("@/components/landing/Hero"));
-const LogosMarquee = dynamic(() => import("@/components/landing/LogosMarquee"));
 const ContactMap = dynamic(() => import("@/components/landing/ContactMap"));
 const Navbar = dynamic(() => import("@/components/landing/Navbar"));
 const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton"));
@@ -54,12 +54,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {/* Section 2 — Products / Offers */}
       <ProductsSection products={products} />
 
-      {/* Section 3 — Logos marquee */}
-      <section id="servicios" className="bg-white py-8">
-        <div className="container mx-auto px-4">
-          <LogosMarquee logos={["/Imagenes/HVAC_exterior_negro.jpg"]} />
-        </div>
-      </section>
+      {/* Section 3 — Brands */}
+      <BrandsSection />
 
       {/* Section 4 — Contact */}
       <section id="contact" className="container mx-auto px-4 sm:px-6 py-16 grid grid-cols-1 md:grid-cols-2 gap-8">

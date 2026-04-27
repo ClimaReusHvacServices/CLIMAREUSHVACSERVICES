@@ -55,7 +55,7 @@ export default function Hero({
       <div className="absolute inset-0">
         {images.map((src, i) => (
           <div key={i} className={`absolute inset-0 transition-opacity duration-1000 ease-out ${i === index ? "opacity-100 scale-100" : "opacity-0 scale-105"}`} style={{ transform: `translateY(${i === index ? -offset * 0.2 : 0}px)` }}>
-            <Image src={src} alt={`hero-${i}`} fill priority={i === 0} style={{ objectFit: "cover" }} sizes="100vw" />
+            <Image src={src} alt={`hero-${i}`} fill priority={i === 0} quality={90} style={{ objectFit: "cover", objectPosition: "center" }} sizes="100vw" />
           </div>
         ))}
         <div className="absolute inset-0 bg-gradient-to-r from-accent-800/60 to-primary-700/25" />
