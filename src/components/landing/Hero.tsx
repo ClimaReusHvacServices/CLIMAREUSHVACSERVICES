@@ -10,9 +10,9 @@ type HeroProps = {
 
 export default function Hero({
   images = [
-    "/Imagenes/Exterior_edificio.jpg",
-    "/Imagenes/Exterior_casa_moderna.jpg",
-    "/Imagenes/Interior_Banner.jpg",
+    "/Imagenes/hero_hq_1.jpg",
+    "/Imagenes/hero_hq_2.jpg",
+    "/Imagenes/trabajo_1.jpg",
   ],
   title = "Instalación y reparación de aire acondicionado en Reus y Tarragona",
   subtitle = "Especialistas en instalación, mantenimiento y reparación de aire acondicionado",
@@ -62,7 +62,7 @@ export default function Hero({
 
           return (
             <div key={i} className={`hero-slide absolute inset-0 transition-opacity duration-1000 ease-out ${i === index ? "opacity-100 scale-100" : "opacity-0 scale-105"}`} style={{ transform: `translateY(${i === index ? -offset * 0.2 : 0}px)` }}>
-              <Image src={src} alt={`hero-${i}`} fill priority={i === 0} quality={90} placeholder="blur" blurDataURL={blurDataURL} style={{ objectFit: "cover", objectPosition: "center" }} sizes="100vw" />
+              <Image src={src} alt={`hero-${i}`} fill priority={i === 0} quality={95} placeholder="blur" blurDataURL={blurDataURL} style={{ objectFit: "cover", objectPosition: "center" }} sizes="(max-width: 768px) 100vw, (max-width: 1920px) 100vw, 1920px" />
             </div>
           );
         })}
