@@ -57,3 +57,7 @@ Imagenes/
 *.avi
 *.mkv
 *.webm
+
+# Allow images placed in the public folder for deployment
+!public/Imagenes/
+!public/Imagenes/**
