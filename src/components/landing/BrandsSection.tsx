@@ -26,9 +26,9 @@ export default function BrandsSection() {
     >
       {/* Header */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center mb-14">
-        <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight">
-          Trabajamos con las mejores{" "}
-          <span className="inline-block bg-yellow-400 text-gray-900 px-4 py-0.5 rounded-full font-extrabold">
+        <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight flex items-center justify-center gap-4">
+          <span>Trabajamos con las mejores</span>
+          <span className="inline-flex items-center justify-center bg-accent-600 text-white px-5 py-1 rounded-full font-extrabold text-base -translate-y-0.5">
             marcas
           </span>
         </h2>
@@ -39,7 +39,7 @@ export default function BrandsSection() {
       </div>
 
       {/* Marquee */}
-      <div className="relative">
+      <div className="relative px-6">
         {/* Fade edges matching the bg gradient */}
         <div className="absolute inset-y-0 left-0 w-44 z-10 pointer-events-none"
           style={{ background: "linear-gradient(to right, rgba(13,60,77,1), transparent)" }} />
@@ -47,10 +47,11 @@ export default function BrandsSection() {
           style={{ background: "linear-gradient(to left, rgba(18,78,99,1), transparent)" }} />
 
         {/* -${LOOP_PX / 2}px delay trick starts the carousel mid-loop so no visible "beginning" */}
-        <div
-          className="flex items-center"
-          style={{ animation: `brands-scroll 28s linear -14s infinite` }}
-        >
+        <div className="w-full flex items-center justify-center overflow-hidden">
+          <div
+            className="flex items-center"
+            style={{ animation: `brands-scroll 28s linear -14s infinite`, minWidth: '200%' }}
+          >
           {TRACK.map((brand, i) => (
             <div key={i} className="shrink-0 flex items-center justify-center px-3">
               <div className="relative w-36 h-16 md:w-60 md:h-24">
@@ -64,6 +65,7 @@ export default function BrandsSection() {
               </div>
             </div>
           ))}
+          </div>
         </div>
       </div>
 

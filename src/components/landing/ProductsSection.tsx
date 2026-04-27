@@ -36,14 +36,14 @@ function ProductCard({ product, onClick }: { product: ProductItem; onClick: () =
       onClick={onClick}
       className="group bg-[#f5f2eb] rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 flex flex-col"
     >
-      {/* Badge row */}
-      <div className="px-4 pt-4 h-8 flex items-center">
-        {hasDiscount && (
-          <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-widest uppercase text-accent-700 border border-accent-400 px-2.5 py-0.5 rounded-full">
-            Promoción  -{savingsPct}%
+      {/* Badge — absolutely positioned so it never gets cut off by the card rounding */}
+      {hasDiscount && (
+        <div className="absolute left-4 top-4 z-20">
+          <span className="inline-flex items-center gap-1 text-[11px] font-bold tracking-widest uppercase text-accent-700 border border-accent-400 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm">
+            Promoción —{savingsPct}%
           </span>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Image placeholder */}
       <div className="mx-4 h-44 sm:h-48 bg-gradient-to-br from-gray-100 to-gray-50 rounded-xl flex flex-col items-center justify-center gap-2 overflow-hidden border border-gray-100/60">
@@ -259,8 +259,8 @@ export function ProductsSection({ products }: { products: ProductItem[] }) {
   const [selected, setSelected] = useState<ProductItem | null>(null);
 
   return (
-    <section id="oferta" style={{ background: "linear-gradient(160deg, #0d3c4d 0%, #1d7291 60%, #124e63 100%)" }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+    <section id="oferta" style={{ background: "linear-gradient(160deg, #00674F 0%, #008f65 45%, #1d7291 100%)" }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
         {/* Header */}
         <div className="text-center mb-12">
           <span className="inline-block text-xs font-bold tracking-widest uppercase text-accent-300 mb-3">
