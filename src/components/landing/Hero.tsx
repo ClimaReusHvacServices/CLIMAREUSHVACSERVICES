@@ -53,11 +53,19 @@ export default function Hero({
   return (
     <section className="relative h-screen min-h-[520px] w-full overflow-hidden text-white">
       <div className="absolute inset-0">
-        {images.map((src, i) => (
-          <div key={i} className={`hero-slide absolute inset-0 transition-opacity duration-1000 ease-out ${i === index ? "opacity-100 scale-100" : "opacity-0 scale-105"}`} style={{ transform: `translateY(${i === index ? -offset * 0.2 : 0}px)` }}>
-            <Image src={src} alt={`hero-${i}`} fill priority={i === 0} quality={90} style={{ objectFit: "cover", objectPosition: "center" }} sizes="100vw" />
-          </div>
-        ))}
+        {images.map((src, i) => {
+          // simple SVG blur placeholder using site palette — small and fast
+          const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='32' height='20' viewBox='0 0 32 20' preserveAspectRatio='none'>` +
+            `<defs><linearGradient id='g' x1='0' x2='1'><stop stop-color='%23006b4f' offset='0'/><stop stop-color='%231d7291' offset='1'/></linearGradient></defs>` +
+            `<rect width='32' height='20' fill='url(%23g)'/></svg>`;
+          const blurDataURL = `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
+
+          return (
+            <div key={i} className={`hero-slide absolute inset-0 transition-opacity duration-1000 ease-out ${i === index ? "opacity-100 scale-100" : "opacity-0 scale-105"}`} style={{ transform: `translateY(${i === index ? -offset * 0.2 : 0}px)` }}>
+              <Image src={src} alt={`hero-${i}`} fill priority={i === 0} quality={90} placeholder="blur" blurDataURL={blurDataURL} style={{ objectFit: "cover", objectPosition: "center" }} sizes="100vw" />
+            </div>
+          );
+        })}
         <div className="absolute inset-0 bg-gradient-to-r from-accent-800/60 to-primary-700/25" />
       </div>
 
