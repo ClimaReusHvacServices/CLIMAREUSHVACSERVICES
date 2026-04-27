@@ -2,10 +2,6 @@
 import React, { useEffect, useState } from "react";
 import Image, { type StaticImageData } from "next/image";
 
-import hero0 from "../../../Imagenes/Exterior_edificio.jpg"; // Keep for reference
-import hero1 from "../../../Imagenes/Exterior_casa_moderna.jpg"; // Keep for reference
-import hero2 from "../../../Imagenes/Interior_Banner.jpg"; // Keep for reference
-
 type HeroProps = {
   images?: (string | StaticImageData)[];
   title?: string;

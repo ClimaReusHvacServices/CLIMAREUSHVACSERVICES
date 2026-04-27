@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { X, Wind, CheckCircle2, Star } from "lucide-react";
+import { Link } from "@/i18n/routing";
 
 interface ProductItem {
   id: string;
@@ -211,13 +212,13 @@ function ProductModal({ product, onClose }: { product: ProductItem; onClose: () 
                 </svg>
                 Consultar por WhatsApp
               </a>
-              <a
-                href="/es/register"
+              <Link
+                href="/register"
                 className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white text-sm font-bold transition-all hover:opacity-90"
                 style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
               >
                 Solicitar instalación
-              </a>
+              </Link>
             </div>
           </div>
         </div>
