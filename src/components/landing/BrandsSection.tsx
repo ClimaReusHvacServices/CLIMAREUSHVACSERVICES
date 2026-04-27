@@ -21,11 +21,9 @@ export default function BrandsSection() {
   return (
     <section
       id="servicios"
-      className="py-16 sm:py-20 overflow-hidden relative"
-      style={{ background: "linear-gradient(to bottom right, #0b6b8a 0%, #1d7291 60%, #00674F 100%)" }}
+      className="py-16 sm:py-20 overflow-hidden"
+      style={{ background: "linear-gradient(135deg, #0b5f86 0%, #1d7291 60%, #083a57 100%)" }}
     >
-      {/* subtle shadow from top-left to match original design */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at top left, rgba(2,48,71,0.12), transparent 35%)' }} />
       {/* Header */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center mb-14">
         <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight flex items-center justify-center gap-4">
@@ -44,9 +42,9 @@ export default function BrandsSection() {
       <div className="relative px-6">
         {/* Fade edges matching the bg gradient */}
         <div className="absolute inset-y-0 left-0 w-44 z-10 pointer-events-none"
-          style={{ background: "linear-gradient(to right, rgba(29,114,145,1), transparent)" }} />
+          style={{ background: "linear-gradient(to right, rgba(11,95,134,1), transparent)" }} />
         <div className="absolute inset-y-0 right-0 w-44 z-10 pointer-events-none"
-          style={{ background: "linear-gradient(to left, rgba(0,103,79,1), transparent)" }} />
+          style={{ background: "linear-gradient(to left, rgba(8,58,87,1), transparent)" }} />
 
         {/* -${LOOP_PX / 2}px delay trick starts the carousel mid-loop so no visible "beginning" */}
         <div className="w-full flex items-center justify-center overflow-hidden">

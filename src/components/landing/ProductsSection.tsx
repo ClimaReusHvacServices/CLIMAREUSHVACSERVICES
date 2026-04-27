@@ -259,8 +259,7 @@ export function ProductsSection({ products }: { products: ProductItem[] }) {
   const [selected, setSelected] = useState<ProductItem | null>(null);
 
   return (
-    <section id="oferta" className="relative" style={{ background: "linear-gradient(to right, #0b6b8a 0%, #1d7291 45%, #00674F 100%)" }}>
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at top left, rgba(2,48,71,0.12), transparent 35%)' }} />
+    <section id="oferta" style={{ background: "linear-gradient(135deg, #0b5f86 0%, #1d7291 45%, #083a57 100%)" }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
         {/* Header */}
         <div className="text-center mb-12">
