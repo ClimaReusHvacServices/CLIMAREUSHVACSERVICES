@@ -54,7 +54,7 @@ export default function Hero({
     <section className="relative h-screen min-h-[520px] w-full overflow-hidden text-white">
       <div className="absolute inset-0">
         {images.map((src, i) => (
-          <div key={i} className={`absolute inset-0 transition-opacity duration-1000 ease-out ${i === index ? "opacity-100 scale-100" : "opacity-0 scale-105"}`} style={{ transform: `translateY(${i === index ? -offset * 0.2 : 0}px)` }}>
+          <div key={i} className={`hero-slide absolute inset-0 transition-opacity duration-1000 ease-out ${i === index ? "opacity-100 scale-100" : "opacity-0 scale-105"}`} style={{ transform: `translateY(${i === index ? -offset * 0.2 : 0}px)` }}>
             <Image src={src} alt={`hero-${i}`} fill priority={i === 0} quality={90} style={{ objectFit: "cover", objectPosition: "center" }} sizes="100vw" />
           </div>
         ))}
@@ -62,7 +62,7 @@ export default function Hero({
       </div>
 
       <div className="relative z-10 container mx-auto h-full flex items-center">
-        <div className="max-w-3xl p-6 md:p-12">
+        <div className="max-w-full md:max-w-[45%] p-6 md:p-12 md:pl-20">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-white drop-shadow-md">
             {title}
           </h1>
@@ -77,6 +77,7 @@ export default function Hero({
           </div>
         </div>
       </div>
+      <style jsx>{`@media (prefers-reduced-motion: reduce) { .hero-slide { transition: none !important; transform: none !important; } }`}</style>
     </section>
   );
 }

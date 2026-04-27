@@ -49,7 +49,7 @@ export default function BrandsSection() {
         {/* -${LOOP_PX / 2}px delay trick starts the carousel mid-loop so no visible "beginning" */}
         <div className="w-full flex items-center justify-center overflow-hidden">
           <div
-            className="flex items-center"
+            className="brands-track flex items-center"
             style={{ animation: `brands-scroll 28s linear -14s infinite`, minWidth: '200%' }}
           >
           {TRACK.map((brand, i) => (
@@ -73,6 +73,9 @@ export default function BrandsSection() {
         @keyframes brands-scroll {
           0%   { transform: translateX(0); }
           100% { transform: translateX(-${LOOP_PX}px); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .brands-track { animation: none !important; }
         }
       `}</style>
     </section>

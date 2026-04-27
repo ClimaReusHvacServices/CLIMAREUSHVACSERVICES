@@ -34,7 +34,7 @@ function ProductCard({ product, onClick }: { product: ProductItem; onClick: () =
   return (
     <article
       onClick={onClick}
-      className="group bg-[#f5f2eb] rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 flex flex-col"
+      className="relative group bg-[#f5f2eb] rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 flex flex-col"
     >
       {/* Badge — absolutely positioned so it never gets cut off by the card rounding */}
       {hasDiscount && (
