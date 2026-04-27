@@ -1,14 +1,14 @@
 "use client";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { Phone, Menu, X } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 const NAV_LINKS = [
-  { href: "/",          label: "Inicio" },
-  { href: "/#oferta",   label: "Oferta" },
-  { href: "/servicios", label: "Servicios" },
-  { href: "/#contact",  label: "Contacto" },
-];
+  { href: "/",           label: "Inicio" },
+  { href: "/#oferta",    label: "Oferta" },
+  { href: "/servicios",  label: "Servicios" },
+  { href: "/#contact",   label: "Contacto" },
+] as const;
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
