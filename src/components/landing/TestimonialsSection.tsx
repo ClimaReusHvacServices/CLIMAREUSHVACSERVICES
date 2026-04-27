@@ -60,13 +60,13 @@ const LOOP = REVIEWS.length * ITEM;
 
 export default function TestimonialsSection() {
   return (
-    <section className="py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(160deg, #eef2fb 0%, #f4f6fd 100%)" }}>
+    <section className="py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(160deg, #0d3c4d 0%, #083a30 100%)" }}>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center mb-12">
-        <span className="text-xs font-bold tracking-widest uppercase text-primary-500 mb-2 block">Testimonios</span>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900">
+        <span className="text-xs font-bold tracking-widest uppercase text-primary-300 mb-2 block">Testimonios</span>
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
           Lo que dicen nuestros clientes
         </h2>
-        <p className="mt-4 text-gray-500 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+        <p className="mt-4 text-white/60 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
           En Clima Reus HVAC Services nos enorgullece el trabajo bien hecho. Más de 4.000
           instalaciones realizadas en Reus, Tarragona y alrededores son el mejor reflejo de nuestro
           compromiso con la calidad, la rapidez y el trato profesional.
@@ -76,9 +76,9 @@ export default function TestimonialsSection() {
       {/* Slider */}
       <div className="relative">
         <div className="absolute inset-y-0 left-0 w-20 z-10 pointer-events-none"
-          style={{ background: "linear-gradient(to right, #eef2fb, transparent)" }} />
+          style={{ background: "linear-gradient(to right, #0d3c4d, transparent)" }} />
         <div className="absolute inset-y-0 right-0 w-20 z-10 pointer-events-none"
-          style={{ background: "linear-gradient(to left, #f4f6fd, transparent)" }} />
+          style={{ background: "linear-gradient(to left, #083a30, transparent)" }} />
 
         <div
           className="flex items-stretch"
