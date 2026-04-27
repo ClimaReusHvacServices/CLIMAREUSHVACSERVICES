@@ -66,11 +66,11 @@ Marca los items a medida que completes la instalación.
 - [ ] Selector de idioma en todas las páginas
 - [ ] Colores de Tailwind CSS aplicados
 - [ ] Layout responsive en móvil/tablet/desktop
-
-### Idiomas
-- [ ] Español (es) seleccionado por defecto
-- [ ] Cambiar a Inglés (en) funciona
-- [ ] Cambiar a Catalán (ca) funciona
+- [ ] Ir a `http://localhost:3000/es/login`
+- [ ] Cambiar idioma funciona (selector de idioma)
+- [ ] Email: `admin@climareus.es`, Password: `Admin123!@`
+- [ ] Login exitoso redirige a `/admin`
+- [ ] Sesión mantiene datos de usuario
 - [ ] Textos se traducen correctamente
 - [ ] URLs cambian según idioma
 
@@ -128,10 +128,10 @@ Marca los items a medida que completes la instalación.
 - [ ] Sesiones expiran después de 30 días
 - [ ] Cookies httpOnly activadas
 - [ ] CSRF protection habilitada (NextAuth)
-
-### Rutas Protegidas
-- [ ] `/admin` requiere rol admin
-- [ ] Intento de acceso sin auth redirige a login
+- [ ] Mín 8 caracteres
+- [ ] Al menos una mayúscula
+- [ ] Al menos un número
+- [ ] Al menos un carácter especial
 - [ ] Intento de acceso sin rol correcto muestra error
 - [ ] Logout elimina sesión correctamente
 
@@ -239,13 +239,12 @@ npm start                  # Iniciar servidor producción
 2. Revisa `src/` para ver ejemplos
 3. Experimenta modificando y creando
 
----
 
 ## ✨ FELICIDADES!
 
 Has completado exitosamente la instalación y configuración de **Clima Reus HVAC**.
 
-Ahora tienes:
+ **Estatus**: LISTO PARA PRODUCCIÓN DE FEATURES
 ✅ Proyecto Next.js configurado correctamente
 ✅ Autenticación segura implementada
 ✅ Base de datos relacional lista

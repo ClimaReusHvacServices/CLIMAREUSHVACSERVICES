@@ -241,7 +241,7 @@ const roleBasedRoutes = {
 
 ---
 
-## 🌐 Ejemplo: Agregar Nuevo Idioma
+## Ejemplo: Agregar Nuevo Idioma
 
 ### 1. Crear archivo de mensajes
 
@@ -370,7 +370,7 @@ npm run dev
 
 ```
 Feature: Carrito de Compra
-├── 📊 Base de datos
+├── Base de datos
 │   ├── Model: Cart (si lo necesitas persistido)
 │   └── Relaciones: User → Cart → CartItem → Product
 ├── 🔌 API
@@ -383,7 +383,7 @@ Feature: Carrito de Compra
 │   └── CartCheckout.tsx           → Checkout
 ├── 📄 Páginas
 │   └── /[locale]/checkout         → Página de carrito
-├── 🌐 Traducciones
+├── Traducciones
 │   └── Agregar keys para carrito
 └── 🔒 Seguridad
     └── Validar permisos en API

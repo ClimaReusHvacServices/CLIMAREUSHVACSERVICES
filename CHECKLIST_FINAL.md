@@ -64,7 +64,7 @@ Busca esta sección:
 }
 ```
 
-⚠️ DEBE estar `"postinstall": "prisma generate"`
+DEBE estar `"postinstall": "prisma generate"`
 
 ---
 
