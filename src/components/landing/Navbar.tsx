@@ -4,10 +4,10 @@ import { Phone, Menu, X } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 const NAV_LINKS = [
-  { href: "#",          label: "Inicio" },
-  { href: "#oferta",    label: "Oferta" },
-  { href: "#servicios", label: "Servicios" },
-  { href: "#contact",   label: "Contacto" },
+  { href: "/",          label: "Inicio" },
+  { href: "/#oferta",   label: "Oferta" },
+  { href: "/servicios", label: "Servicios" },
+  { href: "/#contact",  label: "Contacto" },
 ];
 
 export default function Navbar() {
