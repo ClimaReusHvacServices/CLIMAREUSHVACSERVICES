@@ -2,7 +2,7 @@
 
 Plataforma profesional para venta e instalación de sistemas de aire acondicionado.
 
-## 🏗️ Arquitectura del Proyecto
+## Arquitectura del Proyecto
 
 ### Stack Tecnológico
 
@@ -63,7 +63,7 @@ prisma/
 .gitignore                        # Archivos ignorados por git
 ```
 
-## 🔐 Seguridad
+## Seguridad
 
 ### Autenticación
 
@@ -84,7 +84,7 @@ El middleware `src/middleware.ts` protege las rutas automáticamente:
 // Rutas trabajador: requieren role === 'trabajador'
 ```
 
-## 🗄️ Base de Datos
+## Base de Datos
 
 ### Tablas Principales
 
@@ -140,7 +140,7 @@ El middleware `src/middleware.ts` protege las rutas automáticamente:
 - Notificaciones a usuarios
 - Campos: id, userId, type, title, message, relatedId, isRead, readAt
 
-## 🔄 Flujos de Negocio
+## Flujos de Negocio
 
 ### Registro e Login
 
@@ -197,7 +197,7 @@ El middleware `src/middleware.ts` protege las rutas automáticamente:
 8. Cliente deja reseña (Review)
 ```
 
-## 🛠️ Instalación y Configuración
+## Instalación y Configuración
 
 ### Prerequisitos
 
@@ -251,7 +251,7 @@ npm run dev
 http://localhost:3000
 ```
 
-## 📝 Variables de Entorno
+## Variables de Entorno
 
 ```env
 # Base de datos
@@ -269,7 +269,7 @@ NEXT_PUBLIC_APP_NAME=Clima Reus HVAC
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-## 🌐 Idiomas Soportados
+## Idiomas Soportados
 
 - **Español (es)** - Predeterminado
 - **Inglés (en)**
@@ -277,7 +277,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 Cambiar idioma automáticamente redirige a la ruta correspondiente.
 
-## 👥 Roles y Permisos
+## Roles y Permisos
 
 ### Admin
 - ✅ Ver dashboard
@@ -302,7 +302,7 @@ Cambiar idioma automáticamente redirige a la ruta correspondiente.
 - ✅ Registrar comentarios en tareas
 - ✅ Ver evaluaciones
 
-## 📱 Componentes Reutilizables
+## Componentes Reutilizables
 
 ### InputField
 ```tsx

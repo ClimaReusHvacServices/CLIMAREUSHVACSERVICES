@@ -93,7 +93,7 @@ export function RegisterForm() {
 
         {/* Mensajes */}
         {generalError && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm flex items-start gap-2">
+          <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 text-primary-700 text-sm flex items-start gap-2">
             <AlertTriangle size={18} className="shrink-0 mt-0.5" />
             <span>{generalError}</span>
           </div>

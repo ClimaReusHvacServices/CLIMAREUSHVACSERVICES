@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Search, Package, Wrench, Box, X } from "lucide-react";
+import { Pagination } from "@/components/common/Pagination";
 import {
   createProduct, updateProduct, deleteProduct,
   createService, updateService, deleteService,
@@ -30,6 +31,7 @@ interface PackageRow {
 }
 
 type Tab = "products" | "services" | "packages";
+const PAGE_SIZE = 10;
 
 const defaultProductForm = { name: "", description: "", category: "", manufacturer: "", price: "", discountPrice: "", stock: "1", warranty: "", isActive: true };
 const defaultServiceForm = { name: "", description: "", type: "instalacion", basePrice: "", estimatedDuration: "60", difficulty: "media", isActive: true };
@@ -79,9 +81,9 @@ function ConfirmDialog({ title, desc, itemName, onConfirm, onCancel, isLoading }
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onCancel} />
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
-        <div className="flex items-start gap-3">
-          <div className="p-2 bg-red-50 rounded-xl shrink-0">
-            <Trash2 size={18} className="text-red-500" />
+          <div className="flex items-start gap-3">
+          <div className="p-2 bg-primary-50 rounded-xl shrink-0">
+            <Trash2 size={18} className="text-primary-600" />
           </div>
           <div>
             <h3 className="font-bold text-gray-900">{title}</h3>
@@ -93,7 +95,7 @@ function ConfirmDialog({ title, desc, itemName, onConfirm, onCancel, isLoading }
           <button onClick={onCancel} disabled={isLoading} className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50">
             {tCommon("cancel")}
           </button>
-          <button onClick={onConfirm} disabled={isLoading} className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-xl hover:bg-red-600 transition-colors disabled:opacity-50 flex items-center gap-2">
+          <button onClick={onConfirm} disabled={isLoading} className="px-4 py-2 text-sm font-medium text-white bg-accent-600 rounded-xl hover:bg-accent-700 transition-colors disabled:opacity-50 flex items-center gap-2">
             {isLoading && <div className="size-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />}
             {tCommon("delete")}
           </button>
@@ -107,7 +109,7 @@ function Field({ label, required, children }: { label: string; required?: boolea
   return (
     <div className="space-y-1">
       <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide">
-        {label}{required && <span className="text-red-400 ml-1">*</span>}
+        {label}{required && <span className="text-primary-600 ml-1">*</span>}
       </label>
       {children}
     </div>
@@ -130,6 +132,7 @@ export function ProductsManager({ products, services, packages }: {
   const [modal, setModal] = useState<{ mode: "create" | "edit"; entityType: Tab; id?: string } | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string; entityType: Tab } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [page, setPage] = useState(1);
 
   const [productForm, setProductForm] = useState({ ...defaultProductForm });
   const [serviceForm, setServiceForm] = useState({ ...defaultServiceForm });
@@ -141,8 +144,12 @@ export function ProductsManager({ products, services, packages }: {
   const filteredServices = services.filter(s => s.name.toLowerCase().includes(q) || s.type.toLowerCase().includes(q));
   const filteredPackages = packages.filter(p => p.name.toLowerCase().includes(q) || p.product.name.toLowerCase().includes(q) || p.service.name.toLowerCase().includes(q));
 
-  const current = tab === "products" ? filteredProducts : tab === "services" ? filteredServices : filteredPackages;
+  const allCurrent = tab === "products" ? filteredProducts : tab === "services" ? filteredServices : filteredPackages;
+  const totalPages = Math.ceil(allCurrent.length / PAGE_SIZE);
+  const current = allCurrent.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const totalCurrent = tab === "products" ? products.length : tab === "services" ? services.length : packages.length;
+  const from = allCurrent.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const to = Math.min(page * PAGE_SIZE, allCurrent.length);
 
   // Modal helpers
   function openCreate(type: Tab) {
@@ -252,7 +259,7 @@ export function ProductsManager({ products, services, packages }: {
   }
 
   const statusCls = (active: boolean) =>
-    active ? "bg-primary-50 text-primary-700" : "bg-red-50 text-red-600";
+    active ? "bg-primary-50 text-primary-700" : "bg-gray-100 text-gray-600";
 
   return (
     <div className="space-y-5">
@@ -361,7 +368,7 @@ export function ProductsManager({ products, services, packages }: {
                     <td className="py-3 px-4">
                       <div className="flex items-center justify-end gap-1">
                         <button onClick={() => openEdit("products", p)} className="p-1.5 text-gray-400 hover:text-accent-600 hover:bg-accent-50 rounded-lg transition-colors"><Pencil size={14} /></button>
-                        <button onClick={() => setDeleteTarget({ id: p.id, name: p.name, entityType: "products" })} className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"><Trash2 size={14} /></button>
+                        <button onClick={() => setDeleteTarget({ id: p.id, name: p.name, entityType: "products" })} className="p-1.5 text-gray-400 hover:text-accent-600 hover:bg-accent-50 rounded-lg transition-colors"><Trash2 size={14} /></button>
                       </div>
                     </td>
                   </tr>
@@ -383,7 +390,7 @@ export function ProductsManager({ products, services, packages }: {
                     <td className="py-3 px-4">
                       <div className="flex items-center justify-end gap-1">
                         <button onClick={() => openEdit("services", s)} className="p-1.5 text-gray-400 hover:text-accent-600 hover:bg-accent-50 rounded-lg transition-colors"><Pencil size={14} /></button>
-                        <button onClick={() => setDeleteTarget({ id: s.id, name: s.name, entityType: "services" })} className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"><Trash2 size={14} /></button>
+                        <button onClick={() => setDeleteTarget({ id: s.id, name: s.name, entityType: "services" })} className="p-1.5 text-gray-400 hover:text-accent-600 hover:bg-accent-50 rounded-lg transition-colors"><Trash2 size={14} /></button>
                       </div>
                     </td>
                   </tr>
@@ -403,7 +410,7 @@ export function ProductsManager({ products, services, packages }: {
                     <td className="py-3 px-4">
                       <div className="flex items-center justify-end gap-1">
                         <button onClick={() => openEdit("packages", pkg)} className="p-1.5 text-gray-400 hover:text-accent-600 hover:bg-accent-50 rounded-lg transition-colors"><Pencil size={14} /></button>
-                        <button onClick={() => setDeleteTarget({ id: pkg.id, name: pkg.name, entityType: "packages" })} className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"><Trash2 size={14} /></button>
+                        <button onClick={() => setDeleteTarget({ id: pkg.id, name: pkg.name, entityType: "packages" })} className="p-1.5 text-gray-400 hover:text-accent-600 hover:bg-accent-50 rounded-lg transition-colors"><Trash2 size={14} /></button>
                       </div>
                     </td>
                   </tr>

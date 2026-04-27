@@ -6,8 +6,8 @@ export default function UnauthorizedPage() {
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#f5f7f4" }}>
       <div className="text-center bg-white rounded-2xl shadow-lg p-12 max-w-md mx-4">
         <div className="flex justify-center mb-4">
-          <div className="p-4 bg-red-50 rounded-full">
-            <ShieldOff size={40} className="text-red-400" />
+          <div className="p-4 bg-accent-50 rounded-full">
+            <ShieldOff size={40} className="text-accent-500" />
           </div>
         </div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Acceso denegado</h1>

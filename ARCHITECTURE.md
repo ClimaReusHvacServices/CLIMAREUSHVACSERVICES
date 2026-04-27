@@ -2,7 +2,7 @@
 
 ## 1. ¿Por qué NextAuth.js en lugar de otras soluciones?
 
-✅ **Elegido: NextAuth.js v5**
+**Elegido: NextAuth.js v5**
 
 ### Razones:
 - Integración nativa con Next.js (no necesita servidor separado)
@@ -13,16 +13,16 @@
 - Documentación excelente
 
 ### Alternativas consideradas:
-- ❌ Firebase Auth: Requiere servicios externos, menos control
-- ❌ Supabase Auth: Aunque buena, Firebase sería redundante con Neon
-- ❌ Passport.js: Más complejo, diseñado para Express
-- ✅ NextAuth.js: Es el estándar de Next.js
+- Firebase Auth: Requiere servicios externos, menos control
+- Supabase Auth: Aunque buena, Firebase sería redundante con Neon
+- Passport.js: Más complejo, diseñado para Express
+- NextAuth.js: Es el estándar de Next.js
 
 ---
 
 ## 2. ¿Por qué Prisma como ORM?
 
-✅ **Elegido: Prisma**
+**Elegido: Prisma**
 
 ### Razones:
 - Type-safe queries (TypeScript)
@@ -43,7 +43,7 @@
 
 ## 3. Validación de Formularios con Zod
 
-✅ **Elegido: Zod**
+**Elegido: Zod**
 
 ### Razones:
 - Validación en cliente Y servidor
@@ -61,7 +61,7 @@ Enviar a API → API valida de nuevo → Respuesta con errores
 
 ## 4. Internacionalización con next-intl
 
-✅ **Elegido: next-intl**
+**Elegido: next-intl**
 
 ### Razones:
 - Específicamente diseñado para Next.js
@@ -79,7 +79,7 @@ Enviar a API → API valida de nuevo → Respuesta con errores
 
 ## 5. Estilos con Tailwind CSS v4
 
-✅ **Elegido: Tailwind CSS v4**
+**Elegido: Tailwind CSS v4**
 
 ### Razones:
 - Utility-first: desarrollo rápido
@@ -98,7 +98,7 @@ secondary: slate-500 (#64748b)
 
 ## 6. Estructura de Carpetas: (auth) y (dashboard)
 
-✅ **Elegido: Route Groups**
+**Elegido: Route Groups**
 
 ### Por qué:
 ```
@@ -120,18 +120,18 @@ secondary: slate-500 (#64748b)
 
 ## 7. Seguridad de Contraseñas: "Recuérdame"
 
-✅ **Implementado de forma segura**
+**Implementado de forma segura**
 
 ### NO hacemos:
-- ❌ Guardar contraseña en cookie
-- ❌ Guardar contraseña en localStorage
-- ❌ Guardar contraseña en sesión
+- Guardar contraseña en cookie
+- Guardar contraseña en localStorage
+- Guardar contraseña en sesión
 
 ### SÍ hacemos:
-- ✅ Usar JWT de NextAuth con maxAge extendido (30 días)
-- ✅ Token hasheado si se implementa "Recuérdame" manual
-- ✅ Regenerar session en cada acceso
-- ✅ Revocación automática si es necesario
+- Usar JWT de NextAuth con maxAge extendido (30 días)
+- Token hasheado si se implementa "Recuérdame" manual
+- Regenerar session en cada acceso
+- Revocación automática si es necesario
 
 ### Cómo funciona:
 ```
@@ -146,19 +146,19 @@ secondary: slate-500 (#64748b)
 
 ## 8. Base de Datos: PostgreSQL con Neon
 
-✅ **Elegido: Neon**
+**Elegido: Neon**
 
 ### Por qué no SQLite:
-- ❌ SQLite para desarrollo local, Neon para producción = diferencias
-- ❌ SQLite no soporta usuario/rol management bien
-- ❌ SQLite limitado para escala
+- SQLite para desarrollo local, Neon para producción = diferencias
+- SQLite no soporta usuario/rol management bien
+- SQLite limitado para escala
 
 ### Neon es mejor porque:
-- ✅ PostgreSQL en la nube (compatible local con pgAdmin)
-- ✅ Mismo motor en desarrollo y producción
-- ✅ Escalable desde inicio
-- ✅ Backups automáticos
-- ✅ Serverless
+- PostgreSQL en la nube (compatible local con pgAdmin)
+- Mismo motor en desarrollo y producción
+- Escalable desde inicio
+- Backups automáticos
+- Serverless
 
 ### Configuración dual:
 ```env
@@ -173,7 +173,7 @@ DATABASE_URL="postgresql://neon_user:pass@ep-xxx.neon.tech/clima_reus_hvac?sslmo
 
 ## 9. Roles y Acceso Basado en Roles (RBAC)
 
-✅ **Implementado con Middleware**
+**Implementado con Middleware**
 
 ### Flujo:
 ```
@@ -196,7 +196,7 @@ Permitir/Redirigir
 
 ## 10. API RESTful vs GraphQL
 
-✅ **Elegido: API RESTful**
+**Elegido: API RESTful**
 
 ### Razones:
 - Más simple para empezar
@@ -240,14 +240,14 @@ Planeado:
 
 ## DECISIÓN: Sin Firebase, Sin Supabase
 
-✅ **Arquitectura limpia con solo:**
+**Arquitectura limpia con solo:**
 1. Next.js (Backend + Frontend)
 2. NextAuth.js (Autenticación)
 3. Prisma (ORM)
 4. Neon (Base de datos)
 5. Tailwind CSS (Estilos)
 
-❌ **Evitamos:**
+**Evitamos:**
 - Firebase (overkill, vendor lock-in)
 - Supabase (redundante con Neon)
 - Terceros innecesarios
@@ -258,16 +258,16 @@ Planeado:
 
 ## PASOS PARA PRODUCTIVO
 
-1. ✅ Base de datos creada (este proyecto)
-2. ✅ Autenticación configurada
-3. ✅ Admin dashboard listo
-4. 📝 Login/registro de cliente
-5. 📝 Dashboard de cliente
-6. 📝 Dashboard de trabajador
-7. 📝 Tienda de productos
-8. 📝 Sistema de pagos
-9. 📝 Notificaciones
-10. 📝 API completa
+1. Base de datos creada (este proyecto)
+2. Autenticación configurada
+3. Admin dashboard listo
+4. Login/registro de cliente
+5. Dashboard de cliente
+6. Dashboard de trabajador
+7. Tienda de productos
+8. Sistema de pagos
+9. Notificaciones
+10. API completa
 11. 📝 Testing
 12. 📝 Deployment a Hostinger
 

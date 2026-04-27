@@ -21,13 +21,13 @@ const taskColors: Record<string, string> = {
   pendiente:   "bg-yellow-100 text-yellow-800 border-yellow-200",
   en_progreso: "bg-accent-100 text-accent-700 border-accent-200",
   completada:  "bg-primary-100 text-primary-700 border-primary-200",
-  cancelada:   "bg-red-100 text-red-700 border-red-200",
+  cancelada:   "bg-gray-100 text-gray-700 border-gray-200",
 };
 
 const priorityColors: Record<string, string> = {
   baja:  "bg-gray-100 text-gray-600",
-  media: "bg-orange-100 text-orange-700",
-  alta:  "bg-red-100 text-red-700",
+  media: "bg-accent-50 text-accent-700",
+  alta:  "bg-accent-100 text-accent-700",
 };
 
 export default async function WorkerDashboard({

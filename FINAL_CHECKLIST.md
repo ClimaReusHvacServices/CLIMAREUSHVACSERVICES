@@ -1,10 +1,10 @@
-# ✅ CHECKLIST FINAL - PROYECTO COMPLETADO
+# CHECKLIST FINAL - PROYECTO COMPLETADO
 
 Marca los items a medida que completes la instalación.
 
 ---
 
-## 🛠️ INSTALACIÓN LOCAL
+## INSTALACIÓN LOCAL
 
 ### Node.js y Dependencias
 - [ ] Node.js v18+ instalado en el sistema
@@ -31,9 +31,8 @@ Marca los items a medida que completes la instalación.
 
 ## 🔐 AUTENTICACIÓN FUNCIONANDO
 
-### Login
 - [ ] Ir a `http://localhost:3000/es/login`
-- [ ] Cambiar idioma funciona (botón 🌐)
+- [ ] Cambiar idioma funciona (selector de idioma)
 - [ ] Email: `admin@climareus.es`, Password: `Admin123!@`
 - [ ] Login exitoso redirige a `/admin`
 - [ ] Sesión mantiene datos de usuario

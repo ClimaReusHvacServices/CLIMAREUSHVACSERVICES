@@ -1,26 +1,26 @@
-# 🛠️ GUÍA PARA AGREGAR NUEVAS CARACTERÍSTICAS
+# GUÍA PARA AGREGAR NUEVAS CARACTERÍSTICAS
 
 Este documento explica cómo agregar nuevas funcionalidades al proyecto manteniendo la estructura.
 
 ---
 
-## 📋 Checklist para Nueva Característica
+## Checklist para Nueva Característica
 
 ```
-1. ✅ Actualizar schema.prisma si necesitas nuevas tablas/campos
-2. ✅ Crear migraciones: npm run db:migrate
-3. ✅ Actualizar tipos en src/types/index.ts si aplica
-4. ✅ Crear componentes en src/components/
-5. ✅ Crear páginas en src/app/[locale]/
-6. ✅ Crear API routes en src/app/api/ si necesitas
-7. ✅ Agregar validaciones en src/utils/validation.ts
-8. ✅ Actualizar traducciones en src/i18n/messages/
-9. ✅ Proteger rutas si es necesario en middleware.ts
+1. Actualizar schema.prisma si necesitas nuevas tablas/campos
+2. Crear migraciones: npm run db:migrate
+3. Actualizar tipos en src/types/index.ts si aplica
+4. Crear componentes en src/components/
+5. Crear páginas en src/app/[locale]/
+6. Crear API routes en src/app/api/ si necesitas
+7. Agregar validaciones en src/utils/validation.ts
+8. Actualizar traducciones en src/i18n/messages/
+9. Proteger rutas si es necesario en middleware.ts
 ```
 
 ---
 
-## 📝 Ejemplo: Agregar Dashboard de Cliente
+## Ejemplo: Agregar Dashboard de Cliente
 
 ### Paso 1: Actualizar schema.prisma (si necesario)
 
@@ -99,7 +99,7 @@ export default async function ClientDashboardPage() {
 
 ---
 
-## 🔌 Ejemplo: Agregar Nueva API Route
+## Ejemplo: Agregar Nueva API Route
 
 ### Crear API para obtener órdenes de cliente
 
@@ -141,7 +141,7 @@ export async function GET(request: NextRequest) {
 
 ---
 
-## 🎯 Ejemplo: Agregar Validación Personalizada
+## Ejemplo: Agregar Validación Personalizada
 
 ```typescript
 // src/utils/validation.ts - Agregar nuevo schema
@@ -172,7 +172,7 @@ export function validateOrderData(data: unknown) {
 
 ---
 
-## 🗄️ Ejemplo: Agregar Nueva Tabla a BD
+## Ejemplo: Agregar Nueva Tabla a BD
 
 ### 1. Actualizar schema.prisma
 
@@ -391,55 +391,55 @@ Feature: Carrito de Compra
 
 ---
 
-## ⚠️ Cosas a Evitar
+## Cosas a Evitar
 
-### ❌ NO hacer
+### NO hacer
 
 ```typescript
-// ❌ Usar fetch en servidor sin async
+// Usar fetch en servidor sin async
 const data = fetch(...);
 
-// ❌ Exponer secrets en cliente
+// Exponer secrets en cliente
 const apiKey = process.env.SECRET_KEY;
 
-// ❌ Ignorar tipos TypeScript
+// Ignorar tipos TypeScript
 const data: any = ...;
 
-// ❌ Validar solo en cliente
+// Validar solo en cliente
 // Siempre validar en servidor también
 
-// ❌ Crear estilos inline
+// Crear estilos inline
 <div style={{ color: "red" }}>
 
-// ❌ Hardcodear textos
+// Hardcodear textos
 <p>Hola Usuario</p>
 ```
 
-### ✅ SÍ hacer
+### SÍ hacer
 
 ```typescript
-// ✅ Usar async/await
+// Usar async/await
 const data = await fetch(...);
 
-// ✅ Usar variables de entorno
+// Usar variables de entorno
 const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
-// ✅ Usar tipos específicos
+// Usar tipos específicos
 const data: Order = ...;
 
-// ✅ Validar siempre en servidor
+// Validar siempre en servidor
 const validation = validateOrderData(body);
 
-// ✅ Usar Tailwind CSS
+// Usar Tailwind CSS
 <div className="text-red-500">
 
-// ✅ Usar traducciones
+// Usar traducciones
 <p>{t("greeting.hello")}</p>
 ```
 
 ---
 
-## 🚀 Checklist Antes de Hacer Commit
+## Checklist Antes de Hacer Commit
 
 ```
 □ Código funciona localmente
@@ -470,7 +470,7 @@ npm run db:studio
 # Se abre http://localhost:5555
 ```
 
-### Resetea BD (⚠️ Pierde datos)
+### Resetea BD (Pierde datos)
 ```bash
 npm run db:push -- --force-reset
 npm run db:seed
@@ -498,4 +498,4 @@ npm run dev
 
 ---
 
-**¡Ahora estás listo para agregar nuevas características!** 🎯
+**¡Ahora estás listo para agregar nuevas características!**

@@ -1,6 +1,6 @@
 # VERCEL - COPIA Y PEGA LAS VARIABLES
 
-## ⚠️ INSTRUCCIONES
+## INSTRUCCIONES
 
 1. Abre: https://vercel.com
 2. Proyecto: CLIMAREUSHVACSERVICES
@@ -63,12 +63,12 @@ Luego copia el resultado.
 
 ---
 
-## ✅ DESPUÉS DE AGREGAR
+## DESPUÉS DE AGREGAR
 
 Verifica que veas esto en la lista:
-- ✓ DATABASE_URL = postgresql://...
-- ✓ NEXTAUTH_URL = https://...
-- ✓ NEXTAUTH_SECRET = kL9mP2wX...
+- DATABASE_URL = postgresql://...
+- NEXTAUTH_URL = https://...
+- NEXTAUTH_SECRET = kL9mP2wX...
 
 Entonces:
 1. Ve a Deployments
@@ -78,16 +78,16 @@ Entonces:
 
 ---
 
-## 🧪 PROBAR
+## PROBAR
 
 1. Abre: https://climareushvacservices.vercel.app
 2. Login: admin@climareus.es / Admin123!@
-3. ✅ Funciona → TODO BIEN
-4. ❌ Error → Revisa PASOS_FINALES.md
+3. Funciona → TODO BIEN
+4. Error → Revisa PASOS_FINALES.md
 
 ---
 
-## 📝 NOTAS
+## NOTAS
 
 - No dejes espacios en blanco en valores
 - La DATABASE_URL debe terminar con `?sslmode=require`

@@ -46,8 +46,8 @@ const serviceIcons: Record<string, React.ReactNode> = {
 
 const difficultyColors: Record<string, string> = {
   baja:  "bg-primary-50 text-primary-700",
-  media: "bg-yellow-50 text-yellow-700",
-  alta:  "bg-red-50 text-red-700",
+  media: "bg-accent-50 text-accent-700",
+  alta:  "bg-accent-100 text-accent-700",
 };
 
 function formatPrice(val: any): string {

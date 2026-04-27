@@ -18,7 +18,7 @@ const variantClasses = {
   outline:
     "bg-transparent border-2 border-primary-600 text-primary-600 hover:bg-primary-50 active:bg-primary-100",
   danger:
-    "bg-red-600 text-white hover:bg-red-700 active:bg-red-800",
+    "bg-accent-600 text-white hover:bg-accent-700 active:bg-accent-800",
 };
 
 const sizeClasses = {

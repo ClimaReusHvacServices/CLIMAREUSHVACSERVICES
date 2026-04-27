@@ -1,4 +1,4 @@
-# 🚀 Guía de Despliegue en Vercel + Neon
+# Guía de Despliegue en Vercel + Neon
 
 ## Paso 1: Configurar Base de Datos Neon
 
@@ -82,7 +82,7 @@ Una vez que Vercel termine el build:
 ### Si ves errores:
 
 **Error: "Invalid module name in augmentation"**
-- ✅ Esto ya está corregido en `src/auth/config.ts`
+- Esto ya está corregido en `src/auth/config.ts`
 
 **Error de BD conectando**
 - Verifica `DATABASE_URL` en Vercel env vars
@@ -143,7 +143,7 @@ Estos son solo avisos, no afectan el build:
 ### Build warnings de Edge Runtime
 - Si ves warnings sobre bcryptjs y Edge Runtime
 - Asegúrate que `bcryptjs` se usa solo en servidor, no en middleware
-- ✅ Ya está configurado correctamente
+- Ya está configurado correctamente
 
 ### BD vacía después del deployment
 1. Limpia con `prisma/reset.sql`
