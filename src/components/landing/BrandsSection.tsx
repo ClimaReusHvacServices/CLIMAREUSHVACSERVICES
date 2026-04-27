@@ -11,9 +11,9 @@ const BRANDS = [
 // More copies for a smoother, less noticeable loop start
 const TRACK = [...BRANDS, ...BRANDS, ...BRANDS, ...BRANDS, ...BRANDS, ...BRANDS];
 
-// Increase logo width and reduce gap so logos are bigger and closer
-const LOGO_W = 240; // px
-const GAP_TOTAL = 24; // mx-6 -> 12px each side
+// Desktop target width used for animation math; layout uses responsive Tailwind classes
+const LOGO_W = 240; // px (desktop)
+const GAP_TOTAL = 24; // px total gap
 const ITEM_W = LOGO_W + GAP_TOTAL;
 const LOOP_PX = BRANDS.length * ITEM_W;
 
@@ -52,18 +52,14 @@ export default function BrandsSection() {
           style={{ animation: `brands-scroll 28s linear -14s infinite` }}
         >
           {TRACK.map((brand, i) => (
-            <div
-              key={i}
-              className="shrink-0 flex items-center justify-center mx-6"
-              style={{ width: LOGO_W }}
-            >
-              <div className="relative" style={{ width: LOGO_W, height: 96 }}>
+            <div key={i} className="shrink-0 flex items-center justify-center px-3">
+              <div className="relative w-36 h-16 md:w-60 md:h-24">
                 <Image
                   src={brand.logo}
                   alt={brand.name}
                   fill
                   style={{ objectFit: "contain", filter: "brightness(0) invert(1)", opacity: 0.95 }}
-                  sizes="240px"
+                  sizes="(max-width: 640px) 144px, 240px"
                 />
               </div>
             </div>
