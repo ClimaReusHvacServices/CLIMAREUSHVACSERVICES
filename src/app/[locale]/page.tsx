@@ -5,6 +5,8 @@ import dynamic from "next/dynamic";
 const Hero = dynamic(() => import("@/components/landing/Hero"));
 const LogosMarquee = dynamic(() => import("@/components/landing/LogosMarquee"));
 const ContactMap = dynamic(() => import("@/components/landing/ContactMap"));
+const Navbar = dynamic(() => import("@/components/landing/Navbar"));
+const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton"));
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -23,6 +25,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   // Render public landing page when not authenticated
   return (
     <main>
+      <Navbar />
       {/* Hero with background slideshow */}
       <Hero />
 
@@ -46,6 +49,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           <ContactMap />
         </div>
       </section>
+      <WhatsAppButton />
     </main>
   );
 }
