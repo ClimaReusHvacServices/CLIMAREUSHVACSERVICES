@@ -28,7 +28,10 @@ export default function BrandsSection() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center mb-14">
         <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight flex items-center justify-center gap-4">
           <span>Trabajamos con las mejores</span>
-          <span className="inline-flex items-center justify-center bg-accent-600 text-white px-5 py-1 rounded-full font-extrabold text-base -translate-y-0.5">
+          <span
+            className="inline-flex items-center justify-center text-white px-5 py-1 rounded-full font-extrabold text-base -translate-y-0.5"
+            style={{ background: "linear-gradient(to right, #008f65, #00b87a)" }}
+          >
             marcas
           </span>
         </h2>

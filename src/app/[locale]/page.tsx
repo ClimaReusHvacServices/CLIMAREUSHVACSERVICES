@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { ProductsSection } from "@/components/landing/ProductsSection";
 import BrandsSection from "@/components/landing/BrandsSection";
 import WhyChooseUs from "@/components/landing/WhyChooseUs";
+import Footer from "@/components/landing/Footer";
 
 const Hero = dynamic(() => import("@/components/landing/Hero"));
 const ContactMap = dynamic(() => import("@/components/landing/ContactMap"));
@@ -62,50 +63,59 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <BrandsSection />
 
       {/* Section 5 — Contact */}
-      <section id="contact" className="container mx-auto px-4 sm:px-6 py-16 grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">Datos de contacto</h3>
-          <p className="text-gray-600 mb-2">Carrer de Balmes 29, 43204 Reus</p>
-          <p className="text-gray-600 mb-1">
-            Tel. fijo:{" "}
-            <a href="tel:+34877234166" className="font-semibold text-primary-700 hover:underline">
-              877 234 166
-            </a>
-          </p>
-          <p className="text-gray-600">
-            WhatsApp:{" "}
-            <a href="https://wa.me/34607953886" className="font-semibold text-primary-700 hover:underline">
-              607 953 886
-            </a>
-          </p>
-        </div>
-        <div>
-          <ContactMap />
+      <section id="contact" className="bg-gray-50 py-16 sm:py-20">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="mb-10">
+            <span className="text-xs font-bold tracking-widest uppercase text-primary-500">Encuéntranos</span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mt-1">Datos de contacto</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            {/* Info */}
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 w-8 h-8 rounded-full bg-primary-50 flex items-center justify-center shrink-0">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#008f65" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+                  </svg>
+                </span>
+                <div>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Dirección</p>
+                  <p className="text-sm text-gray-700">Carrer de Balmes 29, 43204 Reus</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 w-8 h-8 rounded-full bg-primary-50 flex items-center justify-center shrink-0">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#008f65" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.8a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+                  </svg>
+                </span>
+                <div>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Teléfono fijo</p>
+                  <a href="tel:+34877234166" className="text-sm font-semibold text-primary-700 hover:underline">877 234 166</a>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: "#25D366" }}>
+                  <svg width="14" height="14" viewBox="0 0 448 512" fill="white">
+                    <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-23.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
+                  </svg>
+                </span>
+                <div>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">WhatsApp</p>
+                  <a href="https://wa.me/34607953886" className="text-sm font-semibold text-primary-700 hover:underline">607 953 886</a>
+                </div>
+              </div>
+            </div>
+            {/* Map */}
+            <div className="rounded-2xl overflow-hidden shadow-md border border-gray-200 h-64 sm:h-72">
+              <ContactMap />
+            </div>
+          </div>
         </div>
       </section>
 
       <WhatsAppButton />
-
-      {/* Footer */}
-      <footer className="border-t border-primary-100 mt-8">
-        <div className="container mx-auto px-4 sm:px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="text-sm text-gray-600">&copy; 2026 Clima Reus HVAC. Todos los derechos reservados.</div>
-
-          <div className="flex items-center gap-3">
-            <a href="https://www.instagram.com/climareushvacservices" target="_blank" rel="noreferrer" className="text-gray-600 hover:text-primary-700 transition-colors">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm5 6.5A4.5 4.5 0 1016.5 13 4.51 4.51 0 0012 8.5zm6.5-2.6a1.05 1.05 0 11-1.05-1.05A1.05 1.05 0 0118.5 5.9zM12 10.5A1.5 1.5 0 1113.5 12 1.5 1.5 0 0112 10.5z" />
-              </svg>
-            </a>
-
-            <a href="https://wa.me/34607953886" target="_blank" rel="noreferrer" className="text-gray-600 hover:text-green-600 transition-colors">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.472-.148-.672.15-.199.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.476-.885-.788-1.482-1.761-1.655-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.199-.298.298-.497.1-.198.05-.372-.025-.52-.074-.149-.672-1.62-.923-2.219-.242-.583-.487-.503-.672-.513l-.573-.01c-.198 0-.52.074-.793.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.124-.273-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.121 1.535 5.849L.509 21.83a.5.5 0 00.611.637l4.106-1.066A11.96 11.96 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }
