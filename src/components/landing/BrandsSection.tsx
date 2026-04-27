@@ -8,54 +8,62 @@ const BRANDS = [
   { name: "Seico",               logo: "/logos/seico.avif" },
 ];
 
-// Duplicated for seamless infinite loop
-const TRACK = [...BRANDS, ...BRANDS, ...BRANDS];
+// More copies for a smoother, less noticeable loop start
+const TRACK = [...BRANDS, ...BRANDS, ...BRANDS, ...BRANDS, ...BRANDS, ...BRANDS];
+
+// Increase logo width and reduce gap so logos are bigger and closer
+const LOGO_W = 240; // px
+const GAP_TOTAL = 24; // mx-6 -> 12px each side
+const ITEM_W = LOGO_W + GAP_TOTAL;
+const LOOP_PX = BRANDS.length * ITEM_W;
 
 export default function BrandsSection() {
   return (
     <section
       id="servicios"
       className="py-16 sm:py-20 overflow-hidden"
-      style={{ background: "linear-gradient(160deg, #f5f0e8 0%, #faf7f2 60%, #f0ebe0 100%)" }}
+      style={{ background: "linear-gradient(135deg, #0d3c4d 0%, #1d7291 60%, #124e63 100%)" }}
     >
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center mb-12">
-        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight">
+      {/* Header */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center mb-14">
+        <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight">
           Trabajamos con las mejores{" "}
-          <span
-            className="inline-block px-4 py-0.5 rounded-full font-extrabold text-white"
-            style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
-          >
+          <span className="inline-block bg-yellow-400 text-gray-900 px-4 py-0.5 rounded-full font-extrabold">
             marcas
           </span>
         </h2>
-        <p className="mt-5 text-gray-500 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+        <p className="mt-5 text-white/65 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
           Instalamos equipos de climatización de fabricantes reconocidos por su eficiencia,
           durabilidad y tecnología avanzada, como Haier, Mitsubishi Electric, Fanworld, Seico y entre otros.
         </p>
       </div>
 
-      {/* Marquee track */}
+      {/* Marquee */}
       <div className="relative">
-        {/* Fade edges */}
-        <div className="absolute inset-y-0 left-0 w-24 z-10 pointer-events-none"
-          style={{ background: "linear-gradient(to right, #f5f0e8, transparent)" }} />
-        <div className="absolute inset-y-0 right-0 w-24 z-10 pointer-events-none"
-          style={{ background: "linear-gradient(to left, #faf7f2, transparent)" }} />
+        {/* Fade edges matching the bg gradient */}
+        <div className="absolute inset-y-0 left-0 w-44 z-10 pointer-events-none"
+          style={{ background: "linear-gradient(to right, rgba(13,60,77,1), transparent)" }} />
+        <div className="absolute inset-y-0 right-0 w-44 z-10 pointer-events-none"
+          style={{ background: "linear-gradient(to left, rgba(18,78,99,1), transparent)" }} />
 
-        <div className="flex items-center" style={{ animation: "brands-scroll 28s linear infinite" }}>
+        {/* -${LOOP_PX / 2}px delay trick starts the carousel mid-loop so no visible "beginning" */}
+        <div
+          className="flex items-center"
+          style={{ animation: `brands-scroll 28s linear -14s infinite` }}
+        >
           {TRACK.map((brand, i) => (
             <div
               key={i}
-              className="flex items-center justify-center mx-12 shrink-0"
-              style={{ width: 140 }}
+              className="shrink-0 flex items-center justify-center mx-6"
+              style={{ width: LOGO_W }}
             >
-              <div className="relative" style={{ width: 130, height: 52 }}>
+              <div className="relative" style={{ width: LOGO_W, height: 96 }}>
                 <Image
                   src={brand.logo}
                   alt={brand.name}
                   fill
-                  style={{ objectFit: "contain" }}
-                  sizes="130px"
+                  style={{ objectFit: "contain", filter: "brightness(0) invert(1)", opacity: 0.95 }}
+                  sizes="240px"
                 />
               </div>
             </div>
@@ -66,7 +74,7 @@ export default function BrandsSection() {
       <style jsx>{`
         @keyframes brands-scroll {
           0%   { transform: translateX(0); }
-          100% { transform: translateX(-${BRANDS.length * (130 + 96)}px); }
+          100% { transform: translateX(-${LOOP_PX}px); }
         }
       `}</style>
     </section>
