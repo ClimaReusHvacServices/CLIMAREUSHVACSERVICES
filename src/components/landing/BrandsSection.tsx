@@ -19,16 +19,20 @@ const LOOP_PX = BRANDS.length * ITEM_W;
 
 export default function BrandsSection() {
   return (
-    <section id="servicios" className="py-16 sm:py-20 overflow-hidden">
+    <section
+      id="servicios"
+      className="py-16 sm:py-20 overflow-hidden"
+      style={{ background: "linear-gradient(135deg, #0b5f86 0%, #1d7291 60%, #083a57 100%)" }}
+    >
       {/* Header */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center mb-14">
-        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight flex items-center justify-center gap-4">
+        <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight flex items-center justify-center gap-4">
           <span>Trabajamos con las mejores</span>
           <span className="inline-flex items-center justify-center bg-accent-600 text-white px-5 py-1 rounded-full font-extrabold text-base -translate-y-0.5">
             marcas
           </span>
         </h2>
-        <p className="mt-5 text-gray-600 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+        <p className="mt-5 text-white/70 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
           Instalamos equipos de climatización de fabricantes reconocidos por su eficiencia,
           durabilidad y tecnología avanzada, como Haier, Mitsubishi Electric, Fanworld, Seico y entre otros.
         </p>
@@ -38,9 +42,9 @@ export default function BrandsSection() {
       <div className="relative px-6">
         {/* Fade edges matching the bg gradient */}
         <div className="absolute inset-y-0 left-0 w-44 z-10 pointer-events-none"
-          style={{ background: "linear-gradient(to right, rgba(255,255,255,1), transparent)" }} />
+          style={{ background: "linear-gradient(to right, rgba(11,95,134,1), transparent)" }} />
         <div className="absolute inset-y-0 right-0 w-44 z-10 pointer-events-none"
-          style={{ background: "linear-gradient(to left, rgba(255,255,255,1), transparent)" }} />
+          style={{ background: "linear-gradient(to left, rgba(8,58,87,1), transparent)" }} />
 
         {/* -${LOOP_PX / 2}px delay trick starts the carousel mid-loop so no visible "beginning" */}
         <div className="w-full flex items-center justify-center overflow-hidden">
@@ -55,7 +59,7 @@ export default function BrandsSection() {
                   src={brand.logo}
                   alt={brand.name}
                   fill
-                  style={{ objectFit: "contain", opacity: 1 }}
+                  style={{ objectFit: "contain", filter: "brightness(0) invert(1)", opacity: 0.95 }}
                   sizes="(max-width: 640px) 144px, 240px"
                 />
               </div>
