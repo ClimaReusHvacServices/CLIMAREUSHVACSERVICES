@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { ProductsSection } from "@/components/landing/ProductsSection";
 import BrandsSection from "@/components/landing/BrandsSection";
 import WhyChooseUs from "@/components/landing/WhyChooseUs";
+import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import Footer from "@/components/landing/Footer";
 
 const Hero = dynamic(() => import("@/components/landing/Hero"));
@@ -61,6 +62,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
       {/* Section 4 — Brands */}
       <BrandsSection />
+
+      {/* Section 5 — Testimonials */}
+      <TestimonialsSection />
 
       {/* Section 5 — Contact */}
       <section id="contact" className="bg-gray-50 py-16 sm:py-20">

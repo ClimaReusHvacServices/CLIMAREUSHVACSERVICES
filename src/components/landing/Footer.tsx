@@ -1,4 +1,5 @@
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import Link from "next/link";
 
 const WA_NUMBER = "34607953886";
 
@@ -29,6 +30,19 @@ export default function Footer() {
             Instalación y reparación de aire acondicionado en Reus y Tarragona.
           </p>
           <div className="flex items-center gap-2.5">
+            {/* Facebook */}
+            <a
+              href="https://www.facebook.com/share/1ZYNJBntAz/?mibextid=wwXIfr"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Facebook"
+              className="w-9 h-9 rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-sm"
+              style={{ backgroundColor: "#1877F2" }}
+            >
+              <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="white">
+                <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+              </svg>
+            </a>
             {/* WhatsApp */}
             <a
               href={`https://wa.me/${WA_NUMBER}`}
@@ -145,12 +159,12 @@ export default function Footer() {
           </nav>
         </div>
         <div className="text-center pb-5">
-          <a
-            href="#"
+          <Link
+            href="/terms"
             className="text-[11px] font-semibold tracking-widest uppercase text-primary-600 hover:text-primary-800 hover:underline transition-colors"
           >
             Términos y Condiciones
-          </a>
+          </Link>
         </div>
       </div>
     </footer>
