@@ -6,12 +6,12 @@ export default function LogosMarquee({ logos = [] }: { logos?: string[] }) {
   const items = [...logos, ...logos]; // duplicate for smooth loop
 
   return (
-    <div className="overflow-hidden py-6">
+    <div className="overflow-hidden py-6 bg-white">
       <div className="flex animate-marquee whitespace-nowrap will-change-transform items-center">
         {items.map((src, i) => (
-          <div key={i} className="mx-8 flex items-center justify-center opacity-90">
-            <div className="relative h-12 w-32">
-              <Image src={src} alt={`logo-${i}`} fill style={{ objectFit: 'contain' }} sizes="(max-width: 640px) 80px, 128px" />
+          <div key={i} className="mx-6 flex items-center justify-center opacity-100">
+            <div className="relative h-16 w-40 min-w-[120px]">
+              <Image src={src} alt={`logo-${i}`} fill style={{ objectFit: "contain" }} sizes="(max-width: 640px) 100px, 160px" />
             </div>
           </div>
         ))}

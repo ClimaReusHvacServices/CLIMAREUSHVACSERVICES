@@ -27,13 +27,26 @@ export default function Hero({
   }, [images.length]);
 
   useEffect(() => {
+    // Enable parallax only on desktop for performance and layout stability
+    const minWidth = 768; // px
+    if (typeof window === "undefined" || window.innerWidth < minWidth) return;
+
+    let raf = 0;
     const onScroll = () => {
-      // subtle parallax offset based on scroll position
       const y = window.scrollY || window.pageYOffset;
-      setOffset(y * 0.15);
+      // throttle with rAF and cap offset
+      if (raf) return;
+      raf = window.requestAnimationFrame(() => {
+        setOffset(Math.min(y * 0.15, 180));
+        raf = 0;
+      });
     };
+
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
   }, []);
 
   return (
@@ -54,19 +67,19 @@ export default function Hero({
         <div className="absolute inset-0 bg-gradient-to-r from-accent-800/60 to-primary-700/25" />
       </div>
 
-      <div className="relative z-10 container mx-auto h-full flex items-center">
-        <div className="max-w-3xl p-6 md:p-12">
-          <h1 className="text-4xl md:text-6xl font-bold leading-tight drop-shadow-sm">
+      <div className="relative z-10 container mx-auto h-full flex items-center justify-center">
+        <div className="max-w-3xl p-6 md:p-12 text-center md:text-left">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-white drop-shadow-md">
             {title}
           </h1>
-          <p className="mt-6 text-lg md:text-xl text-accent-100 max-w-xl">
+          <p className="mt-4 md:mt-6 text-sm sm:text-base md:text-lg text-white/90 max-w-xl">
             {subtitle}
           </p>
 
-          <div className="mt-8">
+          <div className="mt-8 flex justify-center md:justify-start">
             <a
               href="#contact"
-              className="inline-block bg-primary-500 hover:bg-primary-600 text-black font-semibold px-6 py-4 rounded-lg shadow-md"
+              className="inline-block bg-primary-600 hover:bg-primary-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg"
             >
               Solicitar presupuesto gratis
             </a>

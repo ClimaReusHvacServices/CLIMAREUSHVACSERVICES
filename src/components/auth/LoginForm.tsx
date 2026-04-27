@@ -63,7 +63,7 @@ export function LoginForm() {
     <div className="w-full max-w-md">
       <div className="bg-white rounded-2xl shadow-lg p-8 space-y-6">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">{t("auth.login")}</h1>
+          <h1 className="text-3xl font-bold text-primary-800">{t("auth.login")}</h1>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -97,13 +97,13 @@ export function LoginForm() {
                 name="rememberMe"
                 checked={formData.rememberMe}
                 onChange={handleInputChange}
-                className="w-4 h-4 rounded border-gray-300 text-primary-600 cursor-pointer"
+                  className="w-4 h-4 rounded border-gray-300 text-primary-600 cursor-pointer accent-primary-600"
               />
               <label htmlFor="rememberMe" className="text-sm text-gray-700 cursor-pointer">
                 {t("auth.rememberMe")}
               </label>
             </div>
-            <Link href="/forgot-password" className="text-sm text-accent-500 hover:text-accent-600">
+              <Link href="/forgot-password" className="text-sm text-primary-600 hover:text-primary-700">
               {t("auth.forgotPassword")}
             </Link>
           </div>
@@ -114,8 +114,8 @@ export function LoginForm() {
         </form>
 
         <div className="text-center text-sm text-gray-600">
-          {t("auth.noAccount")}{" "}
-          <Link href="/register" className="text-accent-500 hover:text-accent-600 font-semibold">
+          {t("auth.noAccount")} {" "}
+          <Link href="/register" className="text-primary-600 hover:text-primary-700 font-semibold">
             {t("auth.signUp")}
           </Link>
         </div>
