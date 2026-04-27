@@ -33,7 +33,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
       <section className="bg-white py-8">
         <div className="container mx-auto">
-          <LogosMarquee logos={["/Imagenes/logo-haier.png","/Imagenes/logo-mitsubishi.png","/Imagenes/logo-fanworld.png","/Imagenes/logo-selico.png"]} />
+          <LogosMarquee logos={["/Imagenes/HVAC_exterior_negro.jpg"]} />
         </div>
       </section>
 
