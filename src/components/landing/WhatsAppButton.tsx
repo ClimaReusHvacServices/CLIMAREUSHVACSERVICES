@@ -1,18 +1,19 @@
 "use client";
 import React from "react";
 
-export default function WhatsAppButton({ phone = "" }: { phone?: string }) {
+export default function WhatsAppButton({ phone = "34607953886" }: { phone?: string }) {
   const href = phone ? `https://wa.me/${phone}` : "#";
   return (
     <a
       href={href}
       target="_blank"
       rel="noreferrer"
-      className="fixed bottom-6 right-6 z-50 bg-primary-600 hover:bg-primary-700 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center"
+      className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center"
       aria-label="WhatsApp"
+      style={{ backgroundColor: "#25D366" }}
     >
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M20.52 3.48A11.94 11.94 0 0012 0C5.372 0 .01 5.372.01 12.001c0 2.112.555 4.185 1.606 6.012L0 24l6.192-1.605A11.945 11.945 0 0012 24c6.628 0 12-5.372 12-12.001 0-3.2-1.246-6.2-3.48-8.519z" fill="#fff" opacity="0.08"/>
+        <path d="M20.52 3.48A11.94 11.94 0 0012 0C5.372 0 .01 5.372.01 12.001c0 2.112.555 4.185 1.606 6.012L0 24l6.192-1.605A11.945 11.945 0 0012 24c6.628 0 12-5.372 12-12.001 0-3.2-1.246-6.2-3.48-8.519z" fill="#ffffff" opacity="0.06"/>
         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.472-.148-.672.15-.198.297-.767.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.476-.885-.788-1.482-1.761-1.655-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.15-.173.199-.298.298-.497.099-.198.05-.372-.025-.52-.074-.149-.672-1.62-.923-2.219-.242-.583-.487-.503-.672-.513l-.573-.01c-.198 0-.52.074-.793.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.096 3.2 5.077 4.487  .71.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.124-.273-.198-.57-.347z" fill="white"/>
       </svg>
     </a>

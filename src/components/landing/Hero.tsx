@@ -1,19 +1,19 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
+
+import hero0 from "../../../Imagenes/Exterior_edificio.jpg";
+import hero1 from "../../../Imagenes/Exterior_casa_moderna.jpg";
+import hero2 from "../../../Imagenes/Interior_Banner.jpg";
 
 type HeroProps = {
-  images?: string[];
+  images?: (string | StaticImageData)[];
   title?: string;
   subtitle?: string;
 };
 
 export default function Hero({
-  images = [
-    "/Imagenes/Exterior_edificio.jpg",
-    "/Imagenes/Exterior_casa_moderna.jpg",
-    "/Imagenes/Interior_Banner.jpg",
-  ],
+  images = [hero0, hero1, hero2],
   title = "Instalación y reparación de aire acondicionado en Reus y Tarragona",
   subtitle = "Especialistas en instalación, mantenimiento y reparación de aire acondicionado",
 }: HeroProps) {
