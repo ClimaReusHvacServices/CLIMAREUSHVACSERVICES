@@ -10,9 +10,9 @@ type HeroProps = {
 
 export default function Hero({
   images = [
-    "/Imagenes/hero_hq_1.jpg",
-    "/Imagenes/hero_hq_2.jpg",
-    "/Imagenes/trabajo_1.jpg",
+    "/Imagenes/pexels_1.jpg",
+    "/Imagenes/pexels_2.jpg",
+    "/Imagenes/pexels_3.jpg",
   ],
   title = "Instalación y reparación de aire acondicionado en Reus y Tarragona",
   subtitle = "Especialistas en instalación, mantenimiento y reparación de aire acondicionado",
