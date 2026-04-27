@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { ClipboardList } from "lucide-react";
+import { BackButton } from "@/components/common/BackButton";
 
 async function getClientOrders(userId: string) {
   return db.order.findMany({
@@ -37,7 +38,9 @@ export default async function ClientOrdersPage({
   const tStatus = await getTranslations("status");
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
+      <BackButton />
+
       <div>
         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
           <ClipboardList size={24} className="text-primary-600" />

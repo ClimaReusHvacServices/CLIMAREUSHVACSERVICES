@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { ShoppingBag } from "lucide-react";
 import type { OrderStatus } from "@prisma/client";
+import { BackButton } from "@/components/common/BackButton";
 
 async function getAllOrders(statusFilter?: string) {
   return db.order.findMany({
@@ -47,7 +48,9 @@ export default async function AdminOrdersPage({
   const tStatus = await getTranslations("status");
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
+      <BackButton />
+
       <div>
         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
           <ShoppingBag size={24} className="text-orange-500" />

@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { UserCircle } from "lucide-react";
 import { ProfileForm } from "@/components/profile/ProfileForm";
+import { BackButton } from "@/components/common/BackButton";
 
 async function getUserData(userId: string) {
   return db.user.findUnique({
@@ -38,7 +39,9 @@ export default async function ProfilePage({
   const t = await getTranslations("profile");
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-5 max-w-2xl">
+      <BackButton />
+
       <div>
         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
           <UserCircle size={24} className="text-primary-600" />

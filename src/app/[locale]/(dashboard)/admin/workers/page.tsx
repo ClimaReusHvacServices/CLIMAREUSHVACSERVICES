@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Wrench } from "lucide-react";
+import { BackButton } from "@/components/common/BackButton";
 
 async function getAllWorkers() {
   return db.trabajador.findMany({
@@ -36,7 +37,9 @@ export default async function AdminWorkersPage({
   const t = await getTranslations("adminWorkers");
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
+      <BackButton />
+
       <div>
         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
           <Wrench size={24} className="text-accent-500" />

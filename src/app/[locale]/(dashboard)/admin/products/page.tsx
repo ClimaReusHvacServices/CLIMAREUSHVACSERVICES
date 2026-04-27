@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { Package, Wrench, Box } from "lucide-react";
+import { BackButton } from "@/components/common/BackButton";
 
 async function getProductsData() {
   const [products, services, packages] = await Promise.all([
@@ -38,7 +39,9 @@ export default async function AdminProductsPage({
   const t = await getTranslations("adminProducts");
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
+      <BackButton />
+
       <div>
         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
           <Package size={24} className="text-primary-600" />

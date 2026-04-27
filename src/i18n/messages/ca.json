@@ -167,6 +167,7 @@
     "title": "Usuaris",
     "subtitle": "Gestiona tots els usuaris del sistema",
     "search": "Cercar per nom, correu o usuari...",
+    "filterAll": "Tots",
     "colName": "Nom",
     "colEmail": "Correu",
     "colRole": "Rol",
@@ -177,7 +178,8 @@
     "roleTrabajador": "Treballador",
     "active": "Actiu",
     "inactive": "Inactiu",
-    "noUsers": "No hi ha usuaris registrats"
+    "noUsers": "No hi ha usuaris registrats",
+    "noResults": "No s'han trobat usuaris amb aquests filtres"
   },
   "adminWorkers": {
     "title": "Treballadors",

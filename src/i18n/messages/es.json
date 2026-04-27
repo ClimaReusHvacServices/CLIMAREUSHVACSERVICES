@@ -167,6 +167,7 @@
     "title": "Usuarios",
     "subtitle": "Gestiona todos los usuarios del sistema",
     "search": "Buscar por nombre, email o usuario...",
+    "filterAll": "Todos",
     "colName": "Nombre",
     "colEmail": "Email",
     "colRole": "Rol",
@@ -177,7 +178,8 @@
     "roleTrabajador": "Trabajador",
     "active": "Activo",
     "inactive": "Inactivo",
-    "noUsers": "No hay usuarios registrados"
+    "noUsers": "No hay usuarios registrados",
+    "noResults": "No se encontraron usuarios con esos filtros"
   },
   "adminWorkers": {
     "title": "Trabajadores",

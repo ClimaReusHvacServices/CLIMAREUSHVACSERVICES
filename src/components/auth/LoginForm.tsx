@@ -73,7 +73,7 @@ export function LoginForm() {
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            placeholder="ejemplo@correo.com o tu_usuario"
+            placeholder="Usuario@correo.com o Tu Usuario"
             autoComplete="username"
             required
           />
