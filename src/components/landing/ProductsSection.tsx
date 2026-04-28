@@ -4,6 +4,7 @@ import { useState } from "react";
 import { X, Wind, CheckCircle2, Star } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 
 interface ProductItem {
   id: string;
@@ -90,7 +91,7 @@ function ProductCard({ product, onClick, t }: { product: ProductItem; onClick: (
 
 // ─── Modal ────────────────────────────────────────────────────────────────────
 
-function ProductModal({ product, onClose, t }: { product: ProductItem; onClose: () => void; t: (k: string, v?: Record<string, string | number>) => string }) {
+function ProductModal({ product, onClose, t, isLoggedIn }: { product: ProductItem; onClose: () => void; t: (k: string, v?: Record<string, string | number>) => string; isLoggedIn: boolean }) {
   const hasDiscount = product.discountPrice !== null && product.discountPrice < product.price;
   const displayPrice = hasDiscount ? product.discountPrice! : product.price;
   const savings = hasDiscount ? product.price - product.discountPrice! : 0;
@@ -197,13 +198,25 @@ function ProductModal({ product, onClose, t }: { product: ProductItem; onClose: 
                 </svg>
                 {t("products.modalWhatsApp")}
               </a>
-              <Link
-                href="/register"
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white text-sm font-bold transition-all hover:opacity-90"
-                style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
-              >
-                {t("products.modalRequest")}
-              </Link>
+              {isLoggedIn ? (
+                <a
+                  href={`https://wa.me/${WA_NUMBER}?text=${waMessage}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white text-sm font-bold transition-all hover:opacity-90"
+                  style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
+                >
+                  {t("products.modalRequest")}
+                </a>
+              ) : (
+                <Link
+                  href="/login"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white text-sm font-bold transition-all hover:opacity-90"
+                  style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
+                >
+                  {t("products.modalRequest")}
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -240,6 +253,8 @@ function ProductModal({ product, onClose, t }: { product: ProductItem; onClose: 
 
 export function ProductsSection({ products }: { products: ProductItem[] }) {
   const t = useTranslations("landing");
+  const { status } = useSession();
+  const isLoggedIn = status === "authenticated";
   const [selected, setSelected] = useState<ProductItem | null>(null);
 
   return (
@@ -281,7 +296,7 @@ export function ProductsSection({ products }: { products: ProductItem[] }) {
         </div>
       </div>
 
-      {selected && <ProductModal product={selected} onClose={() => setSelected(null)} t={t as any} />}
+      {selected && <ProductModal product={selected} onClose={() => setSelected(null)} t={t as any} isLoggedIn={isLoggedIn} />}
     </section>
   );
 }

@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { CheckCircle2 } from "lucide-react";
+import Image from "next/image";
 
 export default async function WhyChooseUs() {
   const t = await getTranslations("landing");
@@ -15,22 +16,20 @@ export default async function WhyChooseUs() {
     <section className="bg-white py-16 sm:py-24">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
 
-        {/* Left — brand placeholder (swap with real logo when ready) */}
+        {/* Left — brand card */}
         <div className="flex flex-col items-center text-center">
-          <div className="w-44 h-44 rounded-full flex items-center justify-center mb-6 shadow-lg bg-white">
-            <svg width="84" height="84" viewBox="0 0 84 84" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="g1" x1="0" x2="1">
-                  <stop offset="0%" stopColor="#1d7291" />
-                  <stop offset="100%" stopColor="#008f65" />
-                </linearGradient>
-              </defs>
-              <circle cx="42" cy="42" r="40" fill="url(#g1)" />
-              <text x="50%" y="50%" textAnchor="middle" dy="6" fontSize="20" fontWeight="700" fill="#fff">HVAC</text>
-            </svg>
+          {/* Logo */}
+          <div className="w-48 h-48 rounded-full flex items-center justify-center mb-6 shadow-lg bg-white border border-gray-100">
+            <Image
+              src="/logos/logoverde.png"
+              alt="Clima HVAC Service"
+              width={500}
+              height={500}
+              style={{ width: "120px", height: "120px", objectFit: "contain" }}
+            />
           </div>
 
-          <h3 className="text-2xl font-extrabold tracking-tight text-gray-900">
+          <h3 className="text-xl font-extrabold tracking-tight text-gray-900">
             CLIMA HVAC SERVICE
           </h3>
           <p className="text-sm italic text-gray-400 mt-0.5">Ariel Hugo José Morales</p>

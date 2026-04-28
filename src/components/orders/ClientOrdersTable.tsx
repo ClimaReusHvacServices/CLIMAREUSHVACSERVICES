@@ -25,7 +25,7 @@ export function ClientOrdersTable({ orders, locale }: { orders: OrderRow[]; loca
       <p className="text-gray-500 font-medium">{t("noOrders")}</p>
       <p className="text-gray-400 text-sm mt-1 mb-6">{t("noOrdersDesc")}</p>
       <Link
-        href="/dashboard"
+        href="/"
         className="inline-block text-white px-6 py-2.5 rounded-xl font-medium transition-colors text-sm"
         style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
       >

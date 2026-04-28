@@ -53,9 +53,9 @@ export function ClientShell({ children, myOrdersLabel, myProfileLabel }: ClientS
                 <Image
                   src="/logos/horizontal-logoverde.png"
                   alt="Clima HVAC Service"
-                  width={140}
-                  height={40}
-                  style={{ objectFit: "contain", height: "36px", width: "auto" }}
+                  width={500}
+                  height={500}
+                  style={{ height: "36px", width: "auto", objectFit: "contain" }}
                 />
               </Link>
 

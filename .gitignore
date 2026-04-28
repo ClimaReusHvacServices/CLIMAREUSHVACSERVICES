@@ -61,6 +61,8 @@ Imagenes/
 # Allow images placed in the public folder for deployment
 !public/Imagenes/
 !public/Imagenes/**
+!public/logos/
+!public/logos/**
 
 # But ignore large archives and video files inside public/Imagenes
 public/Imagenes/**/*.zip
