@@ -20,10 +20,7 @@ function switchLocale(code: string) {
   overlay.style.cssText =
     "position:fixed;inset:0;z-index:9999;background:#f8fafc;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;";
   overlay.innerHTML = `
-    <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#1d7291,#008f65);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(0,143,101,0.3);">
-      <span style="color:white;font-size:18px;font-weight:800;font-family:sans-serif;letter-spacing:0.5px;">HVAC</span>
-    </div>
-    <p style="color:#1d7291;font-size:15px;font-weight:700;font-family:sans-serif;margin:0;">Clima HVAC Service</p>
+    <img src="/logos/horizontal-logoverde.png" alt="Clima HVAC Service" style="height:56px;object-fit:contain;margin-bottom:8px;" />
     <div style="width:32px;height:32px;border-radius:50%;border:3px solid #e2e8f0;border-top-color:#008f65;animation:chs-spin 0.7s linear infinite;"></div>
     <style>@keyframes chs-spin{to{transform:rotate(360deg)}}</style>
   `;
@@ -244,14 +241,16 @@ export default function Navbar() {
                     {roleText}
                   </span>
                 </div>
-                <Link
-                  href={dashboardHref as any}
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-2 px-5 py-3.5 text-sm font-semibold text-primary-700 hover:bg-primary-50 transition-colors border-b border-gray-100/80"
-                >
-                  <LayoutDashboard size={15} />
-                  {t("navbar.dashboard")}
-                </Link>
+                {role !== "cliente" && (
+                  <Link
+                    href={dashboardHref as any}
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-2 px-5 py-3.5 text-sm font-semibold text-primary-700 hover:bg-primary-50 transition-colors border-b border-gray-100/80"
+                  >
+                    <LayoutDashboard size={15} />
+                    {t("navbar.dashboard")}
+                  </Link>
+                )}
                 {role === "cliente" && (
                   <Link
                     href="/orders"
@@ -338,14 +337,16 @@ export default function Navbar() {
                   </span>
                 </div>
                 <div className="p-1">
-                  <Link
-                    href={dashboardHref as any}
-                    onClick={() => setUserMenuOpen(false)}
-                    className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 rounded-xl transition-colors"
-                  >
-                    <LayoutDashboard size={14} className="text-gray-400" />
-                    {t("navbar.dashboard")}
-                  </Link>
+                  {role !== "cliente" && (
+                    <Link
+                      href={dashboardHref as any}
+                      onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 rounded-xl transition-colors"
+                    >
+                      <LayoutDashboard size={14} className="text-gray-400" />
+                      {t("navbar.dashboard")}
+                    </Link>
+                  )}
                   {role === "cliente" && (
                     <Link
                       href="/profile"

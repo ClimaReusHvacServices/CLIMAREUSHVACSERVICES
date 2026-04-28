@@ -49,7 +49,7 @@ export default function Hero({
   }, []);
 
   return (
-    <section className="relative h-screen min-h-[520px] w-full overflow-hidden text-white">
+    <section className="relative h-screen min-h-[520px] w-full overflow-hidden text-white bg-primary-900">
       <div className="absolute inset-0">
         {images.map((src, i) => {
           // simple SVG blur placeholder using site palette — small and fast
@@ -59,7 +59,7 @@ export default function Hero({
           const blurDataURL = `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
 
           return (
-            <div key={i} className={`hero-slide absolute inset-0 transition-opacity duration-1000 ease-out ${i === index ? "opacity-100 scale-100" : "opacity-0 scale-105"}`} style={{ transform: `translateY(${i === index ? -offset * 0.2 : 0}px)` }}>
+            <div key={i} className={`hero-slide absolute -top-16 -bottom-16 left-0 right-0 transition-opacity duration-1000 ease-out ${i === index ? "opacity-100 scale-100" : "opacity-0 scale-105"}`} style={{ transform: `translateY(${i === index ? -offset * 0.2 : 0}px)` }}>
               <Image src={src} alt={`hero-${i}`} fill priority={i === 0} quality={95} placeholder="blur" blurDataURL={blurDataURL} style={{ objectFit: "cover", objectPosition: "center" }} sizes="(max-width: 768px) 100vw, (max-width: 1920px) 100vw, 1920px" />
             </div>
           );

@@ -1,6 +1,7 @@
 import { auth } from "@/auth/config";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { DashboardShell } from "@/components/common/DashboardShell";
+import { ClientShell } from "@/components/common/ClientShell";
 
 export default async function DashboardLayout({
   children,
@@ -16,19 +17,31 @@ export default async function DashboardLayout({
   const user = session?.user;
   const t = await getTranslations("nav");
 
+  // Clients get the landing-page-style shell; admin/worker keep DashboardShell
+  if (user?.role === "cliente") {
+    return (
+      <ClientShell
+        myOrdersLabel={t("myOrders")}
+        myProfileLabel={t("myProfile")}
+      >
+        {children}
+      </ClientShell>
+    );
+  }
+
   const navLabels = {
-    adminSection:     t("adminSection"),
-    clienteSection:   t("clienteSection"),
+    adminSection:      t("adminSection"),
+    clienteSection:    t("clienteSection"),
     trabajadorSection: t("trabajadorSection"),
-    adminHome:        t("adminHome"),
-    users:            t("users"),
-    workers:          t("workers"),
-    orders:           t("orders"),
-    products:         t("products"),
-    shop:             t("shop"),
-    myOrders:         t("myOrders"),
-    myProfile:        t("myProfile"),
-    myTasks:          t("myTasks"),
+    adminHome:         t("adminHome"),
+    users:             t("users"),
+    workers:           t("workers"),
+    orders:            t("orders"),
+    products:          t("products"),
+    shop:              t("shop"),
+    myOrders:          t("myOrders"),
+    myProfile:         t("myProfile"),
+    myTasks:           t("myTasks"),
   };
 
   return (
