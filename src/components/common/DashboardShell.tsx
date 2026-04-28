@@ -37,9 +37,8 @@ function buildNav(role: string, l: NavLabels): { section: string; items: NavItem
   if (role === "cliente") return {
     section: l.clienteSection,
     items: [
-      { href: "/dashboard", iconName: "Store",        label: l.shop },
-      { href: "/orders",    iconName: "ClipboardList", label: l.myOrders },
-      { href: "/profile",   iconName: "UserCircle",   label: l.myProfile },
+      { href: "/orders",  iconName: "ClipboardList", label: l.myOrders },
+      { href: "/profile", iconName: "UserCircle",    label: l.myProfile },
     ],
   };
   return {

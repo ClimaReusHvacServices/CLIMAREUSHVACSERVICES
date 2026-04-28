@@ -39,8 +39,9 @@ function ProductCard({ product, onClick, t }: { product: ProductItem; onClick: (
     >
       {hasDiscount && (
         <div className="absolute left-4 top-4 z-20">
-          <span className="inline-flex items-center gap-1 text-[11px] font-bold tracking-widest uppercase text-accent-700 border border-accent-400 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm">
-            {t("products.cardPromo")} —{savingsPct}%
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-white px-3 py-1.5 rounded-full shadow-md" style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}>
+            <CheckCircle2 size={11} className="shrink-0" />
+            {savingsPct}% {t("products.discountLabel")}
           </span>
         </div>
       )}

@@ -47,7 +47,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   if (session) {
     if (session.user?.role === "admin")      redirect(`/${locale}/admin`);
-    if (session.user?.role === "cliente")    redirect(`/${locale}/dashboard`);
     if (session.user?.role === "trabajador") redirect(`/${locale}/worker`);
   }
 

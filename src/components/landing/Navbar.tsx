@@ -1,6 +1,6 @@
 "use client";
 import { Link } from "@/i18n/routing";
-import { Phone, Menu, X, LogIn, Globe, ChevronDown, LogOut, User, LayoutDashboard } from "lucide-react";
+import { Phone, Menu, X, LogIn, Globe, ChevronDown, LogOut, User, LayoutDashboard, ShoppingBag } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
@@ -254,6 +254,16 @@ export default function Navbar() {
                 </Link>
                 {role === "cliente" && (
                   <Link
+                    href="/orders"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-2 px-5 py-3.5 text-sm font-semibold text-primary-700 hover:bg-primary-50 transition-colors border-b border-gray-100/80"
+                  >
+                    <ShoppingBag size={15} />
+                    Mis pedidos
+                  </Link>
+                )}
+                {role === "cliente" && (
+                  <Link
                     href="/profile"
                     onClick={() => setOpen(false)}
                     className="flex items-center gap-2 px-5 py-3.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors border-b border-gray-100/80"
@@ -290,6 +300,17 @@ export default function Navbar() {
         <div className="bg-white/80 backdrop-blur-xl rounded-full shadow-lg border border-white/40">
           <LangPicker />
         </div>
+
+        {/* Cart — only for clients */}
+        {isLoggedIn && role === "cliente" && (
+          <Link
+            href="/orders"
+            className="flex items-center justify-center w-9 h-9 rounded-full bg-white/80 backdrop-blur-xl shadow-lg border border-white/40 text-primary-700 hover:bg-primary-50 hover:border-primary-200 transition-all"
+            aria-label="Mis pedidos"
+          >
+            <ShoppingBag size={15} />
+          </Link>
+        )}
 
         {/* Login pill or user menu */}
         {isLoggedIn && user ? (
