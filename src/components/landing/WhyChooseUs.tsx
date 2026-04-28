@@ -31,7 +31,7 @@ export default async function WhyChooseUs() {
           </div>
 
           <h3 className="text-2xl font-extrabold tracking-tight text-gray-900">
-            HVAC CLIMA REUS
+            CLIMA HVAC SERVICE
           </h3>
           <p className="text-sm italic text-gray-400 mt-0.5">Ariel Hugo José Morales</p>
 

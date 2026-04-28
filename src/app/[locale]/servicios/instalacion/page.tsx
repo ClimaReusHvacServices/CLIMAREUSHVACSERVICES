@@ -1,7 +1,7 @@
 import ServicePageLayout from "@/components/landing/ServicePageLayout";
 
 export const metadata = {
-  title: "Instalación de Aire Acondicionado en Reus y Tarragona | Clima Reus HVAC",
+  title: "Instalación de Aire Acondicionado en Reus y Tarragona | Clima HVAC Service",
   description: "Instalación de aire acondicionado por instaladores certificados RITE. Presupuesto gratuito y servicio el mismo día en Reus y Tarragona.",
 };
 
@@ -15,7 +15,7 @@ export default function InstalacionPage() {
     >
       <h2>Soluciones personalizadas en climatización residencial e industrial</h2>
       <p>
-        No todos los espacios son iguales. Por eso, en Clima Reus realizamos un estudio previo para
+        No todos los espacios son iguales. Por eso, en Clima HVAC Servicerealizamos un estudio previo para
         determinar qué sistema se adapta mejor a tu estructura y presupuesto:
       </p>
       <ul>
@@ -24,7 +24,7 @@ export default function InstalacionPage() {
         <li><strong>Conductos y Cassette:</strong> Ideal para empresas o viviendas que buscan una distribución invisible y uniforme del aire.</li>
       </ul>
 
-      <h2>¿Por qué confiar tu instalación a Clima Reus?</h2>
+      <h2>¿Por qué confiar tu instalación a Clima HVAC Service?</h2>
       <ul>
         <li>
           <strong>Certificación RITE:</strong> Cumplimos estrictamente con el Reglamento de Instalaciones

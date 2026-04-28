@@ -114,8 +114,8 @@ export function DashboardShell({
           </button>
 
           <Link href="/" className="text-lg sm:text-xl font-bold text-white tracking-tight hover:text-white/80 transition-colors truncate">
-            Clima Reus HVAC
-          </Link>
+            Clima HVAC Service
+</Link>
 
           <div className="flex items-center gap-2 sm:gap-3 ml-auto shrink-0">
             <LanguageSwitcher variant="dark" />
@@ -147,7 +147,7 @@ export function DashboardShell({
                 className="flex items-center justify-between px-4 h-16 border-b border-white/10 shrink-0"
                 style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
               >
-                <span className="text-white font-bold text-lg">Clima Reus HVAC</span>
+                <span className="text-white font-bold text-lg">Clima HVAC Service</span>
                 <button
                   onClick={() => setOpen(false)}
                   className="p-1.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"

@@ -3,6 +3,7 @@ import { Link } from "@/i18n/routing";
 import { Phone, Menu, X, LogIn, Globe, ChevronDown, LogOut, User, LayoutDashboard } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 
 const LOCALES = [
@@ -11,10 +12,25 @@ const LOCALES = [
   { code: "ca", label: "CA", name: "Català" },
 ];
 
+const LOCALE_CODES = LOCALES.map((l) => l.code);
+
 function switchLocale(code: string) {
+  // Show loading overlay to hide the page flicker during navigation
+  const overlay = document.createElement("div");
+  overlay.style.cssText =
+    "position:fixed;inset:0;z-index:9999;background:#f8fafc;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;";
+  overlay.innerHTML = `
+    <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#1d7291,#008f65);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(0,143,101,0.3);">
+      <span style="color:white;font-size:18px;font-weight:800;font-family:sans-serif;letter-spacing:0.5px;">HVAC</span>
+    </div>
+    <p style="color:#1d7291;font-size:15px;font-weight:700;font-family:sans-serif;margin:0;">Clima HVAC Service</p>
+    <div style="width:32px;height:32px;border-radius:50%;border:3px solid #e2e8f0;border-top-color:#008f65;animation:chs-spin 0.7s linear infinite;"></div>
+    <style>@keyframes chs-spin{to{transform:rotate(360deg)}}</style>
+  `;
+  document.body.appendChild(overlay);
+
   const segs = window.location.pathname.split("/").filter(Boolean);
-  const knownLocales = LOCALES.map((l) => l.code);
-  const after = knownLocales.includes(segs[0]) ? segs.slice(1).join("/") : segs.join("/");
+  const after = LOCALE_CODES.includes(segs[0]) ? segs.slice(1).join("/") : segs.join("/");
   window.location.href = `/${code}${after ? `/${after}` : ""}`;
 }
 
@@ -78,6 +94,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const locale = useLocale();
+  const pathname = usePathname();
   const mobileRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
@@ -110,6 +127,26 @@ export default function Navbar() {
   const firstName = displayName.split(" ")[0];
   const initials = displayName ? getInitials(displayName) : "?";
 
+  // Page-aware mobile brand label
+  function getMobileLabel(): string {
+    const segs = pathname.split("/").filter((s) => !LOCALE_CODES.includes(s));
+    const section = segs[0] ?? "";
+    const sub = segs[1] ?? "";
+    if (!section) return "Clima HVAC";
+    if (section === "oferta") return t("navbar.offer");
+    if (section === "servicios") {
+      if (!sub) return t("navbar.services");
+      return sub.charAt(0).toUpperCase() + sub.slice(1);
+    }
+    if (section === "dashboard") return t("navbar.dashboard");
+    if (section === "admin") return "Admin";
+    if (section === "worker") return t("navbar.roleTrabajador");
+    if (section === "profile") return t("navbar.profile");
+    if (section === "orders") return t("navbar.myOrders") ?? "Pedidos";
+    return "Clima HVAC";
+  }
+  const mobileLabel = getMobileLabel();
+
   const NAV_LINKS = [
     { href: "/",          label: t("navbar.home") },
     { href: "/#oferta",   label: t("navbar.offer") },
@@ -132,9 +169,9 @@ export default function Navbar() {
             {open ? <X size={16} /> : <Menu size={16} />}
           </button>
 
-          {/* Mobile — brand */}
+          {/* Mobile — page-aware brand label */}
           <Link href="/" onClick={() => setOpen(false)} className="sm:hidden text-sm font-bold text-primary-800 mr-auto">
-            Clima Reus
+            {mobileLabel}
           </Link>
 
           {/* Desktop — nav links */}

@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Clima Reus HVAC",
+    "appName": "Clima HVAC Service",
     "submit": "Enviar",
     "cancel": "Cancelar",
     "save": "Guardar",
@@ -373,7 +373,7 @@
       "subtitle": "Despejamos tus dudas técnicas sobre nuestras instalaciones de aire acondicionado y aerotermia para que tomes la mejor decisión para tu hogar.",
       "cta": "Hablar con un experto",
       "q1": "¿Cuánto cuesta instalar un aire acondicionado en Reus?",
-      "a1": "El precio de una instalación de aire acondicionado en Reus depende del tipo de equipo, la potencia necesaria y la complejidad de la instalación. En Clima Reus HVAC Services ofrecemos presupuestos personalizados para garantizar la mejor solución según tu espacio y necesidades.",
+      "a1": "El precio de una instalación de aire acondicionado en Reus depende del tipo de equipo, la potencia necesaria y la complejidad de la instalación. En Clima HVAC Service ofrecemos presupuestos personalizados para garantizar la mejor solución según tu espacio y necesidades.",
       "q2": "¿Cada cuánto tiempo se debe hacer mantenimiento al aire acondicionado?",
       "a2": "Se recomienda realizar mantenimiento al menos una vez al año para garantizar el buen funcionamiento del equipo. El mantenimiento ayuda a mejorar la eficiencia energética, prolongar la vida útil del sistema y mantener una buena calidad del aire.",
       "q3": "¿En qué zonas ofrecen servicio de climatización?",
@@ -384,7 +384,7 @@
     "testimonials": {
       "badge": "Testimonios",
       "title": "Lo que dicen nuestros clientes",
-      "subtitle": "En Clima Reus HVAC Services nos enorgullece el trabajo bien hecho. Más de 4.000 instalaciones realizadas en Reus, Tarragona y alrededores son el mejor reflejo de nuestro compromiso con la calidad, la rapidez y el trato profesional.",
+      "subtitle": "En Clima HVAC Service nos enorgullece el trabajo bien hecho. Más de 4.000 instalaciones realizadas en Reus, Tarragona y alrededores son el mejor reflejo de nuestro compromiso con la calidad, la rapidez y el trato profesional.",
       "cta": "Ver todos los testimonios en Google",
       "source": "Testimonio de"
     },
@@ -398,7 +398,7 @@
       "h3day": "Domingo", "h3time": "Cerrado",
       "linkHome": "Inicio", "linkOffers": "Ofertas", "linkServices": "Servicios", "linkContact": "Contacto",
       "terms": "Términos y Condiciones",
-      "copyright": "© 2026 - Clima Reus HVAC Services"
+      "copyright": "© 2026 - Clima HVAC Service"
     },
     "contactSection": {
       "badge": "Encuéntranos", "title": "Datos de contacto",

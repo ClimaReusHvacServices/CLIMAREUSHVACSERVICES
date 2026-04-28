@@ -1,7 +1,7 @@
 import ServicePageLayout from "@/components/landing/ServicePageLayout";
 
 export const metadata = {
-  title: "Mantenimiento de Aire Acondicionado en Reus | Clima Reus HVAC",
+  title: "Mantenimiento de Aire Acondicionado en Reus | Clima HVAC Service",
   description: "Mantenimiento preventivo de aire acondicionado en Reus y Tarragona. Alarga la vida de tu equipo y respira aire limpio con nuestro servicio técnico certificado.",
 };
 
@@ -16,7 +16,7 @@ export default function MantenimientoPage() {
       <h2>¿Por qué es vital el mantenimiento regular?</h2>
       <p>
         Un equipo de aire acondicionado sin mantenimiento no solo consume más luz, sino que puede
-        convertirse en un foco de infecciones respiratorias. En Clima Reus cuidamos tu salud y tu
+        convertirse en un foco de infecciones respiratorias. En Clima HVAC Service cuidamos tu salud y tu
         bolsillo.
       </p>
       <p>

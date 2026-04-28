@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Clima Reus HVAC",
+    "appName": "Clima HVAC Service",
     "submit": "Submit",
     "cancel": "Cancel",
     "save": "Save",
@@ -373,7 +373,7 @@
       "subtitle": "We answer your technical questions about our air conditioning and aerothermal installations so you can make the best decision for your home.",
       "cta": "Talk to an expert",
       "q1": "How much does it cost to install air conditioning in Reus?",
-      "a1": "The price of an air conditioning installation in Reus depends on the type of unit, the required power and the complexity of the installation. At Clima Reus HVAC Services we offer personalised quotes to ensure the best solution for your space and needs.",
+      "a1": "The price of an air conditioning installation in Reus depends on the type of unit, the required power and the complexity of the installation. At Clima HVAC Service we offer personalised quotes to ensure the best solution for your space and needs.",
       "q2": "How often should air conditioning be serviced?",
       "a2": "It is recommended to carry out maintenance at least once a year to ensure the proper functioning of the equipment. Maintenance helps improve energy efficiency, extend the life of the system and maintain good air quality.",
       "q3": "In which areas do you offer air conditioning services?",
@@ -384,7 +384,7 @@
     "testimonials": {
       "badge": "Testimonials",
       "title": "What our clients say",
-      "subtitle": "At Clima Reus HVAC Services we take pride in a job well done. Over 4,000 installations carried out in Reus, Tarragona and surrounding areas are the best reflection of our commitment to quality, speed and professional service.",
+      "subtitle": "At Clima HVAC Service we take pride in a job well done. Over 4,000 installations carried out in Reus, Tarragona and surrounding areas are the best reflection of our commitment to quality, speed and professional service.",
       "cta": "View all testimonials on Google",
       "source": "Review from"
     },
@@ -398,7 +398,7 @@
       "h3day": "Sunday", "h3time": "Closed",
       "linkHome": "Home", "linkOffers": "Offers", "linkServices": "Services", "linkContact": "Contact",
       "terms": "Terms and Conditions",
-      "copyright": "© 2026 - Clima Reus HVAC Services"
+      "copyright": "© 2026 - Clima HVAC Service"
     },
     "contactSection": {
       "badge": "Find us", "title": "Contact information",

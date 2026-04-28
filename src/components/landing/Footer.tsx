@@ -30,7 +30,7 @@ export default async function Footer() {
 
         {/* 1 — Brand */}
         <div>
-          <h3 className="text-base font-extrabold text-gray-900 mb-2">Clima Reus HVAC Services</h3>
+          <h3 className="text-base font-extrabold text-gray-900 mb-2">Clima HVAC Service</h3>
           <p className="text-sm text-gray-500 leading-relaxed mb-5">
             {t("footer.tagline")}
           </p>

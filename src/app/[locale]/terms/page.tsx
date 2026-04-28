@@ -5,7 +5,7 @@ const Navbar = dynamic(() => import("@/components/landing/Navbar"));
 const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton"));
 
 export const metadata = {
-  title: "Términos y Condiciones | Clima Reus HVAC Services",
+  title: "Términos y Condiciones | Clima HVAC Service",
 };
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -25,7 +25,7 @@ export default function TermsPage() {
       {/* Header */}
       <div className="pt-28 pb-12 px-4 text-center" style={{ background: "linear-gradient(160deg, #0d3c4d 0%, #1d7291 100%)" }}>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-white">Términos y Condiciones</h1>
-        <p className="mt-2 text-white/70 text-sm">Clima Reus HVAC Services · Ariel Hugo José Morales</p>
+        <p className="mt-2 text-white/70 text-sm">Clima HVAC Service · Ariel Hugo José Morales</p>
       </div>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-14">
@@ -39,7 +39,7 @@ export default function TermsPage() {
           <p>
             Las presentes Condiciones Generales regulan la prestación de servicios de instalación,
             mantenimiento, reparación y comercialización de sistemas de climatización, aerotermia y
-            ventilación ofrecidos por Ariel Hugo José Morales / Clima Reus HVAC Services.
+            ventilación ofrecidos por Ariel Hugo José Morales / Clima HVAC Service.
           </p>
           <p>
             Estas condiciones se aplican a todos los usuarios que contraten servicios a través del sitio
@@ -151,7 +151,7 @@ export default function TermsPage() {
         <Section title="Datos Identificativos">
           <p>En cumplimiento con lo dispuesto en la Ley 34/2002 (LSSI-CE), se informa que el presente sitio web pertenece a:</p>
           <ul className="list-none space-y-1">
-            <li><strong>Titular:</strong> Ariel Hugo José Morales / Clima Reus HVAC Services</li>
+            <li><strong>Titular:</strong> Ariel Hugo José Morales / Clima HVAC Service</li>
             <li><strong>Actividad:</strong> Instalación, mantenimiento y reparación de sistemas de climatización y aerotermia</li>
             <li><strong>NIF:</strong> Z-1485584-L</li>
             <li><strong>Domicilio:</strong> Calle Balmes, 29 – 43204 Reus, Tarragona</li>
@@ -163,7 +163,7 @@ export default function TermsPage() {
         <Section title="Objeto del Sitio Web">
           <p>
             El presente sitio web tiene como finalidad ofrecer información sobre los servicios prestados
-            por Clima Reus HVAC Services, así como permitir el contacto y solicitud de presupuestos.
+            por Clima HVAC Service, así como permitir el contacto y solicitud de presupuestos.
           </p>
         </Section>
 

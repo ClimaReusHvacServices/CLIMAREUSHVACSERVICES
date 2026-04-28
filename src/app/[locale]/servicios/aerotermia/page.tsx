@@ -1,7 +1,7 @@
 import ServicePageLayout from "@/components/landing/ServicePageLayout";
 
 export const metadata = {
-  title: "Instalación de Aerotermia en Tarragona | Clima Reus HVAC",
+  title: "Instalación de Aerotermia en Tarragona | Clima HVAC Service",
   description: "Aerotermia en Tarragona: ahorra hasta un 70% en tus facturas. Instalación certificada RITE de sistemas 3 en 1 para calefacción, refrigeración y ACS.",
 };
 

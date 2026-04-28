@@ -5,13 +5,13 @@ const REVIEWS = [
   {
     name: "Carlos Rodríguez",
     rating: 5,
-    text: "¡Excelente servicio! Clima Reus HVAC instaló mi aire el mismo día y todo quedó a la perfección. ¡Muy recomendados!",
+    text: "¡Excelente servicio! Clima HVAC Service instaló mi aire el mismo día y todo quedó a la perfección. ¡Muy recomendados!",
     source: "Google",
   },
   {
     name: "Laura Sánchez",
     rating: 5,
-    text: "Tuve una emergencia con mi calefacción en pleno invierno y Clima Reus HVAC Services lo solucionó rápidamente. ¡Gracias por el excelente servicio!",
+    text: "Tuve una emergencia con mi calefacción en pleno invierno y Clima HVAC Service lo solucionó rápidamente. ¡Gracias por el excelente servicio!",
     source: "Google",
   },
   {

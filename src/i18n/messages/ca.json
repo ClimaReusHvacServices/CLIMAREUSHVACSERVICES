@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Clima Reus HVAC",
+    "appName": "Clima HVAC Service",
     "submit": "Enviar",
     "cancel": "Cancelar",
     "save": "Guardar",
@@ -373,7 +373,7 @@
       "subtitle": "Resolem els teus dubtes tècnics sobre les nostres instal·lacions d'aire condicionat i aerotèrmia perquè prenguis la millor decisió per a la teva llar.",
       "cta": "Parlar amb un expert",
       "q1": "Quant costa instal·lar un aire condicionat a Reus?",
-      "a1": "El preu d'una instal·lació d'aire condicionat a Reus depèn del tipus d'equip, la potència necessària i la complexitat de la instal·lació. A Clima Reus HVAC Services oferim pressupostos personalitzats per garantir la millor solució per al teu espai i necessitats.",
+      "a1": "El preu d'una instal·lació d'aire condicionat a Reus depèn del tipus d'equip, la potència necessària i la complexitat de la instal·lació. A Clima HVAC Service oferim pressupostos personalitzats per garantir la millor solució per al teu espai i necessitats.",
       "q2": "Cada quant temps s'ha de fer el manteniment de l'aire condicionat?",
       "a2": "Es recomana realitzar manteniment almenys una vegada a l'any per garantir el bon funcionament de l'equip. El manteniment ajuda a millorar l'eficiència energètica, allargar la vida útil del sistema i mantenir una bona qualitat de l'aire.",
       "q3": "En quines zones oferiu servei de climatització?",
@@ -384,7 +384,7 @@
     "testimonials": {
       "badge": "Testimonis",
       "title": "El que diuen els nostres clients",
-      "subtitle": "A Clima Reus HVAC Services ens enorgulleix la feina ben feta. Més de 4.000 instal·lacions realitzades a Reus, Tarragona i voltants són el millor reflex del nostre compromís amb la qualitat, la rapidesa i el tracte professional.",
+      "subtitle": "A Clima HVAC Service ens enorgulleix la feina ben feta. Més de 4.000 instal·lacions realitzades a Reus, Tarragona i voltants són el millor reflex del nostre compromís amb la qualitat, la rapidesa i el tracte professional.",
       "cta": "Veure tots els testimonis a Google",
       "source": "Testimoni de"
     },
@@ -398,7 +398,7 @@
       "h3day": "Diumenge", "h3time": "Tancat",
       "linkHome": "Inici", "linkOffers": "Ofertes", "linkServices": "Serveis", "linkContact": "Contacte",
       "terms": "Termes i Condicions",
-      "copyright": "© 2026 - Clima Reus HVAC Services"
+      "copyright": "© 2026 - Clima HVAC Service"
     },
     "contactSection": {
       "badge": "Troba'ns", "title": "Dades de contacte",

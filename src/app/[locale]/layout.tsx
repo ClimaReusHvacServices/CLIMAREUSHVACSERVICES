@@ -8,7 +8,7 @@ import { routing } from "@/i18n/routing";
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
-  title: "Clima Reus HVAC - Servicios de Aire Acondicionado",
+  title: "Clima HVAC Service - Servicios de Aire Acondicionado",
   description:
     "Plataforma profesional para venta e instalación de sistemas de aire acondicionado",
 };

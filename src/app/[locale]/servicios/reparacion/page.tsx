@@ -1,7 +1,7 @@
 import ServicePageLayout from "@/components/landing/ServicePageLayout";
 
 export const metadata = {
-  title: "Reparación Urgente de Aire Acondicionado en Reus | Clima Reus HVAC",
+  title: "Reparación Urgente de Aire Acondicionado en Reus | Clima HVAC Service",
   description: "Reparación urgente de aire acondicionado en Reus y Tarragona. Servicio técnico multimarca rápido y garantizado. Diagnóstico y presupuesto sin compromiso.",
 };
 
@@ -52,7 +52,7 @@ export default function ReparacionPage() {
         </li>
       </ul>
 
-      <h2>Compromiso Clima Reus: Sin sorpresas en la factura</h2>
+      <h2>Compromiso Clima HVAC Service: Sin sorpresas en la factura</h2>
       <p>
         Antes de cualquier reparación, realizamos un diagnóstico claro y te entregamos un
         presupuesto cerrado. Solo procedemos con tu autorización expresa. Sin letras pequeñas,

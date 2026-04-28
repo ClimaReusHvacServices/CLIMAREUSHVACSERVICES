@@ -7,7 +7,7 @@ const Navbar = dynamic(() => import("@/components/landing/Navbar"));
 const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton"));
 
 export const metadata = {
-  title: "Servicios de Climatización en Reus | Clima Reus HVAC",
+  title: "Servicios de Climatización en Reus | Clima HVAC Service",
   description: "Instalación, mantenimiento y reparación de aire acondicionado y aerotermia en Reus y Tarragona. Instaladores certificados RITE.",
 };
 

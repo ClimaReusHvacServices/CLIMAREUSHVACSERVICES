@@ -8,7 +8,7 @@ const Navbar = dynamic(() => import("@/components/landing/Navbar"));
 const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton"));
 
 export const metadata = {
-  title: "Ofertas y Catálogo de Equipos HVAC | Clima Reus",
+  title: "Ofertas y Catálogo de Equipos HVAC | Clima HVAC Service",
   description: "Descubre nuestras ofertas y catálogo completo de equipos de climatización con instalación incluida en Reus y Tarragona.",
 };
 
