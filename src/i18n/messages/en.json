@@ -315,5 +315,133 @@
     "successTitle": "Email sent",
     "successDesc": "If an account exists with that email, you will receive instructions shortly.",
     "comingSoon": "This feature will be available soon."
+  },
+  "landing": {
+    "navbar": {
+      "home": "Home", "offer": "Offers", "services": "Services", "contact": "Contact",
+      "login": "Sign In", "loginMobile": "Sign in",
+      "myAccount": "My account", "dashboard": "My dashboard", "profile": "My Profile",
+      "orders": "My orders", "logout": "Sign out",
+      "roleAdmin": "Administrator", "roleCliente": "Client", "roleTrabajador": "Technician"
+    },
+    "hero": {
+      "title": "Air conditioning installation and repair in Reus and Tarragona",
+      "subtitle": "Specialists in air conditioning installation, maintenance and repair",
+      "cta": "Request a free quote"
+    },
+    "products": {
+      "badge": "Equipment on offer",
+      "title": "Air Conditioning Equipment",
+      "subtitle": "The best equipment with basic installation included. Manage your comfort all year round.",
+      "emptyTitle": "New offers coming soon",
+      "emptyDesc": "Contact us for more information",
+      "ctaAll": "View all equipment →",
+      "cardDetail": "View details",
+      "cardInstall": "Includes basic installation",
+      "cardImageSoon": "Image coming soon",
+      "cardPromo": "Promotion",
+      "modalImage": "Product image",
+      "modalInstall": "Includes standard basic installation",
+      "modalSave": "You save {amount} €",
+      "modalCategory": "Category",
+      "modalManufacturer": "Manufacturer",
+      "modalWarranty": "Warranty",
+      "modalStock": "Availability",
+      "modalInStock": "In stock",
+      "modalOutStock": "Out of stock",
+      "modalWhatsApp": "Enquire via WhatsApp",
+      "modalRequest": "Request installation",
+      "modalNote": "* Standard basic installation included. Special installations subject to quote.",
+      "feat1": "Installation included", "feat2": "Technical support",
+      "feat3": "Official warranty", "feat4": "Service in Reus"
+    },
+    "why": {
+      "title": "Why choose us?",
+      "subtitle": "We are RITE-certified installers who treat your home as if it were our own. No waiting, no price surprises and with the best brands on the market.",
+      "b1title": "Local Experience", "b1text": "Over 30 years and 4,000 installations in Reus and Tarragona.",
+      "b2title": "Certified Quality", "b2text": "RITE installers and leading brands like Mitsubishi and Haier.",
+      "b3title": "Efficiency & Savings", "b3text": "A++ class technology for minimum energy consumption.",
+      "b4title": "Express Service", "b4text": "Free quote and installation in just 24 hours."
+    },
+    "brands": {
+      "title": "We work with the best",
+      "badge": "brands",
+      "subtitle": "We install air conditioning equipment from manufacturers recognised for their efficiency, durability and advanced technology, such as Haier, Mitsubishi Electric, Fanworld, Seico and others."
+    },
+    "faq": {
+      "titleLine1": "Frequently", "titleLine2": "Asked Questions (FAQ)",
+      "subtitle": "We answer your technical questions about our air conditioning and aerothermal installations so you can make the best decision for your home.",
+      "cta": "Talk to an expert",
+      "q1": "How much does it cost to install air conditioning in Reus?",
+      "a1": "The price of an air conditioning installation in Reus depends on the type of unit, the required power and the complexity of the installation. At Clima Reus HVAC Services we offer personalised quotes to ensure the best solution for your space and needs.",
+      "q2": "How often should air conditioning be serviced?",
+      "a2": "It is recommended to carry out maintenance at least once a year to ensure the proper functioning of the equipment. Maintenance helps improve energy efficiency, extend the life of the system and maintain good air quality.",
+      "q3": "In which areas do you offer air conditioning services?",
+      "a3": "We offer installation, maintenance and repair of air conditioning systems in Reus, Tarragona and nearby towns such as Cambrils, Salou and Vila-seca.",
+      "q4": "Do you repair all air conditioning brands?",
+      "a4": "Yes. Our technical service has experience in repairing different types of air conditioning systems and works with recognised brands such as Haier and Mitsubishi Electric, among others."
+    },
+    "testimonials": {
+      "badge": "Testimonials",
+      "title": "What our clients say",
+      "subtitle": "At Clima Reus HVAC Services we take pride in a job well done. Over 4,000 installations carried out in Reus, Tarragona and surrounding areas are the best reflection of our commitment to quality, speed and professional service.",
+      "cta": "View all testimonials on Google",
+      "source": "Review from"
+    },
+    "footer": {
+      "tagline": "Air conditioning installation and repair in Reus and Tarragona.",
+      "colAddress": "Address", "colContact": "Contact", "colHours": "Opening hours",
+      "mapsLink": "View on Google Maps →",
+      "telLabel": "Tel:", "waLabel": "WhatsApp:",
+      "h1day": "Mon - Fri", "h1time": "9:00 - 19:00",
+      "h2day": "Saturday", "h2time": "10:00 - 15:00",
+      "h3day": "Sunday", "h3time": "Closed",
+      "linkHome": "Home", "linkOffers": "Offers", "linkServices": "Services", "linkContact": "Contact",
+      "terms": "Terms and Conditions",
+      "copyright": "© 2026 - Clima Reus HVAC Services"
+    },
+    "contactSection": {
+      "badge": "Find us", "title": "Contact information",
+      "addressLabel": "Address", "addressValue": "Carrer de Balmes 29, 43204 Reus",
+      "phoneLabel": "Landline", "waLabel": "WhatsApp",
+      "mapsLink": "View on Google Maps →"
+    },
+    "ofertaPage": {
+      "badge": "Shop", "title": "Air Conditioning Equipment",
+      "subtitle": "The best equipment with basic installation included. Manage your comfort all year round.",
+      "statsOffer": "on offer", "statsTotal": "units available",
+      "statsInstall": "✓ Basic installation included in all",
+      "filterAll": "All",
+      "sortAsc": "Price: low to high", "sortDesc": "Price: high to low", "sortName": "Name A–Z",
+      "offersTitle": "Special offers",
+      "offersUnit": "unit", "offersUnits": "units", "offersPromo": "on promotion",
+      "catalogTitle": "Full catalogue",
+      "catalogUnit": "product", "catalogUnits": "products",
+      "catalogEmpty": "No products in this category"
+    },
+    "serviciosPage": {
+      "badge": "Our services", "title": "Professional Air Conditioning Solutions",
+      "subtitle": "Installation, maintenance and repair with RITE-certified guarantee. Over 30 years creating the perfect climate for your home or business.",
+      "ctaMore": "View more →",
+      "s1title": "Air conditioning installation in Reus and Tarragona",
+      "s1desc": "We carry out installation of split, multi-split and heat pump air conditioning systems tailored to the needs of each space. Our technical team manages the entire process: from the initial survey to commissioning.",
+      "s2title": "Aerothermal system installation",
+      "s2desc": "Aerothermal is one of the most efficient solutions for heating homes and producing domestic hot water. We install modern systems that provide heating, cooling and hot water with a single unit.",
+      "s3title": "Preventive air conditioning maintenance",
+      "s3desc": "Regular maintenance is essential to keep air conditioning equipment performing well and to prevent costly breakdowns. Our service includes a technical inspection, filter cleaning, refrigerant gas check and system verification.",
+      "s4title": "Air conditioning repair",
+      "s4desc": "If your air conditioning system is malfunctioning or not working properly, our technical team carries out quick diagnostics and professional repairs. We work with different types of HVAC systems and well-known brands."
+    },
+    "serviceForm": {
+      "title": "Send us a message",
+      "name": "Name", "namePlaceholder": "Your full name",
+      "phone": "Mobile", "email": "Email address",
+      "message": "Message", "messagePlaceholder": "How can we help you?",
+      "submit": "Send message",
+      "note": "Sending will open WhatsApp with your enquiry. No obligation.",
+      "sentTitle": "Message sent!",
+      "sentDesc": "We have opened WhatsApp for you. We will reply shortly.",
+      "sendAnother": "Send another message"
+    }
   }
 }

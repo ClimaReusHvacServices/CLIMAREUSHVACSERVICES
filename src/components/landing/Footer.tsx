@@ -1,22 +1,27 @@
+import { getTranslations } from "next-intl/server";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { Link } from "@/i18n/routing";
 
 const WA_NUMBER = "34607953886";
 
-const HOURS = [
-  { day: "Lun - Vie", time: "9:00 - 19:00" },
-  { day: "Sábado",    time: "10:00 - 15:00" },
-  { day: "Domingo",   time: "Cerrado" },
-];
+export default async function Footer() {
+  const t = await getTranslations("landing");
 
-const BOTTOM_LINKS = [
-  { href: "#",          label: "Inicio" },
-  { href: "#oferta",    label: "Ofertas" },
-  { href: "#servicios", label: "Servicios" },
-  { href: "#contact",   label: "Contacto" },
-];
+  const HOURS = [
+    { day: t("footer.h1day"), time: t("footer.h1time") },
+    { day: t("footer.h2day"), time: t("footer.h2time") },
+    { day: t("footer.h3day"), time: t("footer.h3time") },
+  ];
 
-export default function Footer() {
+  const BOTTOM_LINKS = [
+    { href: "#",          label: t("footer.linkHome") },
+    { href: "#oferta",    label: t("footer.linkOffers") },
+    { href: "#servicios", label: t("footer.linkServices") },
+    { href: "#contact",   label: t("footer.linkContact") },
+  ];
+
+  const closedLabel = t("footer.h3time");
+
   return (
     <footer className="bg-gray-50 border-t border-gray-200">
 
@@ -27,7 +32,7 @@ export default function Footer() {
         <div>
           <h3 className="text-base font-extrabold text-gray-900 mb-2">Clima Reus HVAC Services</h3>
           <p className="text-sm text-gray-500 leading-relaxed mb-5">
-            Instalación y reparación de aire acondicionado en Reus y Tarragona.
+            {t("footer.tagline")}
           </p>
           <div className="flex items-center gap-2.5">
             {/* Facebook */}
@@ -72,11 +77,11 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* 2 — Dirección */}
+        {/* 2 — Address */}
         <div>
           <h4 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
             <MapPin size={14} className="text-primary-500" />
-            Dirección
+            {t("footer.colAddress")}
           </h4>
           <p className="text-sm text-gray-500 leading-relaxed">
             Carrer de Balmes 29<br />
@@ -88,25 +93,25 @@ export default function Footer() {
             rel="noreferrer"
             className="inline-block mt-3 text-sm font-semibold text-primary-600 hover:text-primary-800 transition-colors hover:underline"
           >
-            Ver en Google Maps →
+            {t("footer.mapsLink")}
           </a>
         </div>
 
-        {/* 3 — Contacto */}
+        {/* 3 — Contact */}
         <div>
           <h4 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
             <Phone size={14} className="text-primary-500" />
-            Contacto
+            {t("footer.colContact")}
           </h4>
           <div className="space-y-2 text-sm text-gray-500">
             <p>
-              <span className="font-semibold text-gray-600">Tel:</span>{" "}
+              <span className="font-semibold text-gray-600">{t("footer.telLabel")}</span>{" "}
               <a href="tel:+34877234166" className="hover:text-primary-600 transition-colors">
                 (877) 23-41-66
               </a>
             </p>
             <p>
-              <span className="font-semibold text-gray-600">WhatsApp:</span>{" "}
+              <span className="font-semibold text-gray-600">{t("footer.waLabel")}</span>{" "}
               <a href={`https://wa.me/${WA_NUMBER}`} className="hover:text-primary-600 transition-colors">
                 +34 607 953 886
               </a>
@@ -123,17 +128,17 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* 4 — Horario */}
+        {/* 4 — Hours */}
         <div>
           <h4 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
             <Clock size={14} className="text-primary-500" />
-            Horario de apertura
+            {t("footer.colHours")}
           </h4>
           <div className="space-y-2">
             {HOURS.map(({ day, time }) => (
               <div key={day} className="flex justify-between text-sm">
                 <span className="text-gray-500">{day}</span>
-                <span className={`font-medium ${time === "Cerrado" ? "text-red-400" : "text-gray-700"}`}>
+                <span className={`font-medium ${time === closedLabel ? "text-red-400" : "text-gray-700"}`}>
                   {time}
                 </span>
               </div>
@@ -145,7 +150,7 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-gray-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-gray-400">&copy; 2026 - Clima Reus HVAC Services</p>
+          <p className="text-xs text-gray-400">{t("footer.copyright")}</p>
           <nav className="flex flex-wrap items-center justify-center gap-5">
             {BOTTOM_LINKS.map(({ href, label }) => (
               <a
@@ -163,7 +168,7 @@ export default function Footer() {
             href="/terms"
             className="text-[11px] font-semibold tracking-widest uppercase text-primary-600 hover:text-primary-800 hover:underline transition-colors"
           >
-            Términos y Condiciones
+            {t("footer.terms")}
           </Link>
         </div>
       </div>

@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 const BRANDS = [
   { name: "FanWorld",            logo: "/logos/fanworld.avif" },
@@ -18,6 +19,7 @@ const ITEM_W = LOGO_W + GAP_TOTAL;
 const LOOP_PX = BRANDS.length * ITEM_W;
 
 export default function BrandsSection() {
+  const t = useTranslations("landing");
   return (
     <section
       id="servicios"
@@ -27,17 +29,16 @@ export default function BrandsSection() {
       {/* Header */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center mb-14">
         <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight flex items-center justify-center gap-4">
-          <span>Trabajamos con las mejores</span>
+          <span>{t("brands.title")}</span>
           <span
             className="inline-flex items-center justify-center text-white px-5 py-1 rounded-full font-extrabold text-base -translate-y-0.5"
             style={{ background: "linear-gradient(to right, #008f65, #00b87a)" }}
           >
-            marcas
+            {t("brands.badge")}
           </span>
         </h2>
         <p className="mt-5 text-white/70 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-          Instalamos equipos de climatización de fabricantes reconocidos por su eficiencia,
-          durabilidad y tecnología avanzada, como Haier, Mitsubishi Electric, Fanworld, Seico y entre otros.
+          {t("brands.subtitle")}
         </p>
       </div>
 

@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { X, Wind, CheckCircle2, Star, Filter, ChevronDown, Flame, Tag } from "lucide-react";
 import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 
 export interface ProductItem {
   id: string;
@@ -33,7 +34,7 @@ function Stars({ n = 5 }: { n?: number }) {
 }
 
 // ── Modal ──────────────────────────────────────────────────────────────────────
-function ProductModal({ product, onClose }: { product: ProductItem; onClose: () => void }) {
+function ProductModal({ product, onClose, t }: { product: ProductItem; onClose: () => void; t: (k: string, v?: Record<string, string | number>) => string }) {
   const hasDiscount = product.discountPrice !== null && product.discountPrice < product.price;
   const displayPrice = hasDiscount ? product.discountPrice! : product.price;
   const savings = hasDiscount ? product.price - product.discountPrice! : 0;
@@ -42,6 +43,10 @@ function ProductModal({ product, onClose }: { product: ProductItem; onClose: () 
   const waMsg = encodeURIComponent(
     `Hola, me interesa el equipo "${product.name}"${product.manufacturer ? ` de ${product.manufacturer}` : ""}. ¿Podéis informarme?`
   );
+
+  const FEATS = [
+    t("products.feat1"), t("products.feat2"), t("products.feat3"), t("products.feat4"),
+  ];
 
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
@@ -53,7 +58,7 @@ function ProductModal({ product, onClose }: { product: ProductItem; onClose: () 
           <div className="min-w-0">
             {hasDiscount && (
               <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-widest uppercase text-white bg-red-500 px-2.5 py-0.5 rounded-full mb-2">
-                -{savingsPct}% OFERTA
+                -{savingsPct}% {t("products.cardPromo").toUpperCase()}
               </span>
             )}
             <h2 className="text-2xl font-bold text-gray-900 leading-tight">{product.name}</h2>
@@ -70,7 +75,7 @@ function ProductModal({ product, onClose }: { product: ProductItem; onClose: () 
           {/* Image */}
           <div className="h-60 sm:h-72 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex flex-col items-center justify-center gap-3 border border-gray-100">
             <Wind size={80} strokeWidth={0.7} className="text-gray-200" />
-            <p className="text-sm text-gray-300 font-medium">Imagen del producto</p>
+            <p className="text-sm text-gray-300 font-medium">{t("products.modalImage")}</p>
           </div>
 
           {/* Right */}
@@ -83,35 +88,39 @@ function ProductModal({ product, onClose }: { product: ProductItem; onClose: () 
                 <span className="text-4xl font-bold" style={{ color: "#d97706" }}>{fmt(displayPrice)} €</span>
                 {hasDiscount && <span className="text-gray-400 line-through text-xl">{fmt(product.price)} €</span>}
               </div>
-              {hasDiscount && <p className="text-primary-600 text-sm font-semibold mt-1">Ahorras {fmt(savings)} €</p>}
+              {hasDiscount && (
+                <p className="text-primary-600 text-sm font-semibold mt-1">
+                  {t("products.modalSave", { amount: fmt(savings) })}
+                </p>
+              )}
               <p className="text-primary-600 text-xs font-medium mt-2 flex items-center gap-1">
-                <CheckCircle2 size={12} /> Incluye instalación básica estándar
+                <CheckCircle2 size={12} /> {t("products.modalInstall")}
               </p>
             </div>
 
             {/* Specs */}
             <div className="text-sm divide-y divide-gray-100 border border-gray-100 rounded-xl overflow-hidden">
               <div className="flex justify-between px-3 py-2.5 bg-gray-50/50">
-                <span className="text-gray-500">Categoría</span>
+                <span className="text-gray-500">{t("products.modalCategory")}</span>
                 <span className="font-semibold text-gray-800">{product.category}</span>
               </div>
               {product.manufacturer && (
                 <div className="flex justify-between px-3 py-2.5">
-                  <span className="text-gray-500">Fabricante</span>
+                  <span className="text-gray-500">{t("products.modalManufacturer")}</span>
                   <span className="font-semibold text-gray-800">{product.manufacturer}</span>
                 </div>
               )}
               {product.warranty && (
                 <div className="flex justify-between px-3 py-2.5 bg-gray-50/50">
-                  <span className="text-gray-500">Garantía</span>
+                  <span className="text-gray-500">{t("products.modalWarranty")}</span>
                   <span className="font-semibold text-gray-800">{product.warranty}</span>
                 </div>
               )}
               <div className="flex justify-between px-3 py-2.5">
-                <span className="text-gray-500">Disponibilidad</span>
+                <span className="text-gray-500">{t("products.modalStock")}</span>
                 <span className={`font-semibold flex items-center gap-1 ${product.stock > 0 ? "text-primary-600" : "text-red-500"}`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${product.stock > 0 ? "bg-primary-500" : "bg-red-500"}`} />
-                  {product.stock > 0 ? "En stock" : "Sin stock"}
+                  {product.stock > 0 ? t("products.modalInStock") : t("products.modalOutStock")}
                 </span>
               </div>
             </div>
@@ -125,14 +134,14 @@ function ProductModal({ product, onClose }: { product: ProductItem; onClose: () 
                 <svg className="w-4 h-4" viewBox="0 0 448 512" fill="white">
                   <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-23.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
                 </svg>
-                Consultar por WhatsApp
+                {t("products.modalWhatsApp")}
               </a>
               <Link
                 href="/register"
                 className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white text-sm font-bold transition-all hover:opacity-90"
                 style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
               >
-                Solicitar instalación
+                {t("products.modalRequest")}
               </Link>
             </div>
           </div>
@@ -147,7 +156,7 @@ function ProductModal({ product, onClose }: { product: ProductItem; onClose: () 
 
         <div className="px-6 pb-6">
           <div className="flex flex-wrap gap-2">
-            {["Instalación incluida", "Soporte técnico", "Garantía oficial", "Servicio en Reus"].map(f => (
+            {FEATS.map(f => (
               <span key={f} className="inline-flex items-center gap-1 text-xs font-medium text-primary-700 bg-primary-50 px-2.5 py-1 rounded-full">
                 <Star size={10} className="shrink-0" />{f}
               </span>
@@ -156,7 +165,7 @@ function ProductModal({ product, onClose }: { product: ProductItem; onClose: () 
         </div>
 
         <div className="px-6 pb-5">
-          <p className="text-[11px] text-gray-400 text-center">* Instalación básica estándar incluida. Instalaciones especiales bajo presupuesto.</p>
+          <p className="text-[11px] text-gray-400 text-center">{t("products.modalNote")}</p>
         </div>
       </div>
     </div>
@@ -164,7 +173,7 @@ function ProductModal({ product, onClose }: { product: ProductItem; onClose: () 
 }
 
 // ── Product Card ───────────────────────────────────────────────────────────────
-function ProductCard({ product, onClick, highlight = false }: { product: ProductItem; onClick: () => void; highlight?: boolean }) {
+function ProductCard({ product, onClick, highlight = false, t }: { product: ProductItem; onClick: () => void; highlight?: boolean; t: (k: string) => string }) {
   const hasDiscount = product.discountPrice !== null && product.discountPrice < product.price;
   const displayPrice = hasDiscount ? product.discountPrice! : product.price;
   const savingsPct = hasDiscount ? Math.round(((product.price - product.discountPrice!) / product.price) * 100) : 0;
@@ -176,7 +185,6 @@ function ProductCard({ product, onClick, highlight = false }: { product: Product
         highlight ? "border-amber-200 shadow-md" : "border-gray-100 shadow-sm"
       }`}
     >
-      {/* Badges */}
       <div className="px-4 pt-4 h-8 flex items-center gap-2">
         {hasDiscount && (
           <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-widest uppercase text-white bg-red-500 px-2.5 py-0.5 rounded-full">
@@ -184,19 +192,17 @@ function ProductCard({ product, onClick, highlight = false }: { product: Product
           </span>
         )}
         {product.stock === 0 && (
-          <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2.5 py-0.5 rounded-full">Agotado</span>
+          <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2.5 py-0.5 rounded-full">{t("products.modalOutStock")}</span>
         )}
       </div>
 
-      {/* Image */}
       <div className={`mx-4 h-44 rounded-xl flex flex-col items-center justify-center gap-2 border ${
         highlight ? "bg-gradient-to-br from-amber-50 to-orange-50 border-amber-100/60" : "bg-gradient-to-br from-gray-50 to-gray-100 border-gray-100/60"
       }`}>
         <Wind size={52} strokeWidth={0.8} className={highlight ? "text-amber-200" : "text-gray-200"} />
-        <p className="text-[11px] text-gray-300 font-medium">Imagen próximamente</p>
+        <p className="text-[11px] text-gray-300 font-medium">{t("products.cardImageSoon")}</p>
       </div>
 
-      {/* Info */}
       <div className="px-5 pt-4 pb-5 flex flex-col flex-1">
         <Stars n={5} />
         <h3 className="font-bold text-gray-900 text-base leading-tight mt-2 group-hover:text-primary-700 transition-colors line-clamp-2">
@@ -211,7 +217,7 @@ function ProductCard({ product, onClick, highlight = false }: { product: Product
             {hasDiscount && <span className="text-gray-400 line-through text-sm">{fmt(product.price)} €</span>}
           </div>
           <p className="text-primary-600 text-xs font-semibold mt-1 flex items-center gap-1">
-            <CheckCircle2 size={11} /> Instalación incluida
+            <CheckCircle2 size={11} /> {t("products.feat1")}
           </p>
         </div>
 
@@ -219,7 +225,7 @@ function ProductCard({ product, onClick, highlight = false }: { product: Product
           className="mt-4 w-full py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
           style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
         >
-          Ver detalles
+          {t("products.cardDetail")}
         </button>
       </div>
     </article>
@@ -228,20 +234,20 @@ function ProductCard({ product, onClick, highlight = false }: { product: Product
 
 // ── Main page client ───────────────────────────────────────────────────────────
 export default function OfertaPageClient({ products }: { products: ProductItem[] }) {
+  const t = useTranslations("landing");
   const [selected, setSelected] = useState<ProductItem | null>(null);
-  const [categoryFilter, setCategoryFilter] = useState("Todos");
+  const [categoryFilter, setCategoryFilter] = useState("__all__");
   const [sort, setSort] = useState<"precio_asc" | "precio_desc" | "nombre">("precio_asc");
 
   const categories = useMemo(() => {
-    const cats = Array.from(new Set(products.map(p => p.category)));
-    return ["Todos", ...cats];
+    return Array.from(new Set(products.map(p => p.category)));
   }, [products]);
 
   const ofertas = products.filter(p => p.discountPrice !== null && p.discountPrice < p.price);
   const catalogo = products.filter(p => !(p.discountPrice !== null && p.discountPrice < p.price));
 
   function applyFilters(list: ProductItem[]) {
-    let out = categoryFilter === "Todos" ? list : list.filter(p => p.category === categoryFilter);
+    let out = categoryFilter === "__all__" ? list : list.filter(p => p.category === categoryFilter);
     return out.sort((a, b) => {
       const pa = a.discountPrice ?? a.price;
       const pb = b.discountPrice ?? b.price;
@@ -259,17 +265,23 @@ export default function OfertaPageClient({ products }: { products: ProductItem[]
 
       {/* Filters bar */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-10">
-        {/* Category pills */}
         <div className="flex flex-wrap gap-2 items-center">
           <Filter size={14} className="text-gray-400 shrink-0" />
+          <button
+            onClick={() => setCategoryFilter("__all__")}
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+              categoryFilter === "__all__" ? "text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+            style={categoryFilter === "__all__" ? { background: "linear-gradient(to right, #008f65, #1d7291)" } : {}}
+          >
+            {t("ofertaPage.filterAll")}
+          </button>
           {categories.map(cat => (
             <button
               key={cat}
               onClick={() => setCategoryFilter(cat)}
               className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
-                categoryFilter === cat
-                  ? "text-white shadow-sm"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                categoryFilter === cat ? "text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
               style={categoryFilter === cat ? { background: "linear-gradient(to right, #008f65, #1d7291)" } : {}}
             >
@@ -278,7 +290,6 @@ export default function OfertaPageClient({ products }: { products: ProductItem[]
           ))}
         </div>
 
-        {/* Sort */}
         <div className="flex items-center gap-2">
           <ChevronDown size={14} className="text-gray-400" />
           <select
@@ -286,9 +297,9 @@ export default function OfertaPageClient({ products }: { products: ProductItem[]
             onChange={e => setSort(e.target.value as typeof sort)}
             className="text-xs font-medium text-gray-600 bg-white border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-300"
           >
-            <option value="precio_asc">Precio: menor a mayor</option>
-            <option value="precio_desc">Precio: mayor a menor</option>
-            <option value="nombre">Nombre A–Z</option>
+            <option value="precio_asc">{t("ofertaPage.sortAsc")}</option>
+            <option value="precio_desc">{t("ofertaPage.sortDesc")}</option>
+            <option value="nombre">{t("ofertaPage.sortName")}</option>
           </select>
         </div>
       </div>
@@ -299,13 +310,15 @@ export default function OfertaPageClient({ products }: { products: ProductItem[]
           <div className="flex items-center gap-2 mb-6">
             <span className="inline-flex items-center gap-1.5 text-sm font-extrabold text-white px-4 py-1.5 rounded-full"
               style={{ background: "linear-gradient(to right, #dc2626, #f97316)" }}>
-              <Flame size={14} /> Ofertas especiales
+              <Flame size={14} /> {t("ofertaPage.offersTitle")}
             </span>
-            <span className="text-sm text-gray-500">{filteredOfertas.length} equipo{filteredOfertas.length !== 1 ? "s" : ""} en promoción</span>
+            <span className="text-sm text-gray-500">
+              {filteredOfertas.length} {filteredOfertas.length !== 1 ? t("ofertaPage.offersUnits") : t("ofertaPage.offersUnit")} {t("ofertaPage.offersPromo")}
+            </span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {filteredOfertas.map(p => (
-              <ProductCard key={p.id} product={p} onClick={() => setSelected(p)} highlight />
+              <ProductCard key={p.id} product={p} onClick={() => setSelected(p)} highlight t={t as any} />
             ))}
           </div>
         </div>
@@ -316,13 +329,15 @@ export default function OfertaPageClient({ products }: { products: ProductItem[]
         <div>
           <div className="flex items-center gap-2 mb-6">
             <span className="inline-flex items-center gap-1.5 text-sm font-extrabold text-gray-700 px-4 py-1.5 rounded-full bg-gray-100">
-              <Tag size={14} /> Catálogo completo
+              <Tag size={14} /> {t("ofertaPage.catalogTitle")}
             </span>
-            <span className="text-sm text-gray-500">{filteredCatalogo.length} producto{filteredCatalogo.length !== 1 ? "s" : ""}</span>
+            <span className="text-sm text-gray-500">
+              {filteredCatalogo.length} {filteredCatalogo.length !== 1 ? t("ofertaPage.catalogUnits") : t("ofertaPage.catalogUnit")}
+            </span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {filteredCatalogo.map(p => (
-              <ProductCard key={p.id} product={p} onClick={() => setSelected(p)} />
+              <ProductCard key={p.id} product={p} onClick={() => setSelected(p)} t={t as any} />
             ))}
           </div>
         </div>
@@ -331,11 +346,11 @@ export default function OfertaPageClient({ products }: { products: ProductItem[]
       {filteredOfertas.length === 0 && filteredCatalogo.length === 0 && (
         <div className="text-center py-24">
           <Wind size={56} strokeWidth={0.8} className="mx-auto mb-4 text-gray-200" />
-          <p className="text-gray-400 text-lg font-medium">No hay productos en esta categoría</p>
+          <p className="text-gray-400 text-lg font-medium">{t("ofertaPage.catalogEmpty")}</p>
         </div>
       )}
 
-      {selected && <ProductModal product={selected} onClose={() => setSelected(null)} />}
+      {selected && <ProductModal product={selected} onClose={() => setSelected(null)} t={t as any} />}
     </div>
   );
 }

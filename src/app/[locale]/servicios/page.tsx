@@ -1,54 +1,56 @@
 import dynamic from "next/dynamic";
 import { Link } from "@/i18n/routing";
 import Footer from "@/components/landing/Footer";
+import { getTranslations } from "next-intl/server";
 
 const Navbar = dynamic(() => import("@/components/landing/Navbar"));
 const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton"));
-
-const SERVICES = [
-  {
-    href: "/servicios/instalacion",
-    image: "/Imagenes/HVAC_exterior_negro.jpg",
-    title: "Instalación de aire acondicionado en Reus y Tarragona",
-    description: "Realizamos instalación de aire acondicionado tipo split, multisplit y bombas de calor adaptadas a las necesidades de cada espacio. Nuestro equipo técnico gestiona todo el proceso: desde la visita técnica hasta la puesta en marcha.",
-  },
-  {
-    href: "/servicios/aerotermia",
-    image: "/Imagenes/aerotermia_techo_aire_libre.jpg",
-    title: "Instalación de sistemas de aerotermia",
-    description: "La aerotermia es una de las soluciones más eficientes para climatizar viviendas y producir agua caliente sanitaria. Instalamos sistemas modernos que permiten calefacción, refrigeración y agua caliente con un solo equipo.",
-  },
-  {
-    href: "/servicios/mantenimiento",
-    image: "/Imagenes/Interior_confortable.jpg",
-    title: "Mantenimiento preventivo de aire acondicionado",
-    description: "El mantenimiento regular es imprescindible para mantener el rendimiento de los equipos de climatización y prevenir averías costosas. Nuestro servicio incluye revisión técnica, limpieza de filtros, control del gas refrigerante y verificación del sistema.",
-  },
-  {
-    href: "/servicios/reparacion",
-    image: "/Imagenes/Exterior_edificio.jpg",
-    title: "Reparación de aire acondicionado",
-    description: "Si tu sistema de climatización presenta fallos o no funciona correctamente, nuestro equipo técnico realiza diagnósticos rápidos y reparaciones profesionales. Trabajamos con diferentes tipos de sistemas HVAC y marcas reconocidas.",
-  },
-];
 
 export const metadata = {
   title: "Servicios de Climatización en Reus | Clima Reus HVAC",
   description: "Instalación, mantenimiento y reparación de aire acondicionado y aerotermia en Reus y Tarragona. Instaladores certificados RITE.",
 };
 
-export default function ServiciosPage() {
+export default async function ServiciosPage() {
+  const t = await getTranslations("landing");
+
+  const SERVICES = [
+    {
+      href: "/servicios/instalacion",
+      image: "/Imagenes/HVAC_exterior_negro.jpg",
+      title: t("serviciosPage.s1title"),
+      description: t("serviciosPage.s1desc"),
+    },
+    {
+      href: "/servicios/aerotermia",
+      image: "/Imagenes/aerotermia_techo_aire_libre.jpg",
+      title: t("serviciosPage.s2title"),
+      description: t("serviciosPage.s2desc"),
+    },
+    {
+      href: "/servicios/mantenimiento",
+      image: "/Imagenes/Interior_confortable.jpg",
+      title: t("serviciosPage.s3title"),
+      description: t("serviciosPage.s3desc"),
+    },
+    {
+      href: "/servicios/reparacion",
+      image: "/Imagenes/Exterior_edificio.jpg",
+      title: t("serviciosPage.s4title"),
+      description: t("serviciosPage.s4desc"),
+    },
+  ];
+
   return (
     <main>
       <Navbar />
 
       {/* Hero */}
       <div className="pt-28 pb-16 px-4 text-center" style={{ background: "linear-gradient(160deg, #0d3c4d 0%, #1d7291 100%)" }}>
-        <span className="text-xs font-bold tracking-widest uppercase text-accent-300 mb-2 block">Nuestros servicios</span>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white">Soluciones de Climatización Profesional</h1>
+        <span className="text-xs font-bold tracking-widest uppercase text-accent-300 mb-2 block">{t("serviciosPage.badge")}</span>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-white">{t("serviciosPage.title")}</h1>
         <p className="mt-3 text-white/70 text-base max-w-xl mx-auto">
-          Instalación, mantenimiento y reparación con garantía certificada RITE.
-          Más de 30 años creando el clima perfecto para tu hogar o negocio.
+          {t("serviciosPage.subtitle")}
         </p>
       </div>
 
@@ -72,7 +74,7 @@ export default function ServiciosPage() {
                 {s.description}
               </p>
               <span className="mt-4 text-sm font-semibold text-primary-600 group-hover:text-primary-800 transition-colors">
-                Ver más →
+                {t("serviciosPage.ctaMore")}
               </span>
             </div>
           </Link>

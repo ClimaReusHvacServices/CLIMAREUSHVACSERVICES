@@ -1,17 +1,10 @@
 "use client";
 import { Link } from "@/i18n/routing";
-import { Phone, Menu, X, LogIn, Globe, ChevronDown } from "lucide-react";
+import { Phone, Menu, X, LogIn, Globe, ChevronDown, LogOut, User, LayoutDashboard } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { useSession, signOut } from "next-auth/react";
 
-const NAV_LINKS = [
-  { href: "/",          label: "Inicio" },
-  { href: "/#oferta",   label: "Oferta" },
-  { href: "/servicios", label: "Servicios" },
-  { href: "/#contact",  label: "Contacto" },
-] as const;
-
-// Add new locales here — they'll appear automatically everywhere
 const LOCALES = [
   { code: "es", label: "ES", name: "Español" },
   { code: "en", label: "EN", name: "English" },
@@ -25,7 +18,13 @@ function switchLocale(code: string) {
   window.location.href = `/${code}${after ? `/${after}` : ""}`;
 }
 
-// ── Language picker (used in top-right bar & mobile dropdown) ─────────────────
+function getInitials(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  return name.slice(0, 2).toUpperCase();
+}
+
+// ── Language picker ───────────────────────────────────────────────────────────
 function LangPicker() {
   const locale = useLocale();
   const [open, setOpen] = useState(false);
@@ -74,9 +73,13 @@ function LangPicker() {
 
 // ── Main Navbar ───────────────────────────────────────────────────────────────
 export default function Navbar() {
+  const t = useTranslations("landing");
+  const { data: session, status } = useSession();
   const [open, setOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const locale = useLocale();
   const mobileRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const h = (e: MouseEvent) => {
@@ -85,6 +88,34 @@ export default function Navbar() {
     document.addEventListener("mousedown", h);
     return () => document.removeEventListener("mousedown", h);
   }, []);
+
+  useEffect(() => {
+    const h = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setUserMenuOpen(false);
+    };
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  }, []);
+
+  const isLoggedIn = status === "authenticated";
+  const user = session?.user;
+  const role = (user as any)?.role ?? "";
+  const dashboardHref = role === "admin" ? "/admin" : role === "trabajador" ? "/worker" : "/dashboard";
+  const roleText =
+    role === "admin" ? t("navbar.roleAdmin") :
+    role === "cliente" ? t("navbar.roleCliente") :
+    role === "trabajador" ? t("navbar.roleTrabajador") : role;
+  const u = user as any;
+  const displayName = u ? (`${u.firstName ?? ""} ${u.lastName ?? ""}`).trim() || u.email || "" : "";
+  const firstName = displayName.split(" ")[0];
+  const initials = displayName ? getInitials(displayName) : "?";
+
+  const NAV_LINKS = [
+    { href: "/",          label: t("navbar.home") },
+    { href: "/#oferta",   label: t("navbar.offer") },
+    { href: "/servicios", label: t("navbar.services") },
+    { href: "/#contact",  label: t("navbar.contact") },
+  ] as const;
 
   return (
     <>
@@ -110,7 +141,7 @@ export default function Navbar() {
           <div className="hidden sm:flex items-center gap-4">
             {NAV_LINKS.map(({ href, label }) => (
               <Link
-                key={label}
+                key={href}
                 href={href as any}
                 className="text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors first:font-semibold first:text-primary-800"
               >
@@ -139,7 +170,7 @@ export default function Navbar() {
           <div className="sm:hidden mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 overflow-hidden">
             {NAV_LINKS.map(({ href, label }) => (
               <Link
-                key={label}
+                key={href}
                 href={href as any}
                 onClick={() => setOpen(false)}
                 className="flex items-center px-5 py-3.5 text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 transition-colors border-b border-gray-100/80"
@@ -168,33 +199,125 @@ export default function Navbar() {
               </div>
             </div>
 
-            <Link
-              href="/login"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-2 px-5 py-3.5 text-sm font-semibold text-primary-700 hover:bg-primary-50 transition-colors"
-            >
-              <LogIn size={15} />
-              Iniciar sesión
-            </Link>
+            {isLoggedIn && user ? (
+              <>
+                <div className="px-5 py-3 bg-primary-50 border-b border-primary-100/80">
+                  <p className="text-sm font-semibold text-gray-800 truncate">{displayName}</p>
+                  <span className="inline-block mt-0.5 text-xs font-medium text-primary-700 bg-primary-100 px-2 py-0.5 rounded-full">
+                    {roleText}
+                  </span>
+                </div>
+                <Link
+                  href={dashboardHref as any}
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 px-5 py-3.5 text-sm font-semibold text-primary-700 hover:bg-primary-50 transition-colors border-b border-gray-100/80"
+                >
+                  <LayoutDashboard size={15} />
+                  {t("navbar.dashboard")}
+                </Link>
+                {role === "cliente" && (
+                  <Link
+                    href="/profile"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-2 px-5 py-3.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors border-b border-gray-100/80"
+                  >
+                    <User size={15} />
+                    {t("navbar.profile")}
+                  </Link>
+                )}
+                <button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="w-full flex items-center gap-2 px-5 py-3.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors"
+                >
+                  <LogOut size={15} />
+                  {t("navbar.logout")}
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 px-5 py-3.5 text-sm font-semibold text-primary-700 hover:bg-primary-50 transition-colors"
+              >
+                <LogIn size={15} />
+                {t("navbar.loginMobile")}
+              </Link>
+            )}
           </div>
         )}
       </div>
 
-      {/* ── Top-right: Lang picker + Acceder (desktop only) ────────────── */}
+      {/* ── Top-right: Lang picker + Acceder/UserMenu (desktop only) ──── */}
       <div className="fixed right-4 sm:right-6 top-4 sm:top-5 z-50 hidden sm:flex items-center gap-2">
         {/* Language pill */}
         <div className="bg-white/80 backdrop-blur-xl rounded-full shadow-lg border border-white/40">
           <LangPicker />
         </div>
 
-        {/* Acceder pill */}
-        <Link
-          href="/login"
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-bold text-primary-700 bg-white/80 backdrop-blur-xl shadow-lg border border-primary-200 hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all"
-        >
-          <LogIn size={12} />
-          Acceder
-        </Link>
+        {/* Login pill or user menu */}
+        {isLoggedIn && user ? (
+          <div ref={userMenuRef} className="relative">
+            <button
+              onClick={() => setUserMenuOpen((v) => !v)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-primary-700 bg-white/80 backdrop-blur-xl shadow-lg border border-primary-200 hover:bg-primary-50 transition-all"
+            >
+              <div
+                className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0"
+                style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
+              >
+                {initials}
+              </div>
+              <span className="max-w-[110px] truncate">{firstName}</span>
+              <ChevronDown size={11} className={`transition-transform duration-200 ${userMenuOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            {userMenuOpen && (
+              <div className="absolute right-0 top-[calc(100%+8px)] w-52 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-[70]">
+                <div className="px-4 py-3 bg-primary-50 border-b border-primary-100">
+                  <p className="font-semibold text-gray-900 text-sm truncate">{displayName}</p>
+                  <span className="inline-block mt-0.5 text-xs font-medium text-primary-700 bg-primary-100 px-2 py-0.5 rounded-full">
+                    {roleText}
+                  </span>
+                </div>
+                <div className="p-1">
+                  <Link
+                    href={dashboardHref as any}
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 rounded-xl transition-colors"
+                  >
+                    <LayoutDashboard size={14} className="text-gray-400" />
+                    {t("navbar.dashboard")}
+                  </Link>
+                  {role === "cliente" && (
+                    <Link
+                      href="/profile"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 rounded-xl transition-colors"
+                    >
+                      <User size={14} className="text-gray-400" />
+                      {t("navbar.profile")}
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                    className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                  >
+                    <LogOut size={14} />
+                    {t("navbar.logout")}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <Link
+            href="/login"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-bold text-primary-700 bg-white/80 backdrop-blur-xl shadow-lg border border-primary-200 hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all"
+          >
+            <LogIn size={12} />
+            {t("navbar.login")}
+          </Link>
+        )}
       </div>
     </>
   );

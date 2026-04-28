@@ -2,6 +2,7 @@ import { auth } from "@/auth/config";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import dynamic from "next/dynamic";
+import { getTranslations } from "next-intl/server";
 import { ProductsSection } from "@/components/landing/ProductsSection";
 import BrandsSection from "@/components/landing/BrandsSection";
 import WhyChooseUs from "@/components/landing/WhyChooseUs";
@@ -38,15 +39,17 @@ async function getActiveProducts() {
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const session = await auth();
+  const [session, t, products] = await Promise.all([
+    auth(),
+    getTranslations("landing"),
+    getActiveProducts(),
+  ]);
 
   if (session) {
     if (session.user?.role === "admin")      redirect(`/${locale}/admin`);
     if (session.user?.role === "cliente")    redirect(`/${locale}/dashboard`);
     if (session.user?.role === "trabajador") redirect(`/${locale}/worker`);
   }
-
-  const products = await getActiveProducts();
 
   return (
     <main>
@@ -74,8 +77,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <section id="contact" className="bg-gray-50 py-16 sm:py-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="mb-10">
-            <span className="text-xs font-bold tracking-widest uppercase text-primary-500">Encuéntranos</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mt-1">Datos de contacto</h2>
+            <span className="text-xs font-bold tracking-widest uppercase text-primary-500">{t("contactSection.badge")}</span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mt-1">{t("contactSection.title")}</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
             {/* Info */}
@@ -87,8 +90,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   </svg>
                 </span>
                 <div>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Dirección</p>
-                  <p className="text-sm text-gray-700">Carrer de Balmes 29, 43204 Reus</p>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{t("contactSection.addressLabel")}</p>
+                  <p className="text-sm text-gray-700">{t("contactSection.addressValue")}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -98,7 +101,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   </svg>
                 </span>
                 <div>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Teléfono fijo</p>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{t("contactSection.phoneLabel")}</p>
                   <a href="tel:+34877234166" className="text-sm font-semibold text-primary-700 hover:underline">877 234 166</a>
                 </div>
               </div>
@@ -109,7 +112,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   </svg>
                 </span>
                 <div>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">WhatsApp</p>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{t("contactSection.waLabel")}</p>
                   <a href="https://wa.me/34607953886" className="text-sm font-semibold text-primary-700 hover:underline">607 953 886</a>
                 </div>
               </div>

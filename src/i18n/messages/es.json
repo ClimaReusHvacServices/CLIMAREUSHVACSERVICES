@@ -315,5 +315,133 @@
     "successTitle": "Correo enviado",
     "successDesc": "Si existe una cuenta con ese correo, recibirás instrucciones en breve.",
     "comingSoon": "Esta función estará disponible próximamente."
+  },
+  "landing": {
+    "navbar": {
+      "home": "Inicio", "offer": "Oferta", "services": "Servicios", "contact": "Contacto",
+      "login": "Acceder", "loginMobile": "Iniciar sesión",
+      "myAccount": "Mi cuenta", "dashboard": "Mi panel", "profile": "Mi Perfil",
+      "orders": "Mis pedidos", "logout": "Cerrar sesión",
+      "roleAdmin": "Administrador", "roleCliente": "Cliente", "roleTrabajador": "Técnico"
+    },
+    "hero": {
+      "title": "Instalación y reparación de aire acondicionado en Reus y Tarragona",
+      "subtitle": "Especialistas en instalación, mantenimiento y reparación de aire acondicionado",
+      "cta": "Solicitar presupuesto gratis"
+    },
+    "products": {
+      "badge": "Equipos en oferta",
+      "title": "Equipos de Climatización",
+      "subtitle": "Los mejores equipos con instalación básica incluida. Gestiona tu confort todo el año.",
+      "emptyTitle": "Próximamente nuevas ofertas",
+      "emptyDesc": "Contacta con nosotros para más información",
+      "ctaAll": "Ver todos los equipos →",
+      "cardDetail": "Ver detalles",
+      "cardInstall": "Incluye instalación básica",
+      "cardImageSoon": "Imagen próximamente",
+      "cardPromo": "Promoción",
+      "modalImage": "Imagen del producto",
+      "modalInstall": "Incluye instalación básica estándar",
+      "modalSave": "Ahorras {amount} €",
+      "modalCategory": "Categoría",
+      "modalManufacturer": "Fabricante",
+      "modalWarranty": "Garantía",
+      "modalStock": "Disponibilidad",
+      "modalInStock": "En stock",
+      "modalOutStock": "Sin stock",
+      "modalWhatsApp": "Consultar por WhatsApp",
+      "modalRequest": "Solicitar instalación",
+      "modalNote": "* Instalación básica estándar incluida. Instalaciones especiales bajo presupuesto.",
+      "feat1": "Instalación incluida", "feat2": "Soporte técnico",
+      "feat3": "Garantía oficial", "feat4": "Servicio en Reus"
+    },
+    "why": {
+      "title": "¿Por qué elegirnos?",
+      "subtitle": "Somos instaladores certificados RITE que cuidan tu hogar como si fuera el nuestro. Sin esperas, sin sorpresas en el precio y con las mejores marcas del mercado.",
+      "b1title": "Experiencia Local", "b1text": "Más de 30 años y 4.000 instalaciones en Reus y Tarragona.",
+      "b2title": "Calidad Certificada", "b2text": "Instaladores RITE y marcas líderes como Mitsubishi y Haier.",
+      "b3title": "Eficiencia y Ahorro", "b3text": "Tecnología clase A++ para el mínimo consumo energético.",
+      "b4title": "Servicio Express", "b4text": "Presupuesto gratis e instalación en solo 24 horas."
+    },
+    "brands": {
+      "title": "Trabajamos con las mejores",
+      "badge": "marcas",
+      "subtitle": "Instalamos equipos de climatización de fabricantes reconocidos por su eficiencia, durabilidad y tecnología avanzada, como Haier, Mitsubishi Electric, Fanworld, Seico y entre otros."
+    },
+    "faq": {
+      "titleLine1": "Preguntas", "titleLine2": "Frecuentes (FAQ)",
+      "subtitle": "Despejamos tus dudas técnicas sobre nuestras instalaciones de aire acondicionado y aerotermia para que tomes la mejor decisión para tu hogar.",
+      "cta": "Hablar con un experto",
+      "q1": "¿Cuánto cuesta instalar un aire acondicionado en Reus?",
+      "a1": "El precio de una instalación de aire acondicionado en Reus depende del tipo de equipo, la potencia necesaria y la complejidad de la instalación. En Clima Reus HVAC Services ofrecemos presupuestos personalizados para garantizar la mejor solución según tu espacio y necesidades.",
+      "q2": "¿Cada cuánto tiempo se debe hacer mantenimiento al aire acondicionado?",
+      "a2": "Se recomienda realizar mantenimiento al menos una vez al año para garantizar el buen funcionamiento del equipo. El mantenimiento ayuda a mejorar la eficiencia energética, prolongar la vida útil del sistema y mantener una buena calidad del aire.",
+      "q3": "¿En qué zonas ofrecen servicio de climatización?",
+      "a3": "Ofrecemos instalación, mantenimiento y reparación de sistemas de climatización en Reus, Tarragona y localidades cercanas como Cambrils, Salou y Vila-seca.",
+      "q4": "¿Reparan todas las marcas de aire acondicionado?",
+      "a4": "Sí. Nuestro servicio técnico tiene experiencia en la reparación de diferentes sistemas de climatización y trabaja con marcas reconocidas como Haier y Mitsubishi Electric, entre otras."
+    },
+    "testimonials": {
+      "badge": "Testimonios",
+      "title": "Lo que dicen nuestros clientes",
+      "subtitle": "En Clima Reus HVAC Services nos enorgullece el trabajo bien hecho. Más de 4.000 instalaciones realizadas en Reus, Tarragona y alrededores son el mejor reflejo de nuestro compromiso con la calidad, la rapidez y el trato profesional.",
+      "cta": "Ver todos los testimonios en Google",
+      "source": "Testimonio de"
+    },
+    "footer": {
+      "tagline": "Instalación y reparación de aire acondicionado en Reus y Tarragona.",
+      "colAddress": "Dirección", "colContact": "Contacto", "colHours": "Horario de apertura",
+      "mapsLink": "Ver en Google Maps →",
+      "telLabel": "Tel:", "waLabel": "WhatsApp:",
+      "h1day": "Lun - Vie", "h1time": "9:00 - 19:00",
+      "h2day": "Sábado", "h2time": "10:00 - 15:00",
+      "h3day": "Domingo", "h3time": "Cerrado",
+      "linkHome": "Inicio", "linkOffers": "Ofertas", "linkServices": "Servicios", "linkContact": "Contacto",
+      "terms": "Términos y Condiciones",
+      "copyright": "© 2026 - Clima Reus HVAC Services"
+    },
+    "contactSection": {
+      "badge": "Encuéntranos", "title": "Datos de contacto",
+      "addressLabel": "Dirección", "addressValue": "Carrer de Balmes 29, 43204 Reus",
+      "phoneLabel": "Teléfono fijo", "waLabel": "WhatsApp",
+      "mapsLink": "Ver en Google Maps →"
+    },
+    "ofertaPage": {
+      "badge": "Tienda", "title": "Equipos de Climatización",
+      "subtitle": "Los mejores equipos con instalación básica incluida. Gestiona tu confort todo el año.",
+      "statsOffer": "en oferta", "statsTotal": "equipos disponibles",
+      "statsInstall": "✓ Instalación básica incluida en todos",
+      "filterAll": "Todos",
+      "sortAsc": "Precio: menor a mayor", "sortDesc": "Precio: mayor a menor", "sortName": "Nombre A–Z",
+      "offersTitle": "Ofertas especiales",
+      "offersUnit": "equipo", "offersUnits": "equipos", "offersPromo": "en promoción",
+      "catalogTitle": "Catálogo completo",
+      "catalogUnit": "producto", "catalogUnits": "productos",
+      "catalogEmpty": "No hay productos en esta categoría"
+    },
+    "serviciosPage": {
+      "badge": "Nuestros servicios", "title": "Soluciones de Climatización Profesional",
+      "subtitle": "Instalación, mantenimiento y reparación con garantía certificada RITE. Más de 30 años creando el clima perfecto para tu hogar o negocio.",
+      "ctaMore": "Ver más →",
+      "s1title": "Instalación de aire acondicionado en Reus y Tarragona",
+      "s1desc": "Realizamos instalación de aire acondicionado tipo split, multisplit y bombas de calor adaptadas a las necesidades de cada espacio. Nuestro equipo técnico gestiona todo el proceso: desde la visita técnica hasta la puesta en marcha.",
+      "s2title": "Instalación de sistemas de aerotermia",
+      "s2desc": "La aerotermia es una de las soluciones más eficientes para climatizar viviendas y producir agua caliente sanitaria. Instalamos sistemas modernos que permiten calefacción, refrigeración y agua caliente con un solo equipo.",
+      "s3title": "Mantenimiento preventivo de aire acondicionado",
+      "s3desc": "El mantenimiento regular es imprescindible para mantener el rendimiento de los equipos de climatización y prevenir averías costosas. Nuestro servicio incluye revisión técnica, limpieza de filtros, control del gas refrigerante y verificación del sistema.",
+      "s4title": "Reparación de aire acondicionado",
+      "s4desc": "Si tu sistema de climatización presenta fallos o no funciona correctamente, nuestro equipo técnico realiza diagnósticos rápidos y reparaciones profesionales. Trabajamos con diferentes tipos de sistemas HVAC y marcas reconocidas."
+    },
+    "serviceForm": {
+      "title": "Envíanos un mensaje",
+      "name": "Nombre", "namePlaceholder": "Tu nombre completo",
+      "phone": "Móvil", "email": "Correo electrónico",
+      "message": "Mensaje", "messagePlaceholder": "¿En qué podemos ayudarte?",
+      "submit": "Enviar mensaje",
+      "note": "Al enviar se abre WhatsApp con tu consulta. Sin compromiso.",
+      "sentTitle": "¡Mensaje enviado!",
+      "sentDesc": "Te hemos abierto WhatsApp. Responderemos enseguida.",
+      "sendAnother": "Enviar otro mensaje"
+    }
   }
 }

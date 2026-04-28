@@ -1,11 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image, { type StaticImageData } from "next/image";
+import { useTranslations } from "next-intl";
 
 type HeroProps = {
   images?: (string | StaticImageData)[];
-  title?: string;
-  subtitle?: string;
 };
 
 export default function Hero({
@@ -14,9 +13,8 @@ export default function Hero({
     "/Imagenes/pexels_2.jpg",
     "/Imagenes/pexels_3.jpg",
   ],
-  title = "Instalación y reparación de aire acondicionado en Reus y Tarragona",
-  subtitle = "Especialistas en instalación, mantenimiento y reparación de aire acondicionado",
 }: HeroProps) {
+  const t = useTranslations("landing");
   const [index, setIndex] = useState(0);
   const [offset, setOffset] = useState(0);
 
@@ -72,15 +70,15 @@ export default function Hero({
       <div className="relative z-10 container mx-auto h-full flex items-center">
         <div className="max-w-full md:max-w-[45%] p-6 md:p-12 md:pl-20">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-white drop-shadow-md">
-            {title}
+            {t("hero.title")}
           </h1>
           <p className="mt-4 md:mt-6 text-sm sm:text-base md:text-lg text-white/90 max-w-xl">
-            {subtitle}
+            {t("hero.subtitle")}
           </p>
 
           <div className="mt-8">
             <a href="#contact" className="inline-block bg-primary-600 hover:bg-primary-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">
-              Solicitar presupuesto gratis
+              {t("hero.cta")}
             </a>
           </div>
         </div>

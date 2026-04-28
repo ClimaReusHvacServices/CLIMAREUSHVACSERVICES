@@ -1,30 +1,20 @@
 "use client";
 
 import { useState } from "react";
-
-const FAQS = [
-  {
-    q: "¿Cuánto cuesta instalar un aire acondicionado en Reus?",
-    a: "El precio de una instalación de aire acondicionado en Reus depende del tipo de equipo, la potencia necesaria y la complejidad de la instalación. En Clima Reus HVAC Services ofrecemos presupuestos personalizados para garantizar la mejor solución según tu espacio y necesidades.",
-  },
-  {
-    q: "¿Cada cuánto tiempo se debe hacer mantenimiento al aire acondicionado?",
-    a: "Se recomienda realizar mantenimiento al menos una vez al año para garantizar el buen funcionamiento del equipo. El mantenimiento ayuda a mejorar la eficiencia energética, prolongar la vida útil del sistema y mantener una buena calidad del aire.",
-  },
-  {
-    q: "¿En qué zonas ofrecen servicio de climatización?",
-    a: "Ofrecemos instalación, mantenimiento y reparación de sistemas de climatización en Reus, Tarragona y localidades cercanas como Cambrils, Salou y Vila-seca.",
-  },
-  {
-    q: "¿Reparan todas las marcas de aire acondicionado?",
-    a: "Sí. Nuestro servicio técnico tiene experiencia en la reparación de diferentes sistemas de climatización y trabaja con marcas reconocidas como Haier y Mitsubishi Electric, entre otras.",
-  },
-];
+import { useTranslations } from "next-intl";
 
 const WA = "34607953886";
 
 export default function FAQSection() {
+  const t = useTranslations("landing");
   const [open, setOpen] = useState<number | null>(0);
+
+  const FAQS = [
+    { q: t("faq.q1"), a: t("faq.a1") },
+    { q: t("faq.q2"), a: t("faq.a2") },
+    { q: t("faq.q3"), a: t("faq.a3") },
+    { q: t("faq.q4"), a: t("faq.a4") },
+  ];
 
   return (
     <section className="bg-white py-16 sm:py-24">
@@ -33,11 +23,10 @@ export default function FAQSection() {
         {/* Left */}
         <div className="lg:sticky lg:top-28">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight">
-            Preguntas<br />Frecuentes (FAQ)
+            {t("faq.titleLine1")}<br />{t("faq.titleLine2")}
           </h2>
           <p className="mt-4 text-gray-500 text-sm leading-relaxed">
-            Despejamos tus dudas técnicas sobre nuestras instalaciones de aire acondicionado
-            y aerotermia para que tomes la mejor decisión para tu hogar.
+            {t("faq.subtitle")}
           </p>
           <a
             href={`https://wa.me/${WA}`}
@@ -46,7 +35,7 @@ export default function FAQSection() {
             className="inline-flex items-center gap-2 mt-8 px-6 py-3 rounded-xl text-sm font-bold text-gray-900 hover:brightness-95 transition-all"
             style={{ backgroundColor: "#facc15" }}
           >
-            Hablar con un experto
+            {t("faq.cta")}
           </a>
         </div>
 

@@ -1,25 +1,16 @@
-import { CheckCircle2, Flame, Snowflake } from "lucide-react";
+import { getTranslations } from "next-intl/server";
+import { CheckCircle2 } from "lucide-react";
 
-const BENEFITS = [
-  {
-    title: "Experiencia Local",
-    text: "Más de 30 años y 4.000 instalaciones en Reus y Tarragona.",
-  },
-  {
-    title: "Calidad Certificada",
-    text: "Instaladores RITE y marcas líderes como Mitsubishi y Haier.",
-  },
-  {
-    title: "Eficiencia y Ahorro",
-    text: "Tecnología clase A++ para el mínimo consumo energético.",
-  },
-  {
-    title: "Servicio Express",
-    text: "Presupuesto gratis e instalación en solo 24 horas.",
-  },
-];
+export default async function WhyChooseUs() {
+  const t = await getTranslations("landing");
 
-export default function WhyChooseUs() {
+  const BENEFITS = [
+    { title: t("why.b1title"), text: t("why.b1text") },
+    { title: t("why.b2title"), text: t("why.b2text") },
+    { title: t("why.b3title"), text: t("why.b3text") },
+    { title: t("why.b4title"), text: t("why.b4text") },
+  ];
+
   return (
     <section className="bg-white py-16 sm:py-24">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
@@ -27,7 +18,6 @@ export default function WhyChooseUs() {
         {/* Left — brand placeholder (swap with real logo when ready) */}
         <div className="flex flex-col items-center text-center">
           <div className="w-44 h-44 rounded-full flex items-center justify-center mb-6 shadow-lg bg-white">
-            {/* provisional SVG badge */}
             <svg width="84" height="84" viewBox="0 0 84 84" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <linearGradient id="g1" x1="0" x2="1">
@@ -55,11 +45,10 @@ export default function WhyChooseUs() {
         {/* Right — benefits */}
         <div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
-            ¿Por qué elegirnos?
+            {t("why.title")}
           </h2>
           <p className="text-gray-500 text-base mb-8 leading-relaxed">
-            Somos instaladores certificados RITE que cuidan tu hogar como si fuera el nuestro.
-            Sin esperas, sin sorpresas en el precio y con las mejores marcas del mercado.
+            {t("why.subtitle")}
           </p>
 
           <ul className="space-y-5">
