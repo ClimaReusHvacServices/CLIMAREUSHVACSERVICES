@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { X, Wind, CheckCircle2, Star } from "lucide-react";
+import { useState, useTransition } from "react";
+import { X, Wind, CheckCircle2, Star, Wrench, LogIn } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
+import { requestService } from "@/app/[locale]/oferta/actions";
 
 interface ProductItem {
   id: string;
@@ -90,11 +92,25 @@ function ProductCard({ product, onClick, t }: { product: ProductItem; onClick: (
 
 // ─── Modal ────────────────────────────────────────────────────────────────────
 
-function ProductModal({ product, onClose, t }: { product: ProductItem; onClose: () => void; t: (k: string, v?: Record<string, string | number>) => string }) {
+function ProductModal({ product, onClose, t, role, locale }: {
+  product: ProductItem;
+  onClose: () => void;
+  t: (k: string, v?: Record<string, string | number>) => string;
+  role: string;
+  locale: string;
+}) {
   const hasDiscount = product.discountPrice !== null && product.discountPrice < product.price;
   const displayPrice = hasDiscount ? product.discountPrice! : product.price;
   const savings = hasDiscount ? product.price - product.discountPrice! : 0;
   const savingsPct = hasDiscount ? Math.round((savings / product.price) * 100) : 0;
+
+  const [requesting, startRequest] = useTransition();
+
+  function handleRequest() {
+    startRequest(async () => {
+      await requestService(product.id, locale);
+    });
+  }
 
   const waMessage = encodeURIComponent(
     `Hola, me interesa el equipo "${product.name}"${product.manufacturer ? ` de ${product.manufacturer}` : ""}. ¿Podéis informarme?`
@@ -197,6 +213,28 @@ function ProductModal({ product, onClose, t }: { product: ProductItem; onClose: 
                 </svg>
                 {t("products.modalWhatsApp")}
               </a>
+              {role === "cliente" ? (
+                <button
+                  onClick={handleRequest}
+                  disabled={requesting}
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white text-sm font-bold transition-all hover:opacity-90 hover:shadow-md disabled:opacity-60"
+                  style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
+                >
+                  {requesting
+                    ? <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    : <Wrench size={15} />}
+                  Solicitar servicio
+                </button>
+              ) : (
+                <Link
+                  href="/login"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white text-sm font-bold transition-all hover:opacity-90 hover:shadow-md"
+                  style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
+                >
+                  <LogIn size={15} />
+                  Iniciar sesión para solicitar
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -233,6 +271,9 @@ function ProductModal({ product, onClose, t }: { product: ProductItem; onClose: 
 
 export function ProductsSection({ products }: { products: ProductItem[] }) {
   const t = useTranslations("landing");
+  const locale = useLocale();
+  const { data: session } = useSession();
+  const role = (session?.user as any)?.role ?? "";
   const [selected, setSelected] = useState<ProductItem | null>(null);
 
   return (
@@ -274,7 +315,7 @@ export function ProductsSection({ products }: { products: ProductItem[] }) {
         </div>
       </div>
 
-      {selected && <ProductModal product={selected} onClose={() => setSelected(null)} t={t as any} />}
+      {selected && <ProductModal product={selected} onClose={() => setSelected(null)} t={t as any} role={role} locale={locale} />}
     </section>
   );
 }
