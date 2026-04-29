@@ -61,6 +61,8 @@ export async function updateClient(id: string, data: {
 
 export async function deleteClient(id: string) {
   await checkAdmin();
+  const orderCount = await db.order.count({ where: { userId: id } });
+  if (orderCount > 0) throw new Error("CLIENT_HAS_ORDERS");
   await db.user.delete({ where: { id } });
   revalidatePath("/[locale]/admin/users", "page");
 }

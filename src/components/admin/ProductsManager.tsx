@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Search, Package, Wrench, Box, X, Wind } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Package, Wrench, Box, X, Wind, Upload } from "lucide-react";
 import { Pagination } from "@/components/common/Pagination";
 import {
   createProduct, updateProduct, deleteProduct,
@@ -137,6 +137,16 @@ export function ProductsManager({ products, services, packages }: {
   const [productForm, setProductForm] = useState({ ...defaultProductForm });
   const [serviceForm, setServiceForm] = useState({ ...defaultServiceForm });
   const [packageForm, setPackageForm] = useState({ ...defaultPackageForm });
+
+  function handleImageFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { toast.error("La imagen no puede superar 2 MB"); return; }
+    const reader = new FileReader();
+    reader.onload = (ev) => setProductForm(f => ({ ...f, imageUrl: ev.target?.result as string ?? "" }));
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  }
 
   // Filter
   const q = search.toLowerCase();
@@ -482,10 +492,41 @@ export function ProductsManager({ products, services, packages }: {
                   <input className={inputCls} value={productForm.warranty} onChange={e => setProductForm(f => ({ ...f, warranty: e.target.value }))} />
                 </Field>
               </div>
-              <Field label="Imagen (URL)">
-                <input type="url" className={inputCls} value={productForm.imageUrl} onChange={e => setProductForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://..." />
+              <Field label="Imagen">
+                <input
+                  type="url"
+                  className={inputCls}
+                  value={productForm.imageUrl.startsWith("data:") ? "" : productForm.imageUrl}
+                  onChange={e => setProductForm(f => ({ ...f, imageUrl: e.target.value }))}
+                  placeholder="https://... (URL de imagen)"
+                />
+                <div className="flex items-center gap-2 my-2">
+                  <div className="flex-1 h-px bg-gray-100" />
+                  <span className="text-xs text-gray-400 shrink-0">o subir archivo</span>
+                  <div className="flex-1 h-px bg-gray-100" />
+                </div>
+                <label className="flex items-center gap-2 cursor-pointer px-3 py-2.5 border border-dashed border-gray-200 rounded-xl hover:border-primary-300 hover:bg-primary-50/30 transition-colors text-sm text-gray-500">
+                  <Upload size={14} className="shrink-0 text-gray-400" />
+                  <span>Elegir imagen (máx. 2 MB)</span>
+                  <input type="file" accept="image/*" className="hidden" onChange={handleImageFile} />
+                </label>
                 {productForm.imageUrl && (
-                  <img src={productForm.imageUrl} alt="preview" className="mt-2 h-20 w-20 object-contain rounded-lg border border-gray-100 bg-gray-50" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                  <div className="mt-2 flex items-start gap-2">
+                    <img
+                      src={productForm.imageUrl}
+                      alt="preview"
+                      className="h-20 w-20 object-contain rounded-lg border border-gray-100 bg-gray-50 shrink-0"
+                      onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setProductForm(f => ({ ...f, imageUrl: "" }))}
+                      className="p-1 text-gray-400 hover:text-red-500 rounded-lg transition-colors"
+                      title="Eliminar imagen"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
                 )}
               </Field>
               <label className="flex items-center gap-2 cursor-pointer">

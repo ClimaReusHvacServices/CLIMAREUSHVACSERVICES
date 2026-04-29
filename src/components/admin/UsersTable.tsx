@@ -115,8 +115,13 @@ export function ClientsTable({ clients, locale }: { clients: ClientRow[]; locale
       toast.success("Cliente eliminado");
       setDeleteTarget(null);
       router.refresh();
-    } catch { toast.error("Error al eliminar"); }
-    finally { setIsLoading(false); }
+    } catch (err: any) {
+      toast.error(
+        err?.message === "CLIENT_HAS_ORDERS"
+          ? "No se puede eliminar: el cliente tiene pedidos. Desactívalo en su lugar."
+          : "Error al eliminar"
+      );
+    } finally { setIsLoading(false); }
   }
 
   return (

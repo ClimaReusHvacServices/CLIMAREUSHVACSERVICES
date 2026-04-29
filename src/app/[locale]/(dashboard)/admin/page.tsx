@@ -3,15 +3,15 @@ import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { Link } from "@/i18n/routing";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Users, Package, Banknote, Wrench, ShoppingBag, UserCog, BarChart3 } from "lucide-react";
+import { Users, Package, Banknote, Wrench, ShoppingBag, BarChart3 } from "lucide-react";
 import { STATUS_COLORS } from "@/lib/status-colors";
 import Image from "next/image";
 
 async function getAdminStats() {
   const [totalUsers, totalOrders, revenueAggregate, activeWorkers] = await Promise.all([
-    db.user.count(),
+    db.user.count({ where: { role: "cliente" } }),
     db.order.count(),
-    db.order.aggregate({ _sum: { totalAmount: true } }),
+    db.order.aggregate({ _sum: { totalAmount: true }, where: { paymentStatus: "pagado" } }),
     db.user.count({ where: { role: "trabajador", isActive: true } }),
   ]);
   return {
@@ -64,21 +64,34 @@ export default async function AdminDashboard({
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <StatCard icon={<Users size={22} />} label={t("totalUsers")} value={stats.totalUsers} gradient="from-[#008f65] to-[#00b37d]" />
-        <StatCard icon={<Package size={22} />} label={t("totalOrders")} value={stats.totalOrders} gradient="from-[#1d7291] to-[#2490b5]" />
-        <StatCard icon={<Banknote size={22} />} label={t("totalRevenue")} value={`€${stats.totalRevenue.toFixed(2)}`} gradient="from-[#083a57] to-[#1d7291]" />
-        <StatCard icon={<Wrench size={22} />} label={t("activeWorkers")} value={stats.activeWorkers} gradient="from-[#d97706] to-[#f59e0b]" />
-      </div>
-
-      {/* Quick actions */}
-      <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 border border-gray-100">
-        <h2 className="text-base font-bold text-gray-900 mb-4">{t("quickActions")}</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <QuickLink href="/admin/users"   icon={<UserCog size={20} className="text-primary-600" />} label="Gestionar Clientes"   desc="Ver, crear y editar clientes" />
-          <QuickLink href="/admin/workers" icon={<Wrench size={20} className="text-amber-500" />}    label={t("manageWorkers")} desc={t("manageWorkersDesc")} />
-          <QuickLink href="/admin/orders"  icon={<ShoppingBag size={20} className="text-accent-600" />} label={t("viewOrders")}  desc={t("viewOrdersDesc")} />
+      {/* Stats strip */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-gray-100">
+          <StatItem
+            icon={<Banknote size={18} />}
+            label={t("totalRevenue")}
+            value={`€${stats.totalRevenue.toFixed(2)}`}
+            sub="Solo pedidos pagados"
+            gradient="from-[#008f65] to-[#00b37d]"
+          />
+          <StatItem
+            icon={<Package size={18} />}
+            label={t("totalOrders")}
+            value={stats.totalOrders}
+            gradient="from-[#1d7291] to-[#2490b5]"
+          />
+          <StatItem
+            icon={<Users size={18} />}
+            label="Clientes"
+            value={stats.totalUsers}
+            gradient="from-[#6366f1] to-[#8b5cf6]"
+          />
+          <StatItem
+            icon={<Wrench size={18} />}
+            label={t("activeWorkers")}
+            value={stats.activeWorkers}
+            gradient="from-[#d97706] to-[#f59e0b]"
+          />
         </div>
       </div>
 
@@ -135,32 +148,17 @@ export default async function AdminDashboard({
   );
 }
 
-function StatCard({ icon, label, value, gradient }: { icon: React.ReactNode; label: string; value: string | number; gradient: string }) {
+function StatItem({ icon, label, value, sub, gradient }: {
+  icon: React.ReactNode; label: string; value: string | number; sub?: string; gradient: string;
+}) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-5 border border-gray-100 overflow-hidden relative">
-      <div className={`absolute top-0 right-0 w-20 h-20 rounded-full opacity-10 -translate-y-6 translate-x-6 bg-gradient-to-br ${gradient}`} />
-      <div className="flex justify-between items-start gap-2">
-        <div className="min-w-0">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider truncate">{label}</p>
-          <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1.5 truncate">{value}</p>
-        </div>
-        <div className={`p-2.5 rounded-xl text-white shrink-0 bg-gradient-to-br ${gradient}`}>{icon}</div>
+    <div className="p-5 sm:p-6 flex flex-col gap-3">
+      <div className={`self-start p-2 rounded-xl text-white bg-gradient-to-br ${gradient}`}>{icon}</div>
+      <div>
+        <p className="text-2xl sm:text-3xl font-bold text-gray-900 leading-none">{value}</p>
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mt-2">{label}</p>
+        {sub && <p className="text-xs text-gray-300 mt-0.5">{sub}</p>}
       </div>
     </div>
-  );
-}
-
-function QuickLink({ href, icon, label, desc }: { href: string; icon: React.ReactNode; label: string; desc: string }) {
-  return (
-    <Link
-      href={href as any}
-      className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 hover:bg-primary-50 hover:border-primary-200 border border-gray-100 hover:shadow-sm transition-all group"
-    >
-      <div className="p-2.5 bg-white rounded-xl shadow-sm shrink-0 group-hover:shadow-md transition-shadow">{icon}</div>
-      <div className="min-w-0">
-        <p className="font-semibold text-gray-900 text-sm">{label}</p>
-        <p className="text-xs text-gray-400 truncate mt-0.5">{desc}</p>
-      </div>
-    </Link>
   );
 }

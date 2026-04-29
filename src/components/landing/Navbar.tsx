@@ -19,7 +19,11 @@ function switchLocale(code: string) {
   overlay.style.cssText =
     "position:fixed;inset:0;z-index:9999;background:#f8fafc;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;";
   overlay.innerHTML = `
-    <img src="/logos/logoverde.png" alt="Clima HVAC Service" style="width:120px;height:120px;object-fit:contain;" />
+    <style>@keyframes mistRise{0%{transform:translateY(105%)}65%{transform:translateY(-35%)}100%{transform:translateY(105%)}}</style>
+    <div style="position:relative;width:160px;height:160px;overflow:hidden;border-radius:16px;">
+      <img src="/logos/logoverde.png" alt="Clima HVAC Service" style="width:160px;height:160px;object-fit:contain;display:block;" />
+      <div style="position:absolute;bottom:0;left:-10%;width:120%;height:100%;background:linear-gradient(to top,rgba(255,255,255,1) 0%,rgba(255,255,255,0.75) 50%,rgba(255,255,255,0) 100%);animation:mistRise 1.5s cubic-bezier(0.4,0,0.2,1) infinite;pointer-events:none;"></div>
+    </div>
   `;
   document.body.appendChild(overlay);
   const segs = window.location.pathname.split("/").filter(Boolean);

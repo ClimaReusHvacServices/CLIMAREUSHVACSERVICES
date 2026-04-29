@@ -100,31 +100,35 @@ export function DashboardShell({
   );
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#eef0ec" }}>
-      {/* Navbar */}
-      <header className="shadow-md sticky top-0 z-40" style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}>
-        <div className="max-w-full px-4 sm:px-6 h-16 flex items-center gap-3">
-          {/* Hamburger – mobile only */}
+    <div className="min-h-screen" style={{ background: "linear-gradient(160deg, #eef5f2 0%, #e8f0f5 50%, #eef0ec 100%)" }}>
+      {/* Floating pill header */}
+      <header className="fixed top-3 left-3 right-3 z-40">
+        <div
+          className="flex items-center px-4 sm:px-5 h-14 rounded-2xl shadow-lg gap-3"
+          style={{
+            background: "linear-gradient(to right, rgba(0,143,101,0.97), rgba(29,114,145,0.97))",
+            border: "1px solid rgba(255,255,255,0.15)",
+            backdropFilter: "blur(10px)",
+          }}
+        >
           <button
             onClick={() => setOpen(true)}
-            className="lg:hidden p-2 -ml-1 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors shrink-0"
+            className="lg:hidden p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded-xl transition-colors shrink-0"
             aria-label="Menu"
           >
-            <Menu size={20} />
+            <Menu size={18} />
           </button>
-
           <Link href="/" className="flex items-center hover:opacity-80 transition-opacity shrink-0">
             <Image
               src="/logos/horizontal-logoblanco.png"
               alt="Clima HVAC Service"
               width={500}
               height={500}
-              style={{ height: "32px", width: "auto", objectFit: "contain" }}
+              style={{ height: "28px", width: "auto", objectFit: "contain" }}
               priority
             />
           </Link>
-
-          <div className="flex items-center gap-2 sm:gap-3 ml-auto shrink-0">
+          <div className="flex items-center gap-2 ml-auto shrink-0">
             <LanguageSwitcher variant="dark" />
             <UserAvatar
               firstName={user.firstName}
@@ -136,10 +140,11 @@ export function DashboardShell({
         </div>
       </header>
 
-      <div className="flex min-h-[calc(100vh-4rem)]">
+      <div className="flex min-h-screen">
         {/* Desktop sidebar */}
-        <aside className="hidden lg:block w-60 bg-white shadow-sm border-r border-gray-100 shrink-0">
-          {sidebarNav()}
+        <aside className="hidden lg:flex flex-col w-60 bg-white shadow-sm border-r border-gray-100 shrink-0" style={{ minHeight: "100vh" }}>
+          <div className="h-[80px] shrink-0" />
+          <div className="flex-1">{sidebarNav()}</div>
         </aside>
 
         {/* Mobile overlay + drawer */}
@@ -167,7 +172,7 @@ export function DashboardShell({
           </>
         )}
 
-        <main className="flex-1 p-4 sm:p-6 min-w-0 overflow-x-hidden">
+        <main className="flex-1 min-w-0 overflow-x-hidden px-4 sm:px-6 pb-6" style={{ paddingTop: "88px" }}>
           {children}
         </main>
       </div>
