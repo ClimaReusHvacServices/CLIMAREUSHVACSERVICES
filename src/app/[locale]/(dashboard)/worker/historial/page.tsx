@@ -101,7 +101,7 @@ export default async function WorkerHistorialPage({
                       </div>
                       {myComment && myComment.author.role === "trabajador" && (
                         <p className="mt-2 text-xs text-gray-500 bg-amber-50 border border-amber-100 rounded-lg px-3 py-1.5 italic">
-                          "{myComment.content}"
+                          &ldquo;{myComment.content}&rdquo;
                         </p>
                       )}
                     </div>

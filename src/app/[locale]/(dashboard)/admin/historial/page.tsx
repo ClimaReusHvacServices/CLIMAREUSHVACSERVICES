@@ -106,7 +106,7 @@ export default async function AdminHistorialPage({
                       </div>
                       {workerComment && workerComment.author.role === "trabajador" && (
                         <p className="mt-2 text-xs text-gray-500 bg-amber-50 border border-amber-100 rounded-lg px-3 py-1.5 italic">
-                          "{workerComment.content}"
+                          &ldquo;{workerComment.content}&rdquo;
                         </p>
                       )}
                     </div>
