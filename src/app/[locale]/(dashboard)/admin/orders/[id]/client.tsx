@@ -1,15 +1,16 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
 import {
-  ArrowLeft, User, MapPin, Package, Send, CheckCircle2,
-  Clock, Banknote, MessageSquare, AlertCircle, UserCheck, Trash2,
+  ArrowLeft, User, MapPin, Package, CheckCircle2,
+  Clock, Banknote, AlertCircle, UserCheck, Trash2,
 } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { updateOrderStatus, sendOrderMessage, claimOrderAsAdmin, clearOrderChat } from "./actions";
 import { STATUS_COLORS } from "@/lib/status-colors";
+import { ChatBox } from "@/components/chat/ChatBox";
 
 const ORDER_STATUSES = [
   { value: "pendiente",   label: "Pendiente" },
@@ -33,11 +34,6 @@ const PAYMENT_COLORS: Record<string, string> = {
   reembolsado: "bg-purple-50 text-purple-700",
 };
 
-const ROLE_COLORS: Record<string, string> = {
-  admin:      "bg-primary-100 text-primary-700",
-  trabajador: "bg-amber-100 text-amber-700",
-  cliente:    "bg-gray-100 text-gray-600",
-};
 
 interface Comment { id: string; content: string; createdAt: Date; author: { firstName: string; lastName: string; role: string } }
 interface OrderItem { id: string; quantity: number; unitPrice: any; totalPrice: any; product: { name: string; images: string[] } | null; servicePackage: { name: string } | null }
@@ -68,13 +64,6 @@ export function OrderDetailClient({ order, locale }: { order: Order; locale: str
   const [savingStatus, setSavingStatus] = useState(false);
   const [claiming, setClaiming] = useState(false);
   const [clearing, setClearing] = useState(false);
-  const [msg, setMsg] = useState("");
-  const [sending, setSending] = useState(false);
-  const chatEndRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [order.task?.comments.length]);
 
   async function handleStatusSave() {
     setSavingStatus(true);
@@ -87,17 +76,6 @@ export function OrderDetailClient({ order, locale }: { order: Order; locale: str
     } finally { setSavingStatus(false); }
   }
 
-  async function handleSend(e: React.FormEvent) {
-    e.preventDefault();
-    if (!msg.trim()) return;
-    setSending(true);
-    try {
-      await sendOrderMessage(order.id, msg);
-      setMsg("");
-      router.refresh();
-    } catch { toast.error("Error al enviar"); }
-    finally { setSending(false); }
-  }
 
   const hasChanged = status !== order.status || paymentStatus !== order.paymentStatus;
 
@@ -306,76 +284,26 @@ export function OrderDetailClient({ order, locale }: { order: Order; locale: str
       </div>
 
       {/* Chat */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div
-          className="px-5 py-3 border-b border-gray-100 flex items-center gap-2"
-          style={{ background: "linear-gradient(to right, #008f6508, #1d729108)" }}
-        >
-          <MessageSquare size={15} className="text-primary-600" />
-          <h2 className="text-sm font-bold text-gray-900">Chat del pedido</h2>
-          <span className="text-xs text-gray-400">{order.task?.comments.length ?? 0} mensaje{(order.task?.comments.length ?? 0) !== 1 ? "s" : ""}</span>
-          {canClearChat && (
+      <ChatBox
+        orderId={order.id}
+        initialComments={order.task?.comments ?? []}
+        myRole="admin"
+        locale={locale}
+        placeholder="Escribe un mensaje al cliente o técnico..."
+        onSend={content => sendOrderMessage(order.id, content)}
+        headerExtra={
+          canClearChat ? (
             <button
               onClick={handleClearChat}
               disabled={clearing}
-              className="ml-auto flex items-center gap-1 text-xs text-red-500 hover:text-red-700 hover:bg-red-50 px-2.5 py-1 rounded-lg transition-colors"
-              title="Eliminar todos los mensajes"
+              className="flex items-center gap-1 text-xs text-red-500 hover:text-red-700 hover:bg-red-50 px-2.5 py-1 rounded-lg transition-colors"
             >
               {clearing ? <div className="size-3 border border-red-500 border-t-transparent rounded-full animate-spin" /> : <Trash2 size={12} />}
               Limpiar chat
             </button>
-          )}
-        </div>
-        <div className="p-5 space-y-3 max-h-80 overflow-y-auto">
-          {(!order.task || order.task.comments.length === 0) ? (
-            <div className="text-center py-8">
-              <MessageSquare size={32} className="mx-auto mb-2 text-gray-200" />
-              <p className="text-sm text-gray-400">Sin mensajes. Empieza el chat con el cliente.</p>
-            </div>
-          ) : (
-            order.task.comments.map(comment => (
-              <div key={comment.id} className={`flex gap-3 ${comment.author.role === "admin" ? "flex-row-reverse" : ""}`}>
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 text-white"
-                  style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}>
-                  {(comment.author.firstName[0] + comment.author.lastName[0]).toUpperCase()}
-                </div>
-                <div className={`max-w-xs lg:max-w-sm ${comment.author.role === "admin" ? "items-end" : "items-start"} flex flex-col gap-1`}>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-xs font-semibold text-gray-700">{comment.author.firstName} {comment.author.lastName}</span>
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${ROLE_COLORS[comment.author.role] ?? "bg-gray-100 text-gray-600"}`}>
-                      {comment.author.role === "admin" ? "Admin" : comment.author.role === "trabajador" ? "Técnico" : "Cliente"}
-                    </span>
-                  </div>
-                  <div className={`px-3 py-2 rounded-2xl text-sm ${comment.author.role === "admin" ? "bg-primary-600 text-white rounded-tr-sm" : "bg-gray-100 text-gray-800 rounded-tl-sm"}`}>
-                    {comment.content}
-                  </div>
-                  <p className="text-[10px] text-gray-400">
-                    {new Date(comment.createdAt).toLocaleString(locale, { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" })}
-                  </p>
-                </div>
-              </div>
-            ))
-          )}
-          <div ref={chatEndRef} />
-        </div>
-        <form onSubmit={handleSend} className="px-5 py-4 border-t border-gray-100 flex gap-3">
-          <input
-            type="text"
-            value={msg}
-            onChange={e => setMsg(e.target.value)}
-            placeholder="Escribe un mensaje al cliente o técnico..."
-            className="flex-1 px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-100 bg-white"
-          />
-          <button
-            type="submit"
-            disabled={!msg.trim() || sending}
-            className="p-2.5 rounded-xl text-white transition-all disabled:opacity-40 shrink-0"
-            style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
-          >
-            {sending ? <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Send size={16} />}
-          </button>
-        </form>
-      </div>
+          ) : undefined
+        }
+      />
     </div>
   );
 }
