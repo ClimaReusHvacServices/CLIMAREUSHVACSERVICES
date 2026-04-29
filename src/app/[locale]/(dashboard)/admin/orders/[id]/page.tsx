@@ -29,7 +29,9 @@ export default async function OrderDetailPage({
         },
       },
       task: {
-        include: {
+        select: {
+          id: true,
+          assignedToId: true,
           comments: {
             include: { author: { select: { firstName: true, lastName: true, role: true } } },
             orderBy: { createdAt: "asc" },

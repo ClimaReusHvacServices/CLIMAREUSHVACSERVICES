@@ -2,8 +2,9 @@ import { auth } from "@/auth/config";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { setRequestLocale } from "next-intl/server";
-import { ShoppingBag, CheckCircle2, Wrench, Award, Clock } from "lucide-react";
-import { ClaimButton, ReleaseButton, CompleteButton } from "./WorkerActions";
+import { ShoppingBag, CheckCircle2, Wrench, Award, Clock, ChevronRight } from "lucide-react";
+import { Link } from "@/i18n/routing";
+import { ClaimButton, ReleaseButton } from "./WorkerActions";
 
 export const dynamic = "force-dynamic";
 
@@ -149,17 +150,27 @@ export default async function WorkerDashboard({
           <div className="divide-y divide-gray-50">
             {active.map(order => (
               <div key={order.id} className="px-5 py-4 flex items-center gap-4 hover:bg-gray-50/60 transition-colors">
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-900 text-sm">{order.orderNumber}</p>
+                <Link href={`/worker/orders/${order.id}` as any} className="flex-1 min-w-0 group">
+                  <p className="font-semibold text-gray-900 text-sm group-hover:text-primary-700 transition-colors">
+                    {order.orderNumber}
+                  </p>
                   <p className="text-xs text-gray-500 mt-0.5">
                     {order.user.firstName} {order.user.lastName}
                     <span className="mx-1.5 text-gray-300">·</span>
                     {order.items.length} artículo{order.items.length !== 1 ? "s" : ""}
                   </p>
-                </div>
+                </Link>
                 <div className="flex items-center gap-2 shrink-0">
                   <ReleaseButton taskId={order.task?.id ?? ""} orderId={order.id} />
-                  <CompleteButton taskId={order.task?.id ?? ""} orderId={order.id} userId={session.user.id} />
+                  <Link
+                    href={`/worker/orders/${order.id}` as any}
+                    className="px-3 py-2 text-sm font-semibold rounded-xl transition-colors flex items-center gap-1.5 shrink-0"
+                    style={{ background: "linear-gradient(to right, #008f65, #1d7291)", color: "white" }}
+                    title="Ver pedido y chat"
+                  >
+                    <ChevronRight size={14} />
+                    Ver pedido
+                  </Link>
                 </div>
               </div>
             ))}

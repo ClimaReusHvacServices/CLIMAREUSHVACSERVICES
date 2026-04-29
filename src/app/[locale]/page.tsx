@@ -1,5 +1,4 @@
 import { auth } from "@/auth/config";
-import { redirect } from "next/navigation";
 import { db } from "@/db";
 import dynamic from "next/dynamic";
 import { getTranslations } from "next-intl/server";
@@ -45,10 +44,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     getActiveProducts(),
   ]);
 
-  if (session) {
-    if (session.user?.role === "admin")      redirect(`/${locale}/admin`);
-    if (session.user?.role === "trabajador") redirect(`/${locale}/worker`);
-  }
 
   return (
     <main>

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { ClipboardList } from "lucide-react";
+import { ClipboardList, ChevronRight } from "lucide-react";
 import { Link } from "@/i18n/routing";
+import { useRouter } from "@/i18n/routing";
 import DataTable from "@/components/common/DataTable";
 import { STATUS_COLORS } from "@/lib/status-colors";
 
@@ -19,6 +19,7 @@ interface OrderRow {
 export function ClientOrdersTable({ orders, locale }: { orders: OrderRow[]; locale: string }) {
   const t = useTranslations("clientOrders");
   const tStatus = useTranslations("status");
+  const router = useRouter();
   const empty = (
     <div className="text-center py-16">
       <ClipboardList size={48} className="mx-auto mb-4 text-gray-200" />
@@ -40,6 +41,7 @@ export function ClientOrdersTable({ orders, locale }: { orders: OrderRow[]; loca
     { key: "status", label: t("colStatus") },
     { key: "total", label: t("colTotal") },
     { key: "date", label: t("colDate"), hideOn: "md" as const },
+    { key: "action", label: "" },
   ];
 
   return (
@@ -50,8 +52,12 @@ export function ClientOrdersTable({ orders, locale }: { orders: OrderRow[]; loca
       minWidth="420px"
       emptyComponent={orders.length === 0 ? empty : undefined}
       renderRow={(order: OrderRow) => (
-        <tr key={order.id} className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
-          <td className="py-3 px-4 font-medium text-gray-900">{order.orderNumber}</td>
+        <tr
+          key={order.id}
+          className="border-b border-gray-50 hover:bg-primary-50/40 transition-colors cursor-pointer"
+          onClick={() => router.push(`/orders/${order.id}` as any)}
+        >
+          <td className="py-3 px-4 font-semibold text-primary-700">{order.orderNumber}</td>
           <td className="py-3 px-4 text-gray-600 hidden sm:table-cell">{order.items.length} {t("items")}</td>
           <td className="py-3 px-4">
             <span className={`inline-block px-2 py-1 rounded-lg text-xs font-semibold ${STATUS_COLORS[order.status] ?? "bg-gray-100 text-gray-600"}`}>
@@ -60,6 +66,9 @@ export function ClientOrdersTable({ orders, locale }: { orders: OrderRow[]; loca
           </td>
           <td className="py-3 px-4 font-medium text-gray-900">€{Number(order.totalAmount).toFixed(2)}</td>
           <td className="py-3 px-4 text-gray-500 text-xs hidden md:table-cell">{new Date(order.createdAt).toLocaleDateString(locale)}</td>
+          <td className="py-3 px-4">
+            <ChevronRight size={14} className="text-gray-300" />
+          </td>
         </tr>
       )}
     />

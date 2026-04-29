@@ -5,10 +5,10 @@ import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
 import {
   ArrowLeft, User, MapPin, Package, Send, CheckCircle2,
-  Clock, Banknote, MessageSquare, AlertCircle,
+  Clock, Banknote, MessageSquare, AlertCircle, UserCheck, Trash2,
 } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { updateOrderStatus, sendOrderMessage } from "./actions";
+import { updateOrderStatus, sendOrderMessage, claimOrderAsAdmin, clearOrderChat } from "./actions";
 import { STATUS_COLORS } from "@/lib/status-colors";
 
 const ORDER_STATUSES = [
@@ -58,7 +58,7 @@ interface Order {
   user: { firstName: string; lastName: string; email: string; phoneNumber: string | null };
   address: { street: string; city: string; state: string | null; postalCode: string; country: string };
   items: OrderItem[];
-  task: { id: string; comments: Comment[] } | null;
+  task: { id: string; assignedToId: string | null; comments: Comment[] } | null;
 }
 
 export function OrderDetailClient({ order, locale }: { order: Order; locale: string }) {
@@ -66,6 +66,8 @@ export function OrderDetailClient({ order, locale }: { order: Order; locale: str
   const [status, setStatus] = useState(order.status);
   const [paymentStatus, setPaymentStatus] = useState(order.paymentStatus);
   const [savingStatus, setSavingStatus] = useState(false);
+  const [claiming, setClaiming] = useState(false);
+  const [clearing, setClearing] = useState(false);
   const [msg, setMsg] = useState("");
   const [sending, setSending] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -98,6 +100,31 @@ export function OrderDetailClient({ order, locale }: { order: Order; locale: str
   }
 
   const hasChanged = status !== order.status || paymentStatus !== order.paymentStatus;
+
+  const noWorkerAssigned = !order.task?.assignedToId;
+  const canClearChat = (order.task?.comments.length ?? 0) > 0 &&
+    ((order.status === "completada" && order.paymentStatus === "pagado") || order.status === "cancelada");
+
+  async function handleClaim() {
+    setClaiming(true);
+    try {
+      await claimOrderAsAdmin(order.id);
+      toast.success("Pedido asignado a ti");
+      router.refresh();
+    } catch { toast.error("Error al tomar pedido"); }
+    finally { setClaiming(false); }
+  }
+
+  async function handleClearChat() {
+    if (!confirm("¿Seguro que quieres borrar todos los mensajes de este chat?")) return;
+    setClearing(true);
+    try {
+      await clearOrderChat(order.id);
+      toast.success("Chat eliminado");
+      router.refresh();
+    } catch { toast.error("Error al eliminar chat"); }
+    finally { setClearing(false); }
+  }
 
   return (
     <div className="space-y-5 max-w-5xl mx-auto">
@@ -160,6 +187,17 @@ export function OrderDetailClient({ order, locale }: { order: Order; locale: str
             <CheckCircle2 size={14} />
             Guardar
           </button>
+          {noWorkerAssigned && (
+            <button
+              onClick={handleClaim}
+              disabled={claiming}
+              className="px-5 py-2.5 text-sm font-semibold text-white rounded-xl transition-all disabled:opacity-40 flex items-center gap-2 shrink-0 bg-amber-500 hover:bg-amber-600"
+            >
+              {claiming && <div className="size-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+              <UserCheck size={14} />
+              Tomar pedido
+            </button>
+          )}
         </div>
       </div>
 
@@ -275,7 +313,18 @@ export function OrderDetailClient({ order, locale }: { order: Order; locale: str
         >
           <MessageSquare size={15} className="text-primary-600" />
           <h2 className="text-sm font-bold text-gray-900">Chat del pedido</h2>
-          <span className="ml-auto text-xs text-gray-400">{order.task?.comments.length ?? 0} mensaje{(order.task?.comments.length ?? 0) !== 1 ? "s" : ""}</span>
+          <span className="text-xs text-gray-400">{order.task?.comments.length ?? 0} mensaje{(order.task?.comments.length ?? 0) !== 1 ? "s" : ""}</span>
+          {canClearChat && (
+            <button
+              onClick={handleClearChat}
+              disabled={clearing}
+              className="ml-auto flex items-center gap-1 text-xs text-red-500 hover:text-red-700 hover:bg-red-50 px-2.5 py-1 rounded-lg transition-colors"
+              title="Eliminar todos los mensajes"
+            >
+              {clearing ? <div className="size-3 border border-red-500 border-t-transparent rounded-full animate-spin" /> : <Trash2 size={12} />}
+              Limpiar chat
+            </button>
+          )}
         </div>
         <div className="p-5 space-y-3 max-h-80 overflow-y-auto">
           {(!order.task || order.task.comments.length === 0) ? (

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Link, usePathname } from "@/i18n/routing";
 import {
   LayoutDashboard, Users, Wrench, ShoppingBag, Package,
-  ClipboardList, UserCircle, Store, Menu, X,
+  ClipboardList, UserCircle, Store, Menu, X, History,
 } from "lucide-react";
 import Image from "next/image";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -12,7 +12,7 @@ import { UserAvatar } from "./UserAvatar";
 
 const ICON_MAP = {
   LayoutDashboard, Users, Wrench, ShoppingBag, Package,
-  ClipboardList, UserCircle, Store,
+  ClipboardList, UserCircle, Store, History,
 };
 type IconName = keyof typeof ICON_MAP;
 
@@ -22,17 +22,19 @@ interface NavLabels {
   adminSection: string; clienteSection: string; trabajadorSection: string;
   adminHome: string; users: string; workers: string; orders: string;
   products: string; shop: string; myOrders: string; myProfile: string; myTasks: string;
+  historial?: string;
 }
 
 function buildNav(role: string, l: NavLabels): { section: string; items: NavItem[] } {
   if (role === "admin") return {
     section: l.adminSection,
     items: [
-      { href: "/admin",          iconName: "LayoutDashboard", label: l.adminHome },
-      { href: "/admin/users",    iconName: "Users",           label: l.users },
-      { href: "/admin/workers",  iconName: "Wrench",          label: l.workers },
-      { href: "/admin/orders",   iconName: "ShoppingBag",     label: l.orders },
-      { href: "/admin/products", iconName: "Package",         label: l.products },
+      { href: "/admin",            iconName: "LayoutDashboard", label: l.adminHome },
+      { href: "/admin/users",      iconName: "Users",           label: l.users },
+      { href: "/admin/workers",    iconName: "Wrench",          label: l.workers },
+      { href: "/admin/orders",     iconName: "ShoppingBag",     label: l.orders },
+      { href: "/admin/products",   iconName: "Package",         label: l.products },
+      { href: "/admin/historial",  iconName: "History",         label: l.historial ?? "Historial" },
     ],
   };
   if (role === "cliente") return {
@@ -44,7 +46,10 @@ function buildNav(role: string, l: NavLabels): { section: string; items: NavItem
   };
   return {
     section: l.trabajadorSection,
-    items: [{ href: "/worker", iconName: "ClipboardList", label: l.myTasks }],
+    items: [
+      { href: "/worker",           iconName: "ClipboardList", label: l.myTasks },
+      { href: "/worker/historial", iconName: "History",       label: l.historial ?? "Historial" },
+    ],
   };
 }
 

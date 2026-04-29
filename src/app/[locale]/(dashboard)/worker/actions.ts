@@ -36,6 +36,7 @@ export async function markOrderComplete(taskId: string, orderId: string, userId:
     data: { totalJobsCompleted: { increment: 1 } },
   });
   revalidatePath("/[locale]/worker", "page");
+  revalidatePath(`/[locale]/worker/orders/${orderId}`, "page");
 }
 
 export async function releaseOrder(taskId: string, orderId: string) {
@@ -43,4 +44,11 @@ export async function releaseOrder(taskId: string, orderId: string) {
   await db.task.update({ where: { id: taskId }, data: { assignedToId: null, status: "pendiente" } });
   await db.order.update({ where: { id: orderId }, data: { status: "pendiente" } });
   revalidatePath("/[locale]/worker", "page");
+}
+
+export async function markOrderPaid(orderId: string) {
+  await checkWorker();
+  await db.order.update({ where: { id: orderId }, data: { paymentStatus: "pagado" } });
+  revalidatePath("/[locale]/worker", "page");
+  revalidatePath(`/[locale]/worker/orders/${orderId}`, "page");
 }

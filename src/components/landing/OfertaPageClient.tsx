@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { X, Wind, CheckCircle2, Star, Filter, ChevronDown, Flame, Tag } from "lucide-react";
-import { Link } from "@/i18n/routing";
-import { useTranslations } from "next-intl";
+import { useState, useMemo, useTransition } from "react";
+import { X, Wind, CheckCircle2, Star, Filter, ChevronDown, Flame, Tag, Wrench, LogIn } from "lucide-react";
+import { Link, useRouter } from "@/i18n/routing";
+import { useLocale, useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
+import { requestService } from "@/app/[locale]/oferta/actions";
 
 export interface ProductItem {
   id: string;
@@ -34,15 +36,29 @@ function Stars({ n = 5 }: { n?: number }) {
 }
 
 // ── Modal ──────────────────────────────────────────────────────────────────────
-function ProductModal({ product, onClose, t }: { product: ProductItem; onClose: () => void; t: (k: string, v?: Record<string, string | number>) => string }) {
+function ProductModal({ product, onClose, t, role, locale }: {
+  product: ProductItem;
+  onClose: () => void;
+  t: (k: string, v?: Record<string, string | number>) => string;
+  role: string;
+  locale: string;
+}) {
   const hasDiscount = product.discountPrice !== null && product.discountPrice < product.price;
   const displayPrice = hasDiscount ? product.discountPrice! : product.price;
   const savings = hasDiscount ? product.price - product.discountPrice! : 0;
   const savingsPct = hasDiscount ? Math.round((savings / product.price) * 100) : 0;
 
+  const [requesting, startRequest] = useTransition();
+
   const waMsg = encodeURIComponent(
     `Hola, me interesa el equipo "${product.name}"${product.manufacturer ? ` de ${product.manufacturer}` : ""}. ¿Podéis informarme?`
   );
+
+  function handleRequest() {
+    startRequest(async () => {
+      await requestService(product.id, locale);
+    });
+  }
 
   const FEATS = [
     t("products.feat1"), t("products.feat2"), t("products.feat3"), t("products.feat4"),
@@ -136,13 +152,28 @@ function ProductModal({ product, onClose, t }: { product: ProductItem; onClose: 
                 </svg>
                 {t("products.modalWhatsApp")}
               </a>
-              <Link
-                href="/register"
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white text-sm font-bold transition-all hover:opacity-90"
-                style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
-              >
-                {t("products.modalRequest")}
-              </Link>
+              {role === "cliente" ? (
+                <button
+                  onClick={handleRequest}
+                  disabled={requesting}
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white text-sm font-bold transition-all hover:opacity-90 disabled:opacity-60"
+                  style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
+                >
+                  {requesting
+                    ? <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    : <Wrench size={15} />}
+                  Solicitar servicio
+                </button>
+              ) : (
+                <Link
+                  href="/login"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white text-sm font-bold transition-all hover:opacity-90"
+                  style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
+                >
+                  <LogIn size={15} />
+                  Iniciar sesión para solicitar
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -235,6 +266,9 @@ function ProductCard({ product, onClick, highlight = false, t }: { product: Prod
 // ── Main page client ───────────────────────────────────────────────────────────
 export default function OfertaPageClient({ products }: { products: ProductItem[] }) {
   const t = useTranslations("landing");
+  const locale = useLocale();
+  const { data: session } = useSession();
+  const role = (session?.user as any)?.role ?? "";
   const [selected, setSelected] = useState<ProductItem | null>(null);
   const [categoryFilter, setCategoryFilter] = useState("__all__");
   const [sort, setSort] = useState<"precio_asc" | "precio_desc" | "nombre">("precio_asc");
@@ -350,7 +384,7 @@ export default function OfertaPageClient({ products }: { products: ProductItem[]
         </div>
       )}
 
-      {selected && <ProductModal product={selected} onClose={() => setSelected(null)} t={t as any} />}
+      {selected && <ProductModal product={selected} onClose={() => setSelected(null)} t={t as any} role={role} locale={locale} />}
     </div>
   );
 }
