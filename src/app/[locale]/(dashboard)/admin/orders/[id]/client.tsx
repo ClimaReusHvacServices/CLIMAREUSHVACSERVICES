@@ -7,7 +7,7 @@ import {
   ArrowLeft, User, MapPin, Package, Send, CheckCircle2,
   Clock, Banknote, MessageSquare, AlertCircle,
 } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { updateOrderStatus, sendOrderMessage } from "./actions";
 import { STATUS_COLORS } from "@/lib/status-colors";
 
@@ -113,12 +113,14 @@ export function OrderDetailClient({ order, locale }: { order: Order; locale: str
           <h1 className="text-lg sm:text-xl font-bold text-gray-900">{order.orderNumber}</h1>
           <p className="text-xs text-gray-400">{new Date(order.createdAt).toLocaleString(locale)}</p>
         </div>
-        <span className={`px-3 py-1.5 rounded-xl text-xs font-bold ${STATUS_COLORS[order.status] ?? "bg-gray-100 text-gray-600"}`}>
-          {ORDER_STATUSES.find(s => s.value === order.status)?.label ?? order.status}
-        </span>
-        <span className={`px-3 py-1.5 rounded-xl text-xs font-bold ${PAYMENT_COLORS[order.paymentStatus] ?? "bg-gray-100 text-gray-600"}`}>
-          {PAYMENT_STATUSES.find(s => s.value === order.paymentStatus)?.label ?? order.paymentStatus}
-        </span>
+        <div className="flex flex-col items-end gap-1">
+          <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${STATUS_COLORS[order.status] ?? "bg-gray-100 text-gray-600"}`}>
+            Pedido: {ORDER_STATUSES.find(s => s.value === order.status)?.label ?? order.status}
+          </span>
+          <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${PAYMENT_COLORS[order.paymentStatus] ?? "bg-gray-100 text-gray-600"}`}>
+            Pago: {PAYMENT_STATUSES.find(s => s.value === order.paymentStatus)?.label ?? order.paymentStatus}
+          </span>
+        </div>
       </div>
 
       {/* Status change */}

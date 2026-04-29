@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { setRequestLocale } from "next-intl/server";
 import { ShoppingBag, CheckCircle2, Wrench, Award, Clock } from "lucide-react";
-import { WorkerActions } from "./WorkerActions";
+import { ClaimButton, ReleaseButton, CompleteButton } from "./WorkerActions";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +13,10 @@ async function getWorkerData(userId: string) {
     db.order.findMany({
       where: {
         status: { in: ["pendiente", "confirmada"] },
-        OR: [{ task: null }, { task: { assignedToId: null } }],
+        OR: [
+          { task: { is: null } },
+          { task: { assignedToId: null } },
+        ],
       },
       include: {
         user: { select: { firstName: true, lastName: true } },
@@ -128,7 +131,7 @@ export default async function WorkerDashboard({
                     {order.items.length} artículo{order.items.length !== 1 ? "s" : ""}
                   </p>
                 </div>
-                <WorkerActions.Claim orderId={order.id} />
+                <ClaimButton orderId={order.id} />
               </div>
             ))}
           </div>
@@ -155,8 +158,8 @@ export default async function WorkerDashboard({
                   </p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <WorkerActions.Release taskId={order.task!.id} orderId={order.id} />
-                  <WorkerActions.Complete taskId={order.task!.id} orderId={order.id} userId={session.user.id} />
+                  <ReleaseButton taskId={order.task?.id ?? ""} orderId={order.id} />
+                  <CompleteButton taskId={order.task?.id ?? ""} orderId={order.id} userId={session.user.id} />
                 </div>
               </div>
             ))}

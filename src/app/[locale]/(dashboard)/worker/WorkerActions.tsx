@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { CheckCircle2, RotateCcw } from "lucide-react";
 import { claimOrder, markOrderComplete, releaseOrder } from "./actions";
 
-function ClaimButton({ orderId }: { orderId: string }) {
+export function ClaimButton({ orderId }: { orderId: string }) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -33,7 +33,7 @@ function ClaimButton({ orderId }: { orderId: string }) {
   );
 }
 
-function ReleaseButton({ taskId, orderId }: { taskId: string; orderId: string }) {
+export function ReleaseButton({ taskId, orderId }: { taskId: string; orderId: string }) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -59,7 +59,7 @@ function ReleaseButton({ taskId, orderId }: { taskId: string; orderId: string })
   );
 }
 
-function CompleteButton({ taskId, orderId, userId }: { taskId: string; orderId: string; userId: string }) {
+export function CompleteButton({ taskId, orderId, userId }: { taskId: string; orderId: string; userId: string }) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -67,7 +67,7 @@ function CompleteButton({ taskId, orderId, userId }: { taskId: string; orderId: 
     setLoading(true);
     try {
       await markOrderComplete(taskId, orderId, userId);
-      toast.success("Pedido marcado como completado");
+      toast.success("Pedido completado");
       router.refresh();
     } catch { toast.error("Error al completar"); }
     finally { setLoading(false); }
@@ -84,9 +84,3 @@ function CompleteButton({ taskId, orderId, userId }: { taskId: string; orderId: 
     </button>
   );
 }
-
-export const WorkerActions = {
-  Claim: ClaimButton,
-  Release: ReleaseButton,
-  Complete: CompleteButton,
-};
