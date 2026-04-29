@@ -64,6 +64,7 @@ export function OrderDetailClient({ order, locale }: { order: Order; locale: str
   const [savingStatus, setSavingStatus] = useState(false);
   const [claiming, setClaiming] = useState(false);
   const [clearing, setClearing] = useState(false);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   async function handleStatusSave() {
     setSavingStatus(true);
@@ -94,8 +95,8 @@ export function OrderDetailClient({ order, locale }: { order: Order; locale: str
   }
 
   async function handleClearChat() {
-    if (!confirm("¿Seguro que quieres borrar todos los mensajes de este chat?")) return;
     setClearing(true);
+    setShowClearConfirm(false);
     try {
       await clearOrderChat(order.id);
       toast.success("Chat eliminado");
@@ -105,6 +106,40 @@ export function OrderDetailClient({ order, locale }: { order: Order; locale: str
   }
 
   return (
+    <>
+    {showClearConfirm && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div
+          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+          onClick={() => setShowClearConfirm(false)}
+        />
+        <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 flex flex-col items-center text-center gap-4 animate-slide-in">
+          <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center">
+            <Trash2 size={24} className="text-red-500" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-gray-900">¿Limpiar chat?</h3>
+            <p className="text-sm text-gray-500 mt-1">
+              Se eliminarán todos los mensajes de este pedido. Esta acción no se puede deshacer.
+            </p>
+          </div>
+          <div className="flex gap-3 w-full pt-1">
+            <button
+              onClick={() => setShowClearConfirm(false)}
+              className="flex-1 px-4 py-2.5 text-sm font-semibold text-gray-700 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={handleClearChat}
+              className="flex-1 px-4 py-2.5 text-sm font-semibold text-white rounded-xl transition-all hover:opacity-90 bg-red-500 hover:bg-red-600"
+            >
+              Sí, eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
     <div className="space-y-5 max-w-5xl mx-auto">
       {/* Header */}
       <div className="flex items-center gap-3">
@@ -294,7 +329,7 @@ export function OrderDetailClient({ order, locale }: { order: Order; locale: str
         headerExtra={
           canClearChat ? (
             <button
-              onClick={handleClearChat}
+              onClick={() => setShowClearConfirm(true)}
               disabled={clearing}
               className="flex items-center gap-1 text-xs text-red-500 hover:text-red-700 hover:bg-red-50 px-2.5 py-1 rounded-lg transition-colors"
             >
@@ -305,5 +340,6 @@ export function OrderDetailClient({ order, locale }: { order: Order; locale: str
         }
       />
     </div>
+    </>
   );
 }
