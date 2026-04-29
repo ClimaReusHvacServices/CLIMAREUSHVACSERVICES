@@ -20,8 +20,6 @@ function switchLocale(code: string) {
     "position:fixed;inset:0;z-index:9999;background:#f8fafc;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;";
   overlay.innerHTML = `
     <img src="/logos/logoverde.png" alt="Clima HVAC Service" style="width:120px;height:120px;object-fit:contain;" />
-    <div style="width:32px;height:32px;border-radius:50%;border:3px solid #e2e8f0;border-top-color:#008f65;animation:chs-spin 0.7s linear infinite;"></div>
-    <style>@keyframes chs-spin{to{transform:rotate(360deg)}}</style>
   `;
   document.body.appendChild(overlay);
   const segs = window.location.pathname.split("/").filter(Boolean);

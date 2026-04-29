@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Search, Package, Wrench, Box, X } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Package, Wrench, Box, X, Wind } from "lucide-react";
 import { Pagination } from "@/components/common/Pagination";
 import {
   createProduct, updateProduct, deleteProduct,
@@ -17,7 +17,7 @@ import {
 interface ProductRow {
   id: string; name: string; description: string; category: string;
   manufacturer: string | null; price: any; discountPrice: any;
-  stock: number; warranty: string | null; isActive: boolean;
+  stock: number; warranty: string | null; isActive: boolean; images: string[];
 }
 interface ServiceRow {
   id: string; name: string; description: string; type: string;
@@ -33,7 +33,7 @@ interface PackageRow {
 type Tab = "products" | "services" | "packages";
 const PAGE_SIZE = 10;
 
-const defaultProductForm = { name: "", description: "", category: "", manufacturer: "", price: "", discountPrice: "", stock: "1", warranty: "", isActive: true };
+const defaultProductForm = { name: "", description: "", category: "", manufacturer: "", price: "", discountPrice: "", stock: "1", warranty: "", isActive: true, imageUrl: "" };
 const defaultServiceForm = { name: "", description: "", type: "instalacion", basePrice: "", estimatedDuration: "60", difficulty: "media", isActive: true };
 const defaultPackageForm = { name: "", description: "", productId: "", serviceId: "", packagePrice: "", discountPercentage: "", isActive: true };
 
@@ -164,6 +164,7 @@ export function ProductsManager({ products, services, packages }: {
       manufacturer: item.manufacturer ?? "", price: String(Number(item.price)),
       discountPrice: item.discountPrice ? String(Number(item.discountPrice)) : "",
       stock: String(item.stock), warranty: item.warranty ?? "", isActive: item.isActive,
+      imageUrl: item.images?.[0] ?? "",
     });
     if (type === "services") setServiceForm({
       name: item.name, description: item.description, type: item.type,
@@ -194,6 +195,7 @@ export function ProductsManager({ products, services, packages }: {
         stock: parseInt(productForm.stock) || 0,
         warranty: productForm.warranty || undefined,
         isActive: productForm.isActive,
+        imageUrl: productForm.imageUrl || undefined,
       };
       if (modal?.mode === "edit" && modal.id) await updateProduct(modal.id, data);
       else await createProduct(data);
@@ -349,8 +351,17 @@ export function ProductsManager({ products, services, packages }: {
                 (current as ProductRow[]).map((p) => (
                   <tr key={p.id} className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
                     <td className="py-3 px-4">
-                      <p className="font-medium text-gray-900">{p.name}</p>
-                      {p.manufacturer && <p className="text-xs text-gray-400">{p.manufacturer}</p>}
+                      <div className="flex items-center gap-3">
+                        {p.images?.[0] ? (
+                          <img src={p.images[0]} alt={p.name} className="w-10 h-10 object-contain rounded-lg border border-gray-100 bg-gray-50 shrink-0" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                        ) : (
+                          <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center shrink-0"><Wind size={16} className="text-gray-300" /></div>
+                        )}
+                        <div>
+                          <p className="font-medium text-gray-900">{p.name}</p>
+                          {p.manufacturer && <p className="text-xs text-gray-400">{p.manufacturer}</p>}
+                        </div>
+                      </div>
                     </td>
                     <td className="py-3 px-4 text-gray-600">{p.category}</td>
                     <td className="py-3 px-4 font-medium text-gray-900">
@@ -471,6 +482,12 @@ export function ProductsManager({ products, services, packages }: {
                   <input className={inputCls} value={productForm.warranty} onChange={e => setProductForm(f => ({ ...f, warranty: e.target.value }))} />
                 </Field>
               </div>
+              <Field label="Imagen (URL)">
+                <input type="url" className={inputCls} value={productForm.imageUrl} onChange={e => setProductForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://..." />
+                {productForm.imageUrl && (
+                  <img src={productForm.imageUrl} alt="preview" className="mt-2 h-20 w-20 object-contain rounded-lg border border-gray-100 bg-gray-50" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                )}
+              </Field>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" checked={productForm.isActive} onChange={e => setProductForm(f => ({ ...f, isActive: e.target.checked }))} className="w-4 h-4 rounded border-gray-300 text-primary-600" />
                 <span className="text-sm font-medium text-gray-700">{t("fieldIsActive")}</span>

@@ -55,7 +55,7 @@ export function ClientShell({ children, myOrdersLabel, myProfileLabel }: ClientS
                   alt="Clima HVAC Service"
                   width={500}
                   height={500}
-                  style={{ height: "36px", width: "auto", objectFit: "contain" }}
+                  style={{ height: "54px", width: "auto", objectFit: "contain" }}
                 />
               </Link>
 

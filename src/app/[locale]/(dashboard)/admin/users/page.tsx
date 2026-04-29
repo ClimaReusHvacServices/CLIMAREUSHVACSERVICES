@@ -4,18 +4,19 @@ import { db } from "@/db";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { Users } from "lucide-react";
-import { UsersTable } from "@/components/admin/UsersTable";
+import { ClientsTable } from "@/components/admin/UsersTable";
 import { BackButton } from "@/components/common/BackButton";
 
-async function getAllUsers() {
+async function getAllClients() {
   return db.user.findMany({
+    where: { role: "cliente" },
     select: {
       id: true,
       firstName: true,
       lastName: true,
       email: true,
       username: true,
-      role: true,
+      phoneNumber: true,
       isActive: true,
       createdAt: true,
     },
@@ -34,7 +35,7 @@ export default async function AdminUsersPage({
   const session = await auth();
   if (!session || session.user?.role !== "admin") redirect("/");
 
-  const users = await getAllUsers();
+  const clients = await getAllClients();
   const t = await getTranslations("adminUsers");
 
   return (
@@ -49,7 +50,7 @@ export default async function AdminUsersPage({
         <p className="text-gray-500 mt-1">{t("subtitle")}</p>
       </div>
 
-      <UsersTable users={users} locale={locale} />
+      <ClientsTable clients={clients as any} locale={locale} />
     </div>
   );
 }

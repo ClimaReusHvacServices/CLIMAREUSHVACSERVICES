@@ -13,7 +13,8 @@ async function checkAdmin() {
 
 export async function createProduct(data: {
   name: string; description: string; category: string; manufacturer?: string;
-  price: number; discountPrice?: number; stock: number; warranty?: string; isActive: boolean;
+  price: number; discountPrice?: number; stock: number; warranty?: string;
+  isActive: boolean; imageUrl?: string;
 }) {
   await checkAdmin();
   await db.product.create({
@@ -24,6 +25,7 @@ export async function createProduct(data: {
       stock: data.stock, warranty: data.warranty ?? null,
       isActive: data.isActive,
       sku: `SKU-${Date.now()}`,
+      images: data.imageUrl ? [data.imageUrl] : [],
     },
   });
   revalidatePath("/[locale]/admin/products", "page");
@@ -31,7 +33,8 @@ export async function createProduct(data: {
 
 export async function updateProduct(id: string, data: {
   name: string; description: string; category: string; manufacturer?: string;
-  price: number; discountPrice?: number; stock: number; warranty?: string; isActive: boolean;
+  price: number; discountPrice?: number; stock: number; warranty?: string;
+  isActive: boolean; imageUrl?: string;
 }) {
   await checkAdmin();
   await db.product.update({
@@ -42,6 +45,7 @@ export async function updateProduct(id: string, data: {
       price: data.price, discountPrice: data.discountPrice ?? null,
       stock: data.stock, warranty: data.warranty ?? null,
       isActive: data.isActive,
+      images: data.imageUrl ? [data.imageUrl] : [],
     },
   });
   revalidatePath("/[locale]/admin/products", "page");

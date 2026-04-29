@@ -5,6 +5,7 @@ import { Link } from "@/i18n/routing";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Users, Package, Banknote, Wrench, ShoppingBag, UserCog, BarChart3 } from "lucide-react";
 import { STATUS_COLORS } from "@/lib/status-colors";
+import Image from "next/image";
 
 async function getAdminStats() {
   const [totalUsers, totalOrders, revenueAggregate, activeWorkers] = await Promise.all([
@@ -46,31 +47,43 @@ export default async function AdminDashboard({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t("title")}</h1>
-        <p className="text-gray-500 mt-1 text-sm">{t("welcome")}, {session.user?.firstName}.</p>
+      {/* Banner header */}
+      <div className="rounded-2xl overflow-hidden shadow-md" style={{ background: "linear-gradient(135deg, #008f65 0%, #1d7291 60%, #083a57 100%)" }}>
+        <div className="px-6 py-6 sm:px-8 sm:py-7 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <Image
+            src="/logos/logoblanco.png"
+            alt="Clima HVAC Service"
+            width={500} height={500}
+            style={{ height: "64px", width: "auto", objectFit: "contain" }}
+            priority
+          />
+          <div className="sm:ml-2">
+            <h1 className="text-xl sm:text-2xl font-bold text-white">{t("title")}</h1>
+            <p className="text-white/70 mt-0.5 text-sm">{t("welcome")}, <span className="text-white font-semibold">{session.user?.firstName}</span>.</p>
+          </div>
+        </div>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <StatCard icon={<Users size={20} className="text-primary-600" />} label={t("totalUsers")} value={stats.totalUsers} border="border-primary-500" />
-        <StatCard icon={<Package size={20} className="text-accent-500" />} label={t("totalOrders")} value={stats.totalOrders} border="border-accent-400" />
-        <StatCard icon={<Banknote size={20} className="text-primary-500" />} label={t("totalRevenue")} value={`€${stats.totalRevenue.toFixed(2)}`} border="border-primary-400" />
-        <StatCard icon={<Wrench size={20} className="text-accent-600" />} label={t("activeWorkers")} value={stats.activeWorkers} border="border-accent-600" />
+        <StatCard icon={<Users size={22} />} label={t("totalUsers")} value={stats.totalUsers} gradient="from-[#008f65] to-[#00b37d]" />
+        <StatCard icon={<Package size={22} />} label={t("totalOrders")} value={stats.totalOrders} gradient="from-[#1d7291] to-[#2490b5]" />
+        <StatCard icon={<Banknote size={22} />} label={t("totalRevenue")} value={`€${stats.totalRevenue.toFixed(2)}`} gradient="from-[#083a57] to-[#1d7291]" />
+        <StatCard icon={<Wrench size={22} />} label={t("activeWorkers")} value={stats.activeWorkers} gradient="from-[#d97706] to-[#f59e0b]" />
       </div>
 
       {/* Quick actions */}
-      <div className="bg-white rounded-xl shadow-sm p-5 sm:p-6">
+      <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 border border-gray-100">
         <h2 className="text-base font-bold text-gray-900 mb-4">{t("quickActions")}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <QuickLink href="/admin/users"   icon={<UserCog size={20} className="text-primary-600" />} label={t("manageUsers")}   desc={t("manageUsersDesc")} />
-          <QuickLink href="/admin/workers" icon={<Wrench size={20} className="text-accent-500" />}   label={t("manageWorkers")} desc={t("manageWorkersDesc")} />
+          <QuickLink href="/admin/users"   icon={<UserCog size={20} className="text-primary-600" />} label="Gestionar Clientes"   desc="Ver, crear y editar clientes" />
+          <QuickLink href="/admin/workers" icon={<Wrench size={20} className="text-amber-500" />}    label={t("manageWorkers")} desc={t("manageWorkersDesc")} />
           <QuickLink href="/admin/orders"  icon={<ShoppingBag size={20} className="text-accent-600" />} label={t("viewOrders")}  desc={t("viewOrdersDesc")} />
         </div>
       </div>
 
       {/* Recent orders */}
-      <div className="bg-white rounded-xl shadow-sm p-5 sm:p-6">
+      <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 border border-gray-100">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
             <BarChart3 size={18} className="text-primary-600" />
@@ -122,15 +135,16 @@ export default async function AdminDashboard({
   );
 }
 
-function StatCard({ icon, label, value, border }: { icon: React.ReactNode; label: string; value: string | number; border: string }) {
+function StatCard({ icon, label, value, gradient }: { icon: React.ReactNode; label: string; value: string | number; gradient: string }) {
   return (
-    <div className={`bg-white rounded-xl shadow-sm p-4 sm:p-5 border-l-4 ${border}`}>
+    <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-5 border border-gray-100 overflow-hidden relative">
+      <div className={`absolute top-0 right-0 w-20 h-20 rounded-full opacity-10 -translate-y-6 translate-x-6 bg-gradient-to-br ${gradient}`} />
       <div className="flex justify-between items-start gap-2">
         <div className="min-w-0">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider truncate">{label}</p>
-          <p className="text-xl sm:text-2xl font-bold text-gray-900 mt-1.5 truncate">{value}</p>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider truncate">{label}</p>
+          <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1.5 truncate">{value}</p>
         </div>
-        <div className="p-2 bg-gray-50 rounded-lg shrink-0">{icon}</div>
+        <div className={`p-2.5 rounded-xl text-white shrink-0 bg-gradient-to-br ${gradient}`}>{icon}</div>
       </div>
     </div>
   );
@@ -140,12 +154,12 @@ function QuickLink({ href, icon, label, desc }: { href: string; icon: React.Reac
   return (
     <Link
       href={href as any}
-      className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 hover:bg-primary-50 hover:border-primary-200 border border-transparent transition-all"
+      className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 hover:bg-primary-50 hover:border-primary-200 border border-gray-100 hover:shadow-sm transition-all group"
     >
-      <div className="p-2 bg-white rounded-lg shadow-sm shrink-0">{icon}</div>
+      <div className="p-2.5 bg-white rounded-xl shadow-sm shrink-0 group-hover:shadow-md transition-shadow">{icon}</div>
       <div className="min-w-0">
         <p className="font-semibold text-gray-900 text-sm">{label}</p>
-        <p className="text-xs text-gray-500 truncate">{desc}</p>
+        <p className="text-xs text-gray-400 truncate mt-0.5">{desc}</p>
       </div>
     </Link>
   );

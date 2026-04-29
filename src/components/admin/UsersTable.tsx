@@ -1,133 +1,286 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Search, Users } from "lucide-react";
-import DataTable from "@/components/common/DataTable";
+import { useRouter } from "@/i18n/routing";
+import { toast } from "sonner";
+import { Search, UserPlus, Pencil, Trash2, Users, Eye, EyeOff, X } from "lucide-react";
+import { createClient, updateClient, deleteClient } from "@/app/[locale]/(dashboard)/admin/users/actions";
 
-const PAGE_SIZE = 10;
-
-interface UserRow {
+interface ClientRow {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
   username: string;
-  role: string;
+  phoneNumber: string | null;
   isActive: boolean;
   createdAt: Date;
 }
 
-const roleColors: Record<string, string> = {
-  admin:      "bg-primary-100 text-primary-700",
-  cliente:    "bg-accent-100 text-accent-700",
-  trabajador: "bg-gray-100 text-gray-600",
-};
+const defaultForm = { firstName: "", lastName: "", email: "", phoneNumber: "", password: "", isActive: true };
 
-const roleBorderColors: Record<string, string> = {
-  admin:      "border-l-primary-500",
-  cliente:    "border-l-accent-400",
-  trabajador: "border-l-gray-400",
-};
+function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", h);
+    document.body.style.overflow = "hidden";
+    return () => { document.removeEventListener("keydown", h); document.body.style.overflow = ""; };
+  }, [onClose]);
 
-export function UsersTable({ users, locale }: { users: UserRow[]; locale: string }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[92vh]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0"
+          style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}>
+          <h2 className="font-bold text-white">{title}</h2>
+          <button onClick={onClose} className="p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+            <X size={16} />
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
+  return (
+    <div className="space-y-1">
+      <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide">
+        {label}{required && <span className="text-red-500 ml-1">*</span>}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+const inputCls = "w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-100 transition-colors bg-white";
+
+export function ClientsTable({ clients, locale }: { clients: ClientRow[]; locale: string }) {
   const t = useTranslations("adminUsers");
+  const router = useRouter();
   const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState("all");
-  const [page, setPage] = useState(1);
+  const [modal, setModal] = useState<"create" | "edit" | null>(null);
+  const [editTarget, setEditTarget] = useState<ClientRow | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ClientRow | null>(null);
+  const [form, setForm] = useState({ ...defaultForm });
+  const [showPw, setShowPw] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const filtered = users.filter((u) => {
+  const filtered = clients.filter((c) => {
     const q = search.toLowerCase();
-    const matchesSearch =
-      q === "" ||
-      `${u.firstName} ${u.lastName}`.toLowerCase().includes(q) ||
-      u.email.toLowerCase().includes(q) ||
-      u.username.toLowerCase().includes(q);
-    const matchesRole = roleFilter === "all" || u.role === roleFilter;
-    return matchesSearch && matchesRole;
+    return q === "" ||
+      `${c.firstName} ${c.lastName}`.toLowerCase().includes(q) ||
+      c.email.toLowerCase().includes(q) ||
+      c.username.toLowerCase().includes(q);
   });
 
-  const from = filtered.length === 0 ? 0 : (1 - 1) * 10 + 1; // placeholders used by DataTable
-  const to = Math.min(10, filtered.length);
+  function openCreate() {
+    setForm({ ...defaultForm });
+    setShowPw(false);
+    setModal("create");
+  }
 
-  const handleSearch = (v: string) => { setSearch(v); setPage(1); };
-  const handleRole = (v: string) => { setRoleFilter(v); setPage(1); };
+  function openEdit(c: ClientRow) {
+    setEditTarget(c);
+    setForm({ firstName: c.firstName, lastName: c.lastName, email: c.email, phoneNumber: c.phoneNumber ?? "", password: "", isActive: c.isActive });
+    setModal("edit");
+  }
 
-  const roleLabel = (role: string) => {
-    if (role === "admin") return t("roleAdmin");
-    if (role === "cliente") return t("roleCliente");
-    return t("roleTrabajador");
-  };
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      if (modal === "create") {
+        await createClient({ firstName: form.firstName, lastName: form.lastName, email: form.email, phoneNumber: form.phoneNumber || undefined, password: form.password });
+        toast.success("Cliente creado correctamente");
+      } else if (modal === "edit" && editTarget) {
+        await updateClient(editTarget.id, { firstName: form.firstName, lastName: form.lastName, email: form.email, phoneNumber: form.phoneNumber || undefined, isActive: form.isActive });
+        toast.success("Cliente actualizado");
+      }
+      setModal(null);
+      router.refresh();
+    } catch (err: any) {
+      toast.error(err?.message?.includes("Unique") ? "El email ya está en uso" : "Error al guardar");
+    } finally { setIsLoading(false); }
+  }
+
+  async function handleDelete() {
+    if (!deleteTarget) return;
+    setIsLoading(true);
+    try {
+      await deleteClient(deleteTarget.id);
+      toast.success("Cliente eliminado");
+      setDeleteTarget(null);
+      router.refresh();
+    } catch { toast.error("Error al eliminar"); }
+    finally { setIsLoading(false); }
+  }
 
   return (
     <div className="space-y-4">
-      {/* Search + filters */}
+      {/* Toolbar */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
           <input
-            type="text"
-            value={search}
-            onChange={(e) => handleSearch(e.target.value)}
-            placeholder={t("search")}
-            className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:border-accent-400 focus:ring-1 focus:ring-accent-100 transition-colors"
+            type="text" value={search} onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar por nombre, email o usuario..."
+            className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-100 transition-colors"
           />
         </div>
-        <div className="flex gap-1 bg-gray-100 p-1 rounded-xl overflow-x-auto">
-          {(["all", "admin", "cliente", "trabajador"] as const).map((role) => (
-            <button
-              key={role}
-              onClick={() => handleRole(role)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0 ${
-                roleFilter === role ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              {role === "all" ? t("filterAll") : roleLabel(role)}
-            </button>
-          ))}
-        </div>
+        <button
+          onClick={openCreate}
+          className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-xl transition-all hover:opacity-90 shrink-0"
+          style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
+        >
+          <UserPlus size={15} />
+          Nuevo Cliente
+        </button>
       </div>
 
       {/* Table */}
-      <DataTable
-        columns={[
-          { key: "name", label: t("colName") },
-          { key: "email", label: t("colEmail"), hideOn: "sm" },
-          { key: "role", label: t("colRole") },
-          { key: "status", label: t("colStatus") },
-          { key: "joined", label: t("colJoined"), hideOn: "lg" },
-        ]}
-        data={filtered}
-        pageSize={10}
-        minWidth="480px"
-        emptyComponent={filtered.length === 0 ? (
-          <div className="py-14 text-center">
-            <Users size={36} className="mx-auto mb-3 text-gray-200" />
-            <p className="text-gray-400 text-sm">{users.length === 0 ? t("noUsers") : t("noResults")}</p>
+      <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr style={{ background: "linear-gradient(to right, #008f6510, #1d729110)" }} className="border-b border-gray-100">
+                <th className="text-left py-3 px-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Cliente</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-500 text-xs uppercase tracking-wider hidden sm:table-cell">Email</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-500 text-xs uppercase tracking-wider hidden md:table-cell">Teléfono</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Estado</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-500 text-xs uppercase tracking-wider hidden lg:table-cell">Registro</th>
+                <th className="py-3 px-4 w-20" />
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-16 text-center">
+                    <Users size={40} className="mx-auto mb-3 text-gray-200" />
+                    <p className="text-gray-400 text-sm">{clients.length === 0 ? "No hay clientes registrados" : "Sin resultados"}</p>
+                  </td>
+                </tr>
+              ) : filtered.map((c) => (
+                <tr key={c.id} className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
+                        style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}>
+                        {(c.firstName[0] + c.lastName[0]).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">{c.firstName} {c.lastName}</p>
+                        <p className="text-xs text-gray-400">@{c.username}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="py-3 px-4 text-gray-600 hidden sm:table-cell">{c.email}</td>
+                  <td className="py-3 px-4 text-gray-500 hidden md:table-cell">{c.phoneNumber || <span className="text-gray-300">—</span>}</td>
+                  <td className="py-3 px-4">
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold ${c.isActive ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-500"}`}>
+                      <span className={`size-1.5 rounded-full shrink-0 ${c.isActive ? "bg-green-500" : "bg-gray-400"}`} />
+                      {c.isActive ? "Activo" : "Inactivo"}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 text-gray-400 text-xs hidden lg:table-cell">{new Date(c.createdAt).toLocaleDateString(locale)}</td>
+                  <td className="py-3 px-4">
+                    <div className="flex items-center justify-end gap-1">
+                      <button onClick={() => openEdit(c)} className="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors" title="Editar">
+                        <Pencil size={14} />
+                      </button>
+                      <button onClick={() => setDeleteTarget(c)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar">
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {filtered.length > 0 && (
+          <div className="px-4 py-2.5 border-t border-gray-50 bg-gray-50/40">
+            <span className="text-xs text-gray-400">{filtered.length} cliente{filtered.length !== 1 ? "s" : ""}</span>
           </div>
-        ) : undefined}
-        renderRow={(user: UserRow) => (
-          <tr key={user.id} className={`border-b border-gray-50 hover:bg-gray-50/70 transition-colors border-l-2 ${roleBorderColors[user.role] ?? "border-l-gray-200"}`}>
-            <td className="py-3 px-4">
-              <p className="font-medium text-gray-900">{user.firstName} {user.lastName}</p>
-              <p className="text-xs text-gray-400">@{user.username}</p>
-            </td>
-            <td className="py-3 px-4 text-gray-600 hidden sm:table-cell">{user.email}</td>
-            <td className="py-3 px-4">
-              <span className={`inline-block px-2.5 py-1 rounded-lg text-xs font-semibold ${roleColors[user.role] ?? "bg-gray-100 text-gray-600"}`}>
-                {roleLabel(user.role)}
-              </span>
-            </td>
-            <td className="py-3 px-4">
-              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold ${user.isActive ? "bg-primary-50 text-primary-700" : "bg-gray-100 text-gray-600"}`}>
-                <span className={`size-1.5 rounded-full shrink-0 ${user.isActive ? "bg-primary-500" : "bg-gray-400"}`} />
-                {user.isActive ? t("active") : t("inactive")}
-              </span>
-            </td>
-            <td className="py-3 px-4 text-gray-400 text-xs hidden lg:table-cell">{new Date(user.createdAt).toLocaleDateString(locale)}</td>
-          </tr>
         )}
-      />
+      </div>
+
+      {/* Create / Edit Modal */}
+      {modal && (
+        <Modal title={modal === "create" ? "Nuevo Cliente" : "Editar Cliente"} onClose={() => setModal(null)}>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Nombre" required>
+                <input required className={inputCls} value={form.firstName} onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))} />
+              </Field>
+              <Field label="Apellido" required>
+                <input required className={inputCls} value={form.lastName} onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))} />
+              </Field>
+            </div>
+            <Field label="Email" required>
+              <input required type="email" className={inputCls} value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
+            </Field>
+            <Field label="Teléfono">
+              <input type="tel" className={inputCls} value={form.phoneNumber} onChange={e => setForm(f => ({ ...f, phoneNumber: e.target.value }))} />
+            </Field>
+            {modal === "create" && (
+              <Field label="Contraseña" required>
+                <div className="relative">
+                  <input required type={showPw ? "text" : "password"} minLength={8} className={inputCls} value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} placeholder="Mínimo 8 caracteres" />
+                  <button type="button" onClick={() => setShowPw(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                    {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
+              </Field>
+            )}
+            {modal === "edit" && (
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={form.isActive} onChange={e => setForm(f => ({ ...f, isActive: e.target.checked }))} className="w-4 h-4 rounded border-gray-300" />
+                <span className="text-sm font-medium text-gray-700">Cliente activo</span>
+              </label>
+            )}
+            <div className="flex gap-2 justify-end pt-2 border-t border-gray-100">
+              <button type="button" onClick={() => setModal(null)} disabled={isLoading} className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50">
+                Cancelar
+              </button>
+              <button type="submit" disabled={isLoading} className="px-5 py-2 text-sm font-semibold text-white rounded-xl transition-opacity disabled:opacity-60 flex items-center gap-2"
+                style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}>
+                {isLoading && <div className="size-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+                Guardar
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {/* Delete confirmation */}
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setDeleteTarget(null)} />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-red-50 rounded-xl shrink-0"><Trash2 size={18} className="text-red-500" /></div>
+              <div>
+                <h3 className="font-bold text-gray-900">Eliminar cliente</h3>
+                <p className="text-sm text-gray-500 mt-0.5">Esta acción no se puede deshacer.</p>
+                <p className="text-sm font-semibold text-gray-800 mt-2">&ldquo;{deleteTarget.firstName} {deleteTarget.lastName}&rdquo;</p>
+              </div>
+            </div>
+            <div className="flex gap-2 justify-end">
+              <button onClick={() => setDeleteTarget(null)} disabled={isLoading} className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50">
+                Cancelar
+              </button>
+              <button onClick={handleDelete} disabled={isLoading} className="px-4 py-2 text-sm font-semibold text-white bg-red-500 rounded-xl hover:bg-red-600 transition-colors disabled:opacity-50 flex items-center gap-2">
+                {isLoading && <div className="size-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
