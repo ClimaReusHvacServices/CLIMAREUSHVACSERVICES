@@ -118,13 +118,13 @@ export function DashboardShell({
           >
             <Menu size={18} />
           </button>
-          <Link href="/" className="flex items-center hover:opacity-80 transition-opacity shrink-0">
+          <Link href="/" className="flex items-center hover:opacity-80 transition-opacity shrink-0" title="Ir a página principal">
             <Image
-              src="/logos/horizontal-logoblanco.png"
+              src="/logos/logo-blanco-nombre.png"
               alt="Clima HVAC Service"
               width={500}
               height={500}
-              style={{ height: "28px", width: "auto", objectFit: "contain" }}
+              style={{ height: "40px", width: "auto", objectFit: "contain" }}
               priority
             />
           </Link>
@@ -159,7 +159,7 @@ export function DashboardShell({
                 className="flex items-center justify-between px-4 h-16 border-b border-white/10 shrink-0"
                 style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
               >
-                <Image src="/logos/horizontal-logoblanco.png" alt="Clima HVAC Service" width={500} height={500} style={{ height: "28px", width: "auto", objectFit: "contain" }} />
+                <Image src="/logos/logo-blanco-nombre.png" alt="Clima HVAC Service" width={500} height={500} style={{ height: "36px", width: "auto", objectFit: "contain" }} />
                 <button
                   onClick={() => setOpen(false)}
                   className="p-1.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"

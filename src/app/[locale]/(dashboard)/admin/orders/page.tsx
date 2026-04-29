@@ -15,6 +15,8 @@ async function getAllOrders(statusFilter?: string) {
       user: { select: { firstName: true, lastName: true, email: true } },
       items: { select: { id: true } },
     },
+    // include paymentStatus for the table
+
     orderBy: { createdAt: "desc" },
   });
 }

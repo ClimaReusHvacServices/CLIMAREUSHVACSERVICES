@@ -1,34 +1,38 @@
 import { auth } from "@/auth/config";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
-import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ClipboardList, CheckCircle2, Clock, AlertCircle, Wrench, Award } from "lucide-react";
+import { setRequestLocale } from "next-intl/server";
+import { ShoppingBag, CheckCircle2, Wrench, Award, Clock } from "lucide-react";
+import { WorkerActions } from "./WorkerActions";
 
-async function getTrabajadorData(userId: string) {
-  const [tasks, trabajador] = await Promise.all([
-    db.task.findMany({
-      where: { assignedToId: userId },
-      include: { order: { select: { orderNumber: true, scheduledDate: true } } },
-      orderBy: { createdAt: "desc" },
-      take: 10,
-    }),
+export const dynamic = "force-dynamic";
+
+async function getWorkerData(userId: string) {
+  const [trabajador, availableOrders, myOrders] = await Promise.all([
     db.trabajador.findUnique({ where: { userId } }),
+    db.order.findMany({
+      where: {
+        status: { in: ["pendiente", "confirmada"] },
+        OR: [{ task: null }, { task: { assignedToId: null } }],
+      },
+      include: {
+        user: { select: { firstName: true, lastName: true } },
+        items: { select: { id: true } },
+      },
+      orderBy: { createdAt: "asc" },
+    }),
+    db.order.findMany({
+      where: { task: { assignedToId: userId } },
+      include: {
+        user: { select: { firstName: true, lastName: true } },
+        items: { select: { id: true } },
+        task: { select: { id: true, status: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
   ]);
-  return { tasks, trabajador };
+  return { trabajador, availableOrders, myOrders };
 }
-
-const taskColors: Record<string, string> = {
-  pendiente:   "bg-yellow-100 text-yellow-800 border-yellow-200",
-  en_progreso: "bg-accent-100 text-accent-700 border-accent-200",
-  completada:  "bg-primary-100 text-primary-700 border-primary-200",
-  cancelada:   "bg-gray-100 text-gray-700 border-gray-200",
-};
-
-const priorityColors: Record<string, string> = {
-  baja:  "bg-gray-100 text-gray-600",
-  media: "bg-accent-50 text-accent-700",
-  alta:  "bg-accent-100 text-accent-700",
-};
 
 export default async function WorkerDashboard({
   params,
@@ -41,123 +45,143 @@ export default async function WorkerDashboard({
   const session = await auth();
   if (!session || session.user?.role !== "trabajador") redirect("/");
 
-  const { tasks, trabajador } = await getTrabajadorData(session.user.id);
-  const t = await getTranslations("worker");
+  const { trabajador, availableOrders, myOrders } = await getWorkerData(session.user.id);
 
-  const pendientes = tasks.filter((t) => t.status === "pendiente").length;
-  const enProgreso = tasks.filter((t) => t.status === "en_progreso").length;
-  const completadas = tasks.filter((t) => t.status === "completada").length;
+  const active = myOrders.filter(o => o.task?.status !== "completada");
+  const completed = myOrders.filter(o => o.task?.status === "completada");
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">{t("title")}, {session.user.firstName}</h1>
-        <p className="text-gray-500 mt-1 flex items-center gap-1.5">
-          <span className={`inline-block w-2 h-2 rounded-full ${trabajador?.isAvailable ? "bg-primary-500" : "bg-gray-400"}`} />
-          {trabajador?.isAvailable ? t("available") : t("notAvailable")}
-        </p>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl shadow-sm p-4 border-l-4 border-yellow-400">
-          <div className="flex items-center gap-2 mb-1">
-            <Clock size={16} className="text-yellow-500" />
-            <p className="text-xs font-semibold text-gray-500 uppercase">{t("pending")}</p>
+      {/* Banner */}
+      <div className="rounded-2xl overflow-hidden shadow-md" style={{ background: "linear-gradient(135deg, #008f65 0%, #1d7291 60%, #083a57 100%)" }}>
+        <div className="px-6 py-5 flex items-center gap-4">
+          <div
+            className="w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-bold shrink-0"
+            style={{ background: "rgba(255,255,255,0.2)" }}
+          >
+            {session.user.firstName[0]}{session.user.lastName?.[0] ?? ""}
           </div>
-          <p className="text-2xl font-bold text-gray-900">{pendientes}</p>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm p-4 border-l-4 border-accent-400">
-          <div className="flex items-center gap-2 mb-1">
-            <AlertCircle size={16} className="text-accent-500" />
-            <p className="text-xs font-semibold text-gray-500 uppercase">{t("inProgress")}</p>
+          <div>
+            <h1 className="text-lg sm:text-xl font-bold text-white">
+              Hola, {session.user.firstName}
+            </h1>
+            <p className="text-white/70 text-sm flex items-center gap-1.5 mt-0.5">
+              <span className={`w-2 h-2 rounded-full shrink-0 ${trabajador?.isAvailable ? "bg-green-400" : "bg-gray-300"}`} />
+              {trabajador?.isAvailable ? "Disponible" : "No disponible"}
+              {trabajador?.specialties && trabajador.specialties.length > 0 && (
+                <span className="text-white/50 ml-2">· {trabajador.specialties.join(", ")}</span>
+              )}
+            </p>
           </div>
-          <p className="text-2xl font-bold text-gray-900">{enProgreso}</p>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm p-4 border-l-4 border-primary-500">
-          <div className="flex items-center gap-2 mb-1">
-            <CheckCircle2 size={16} className="text-primary-600" />
-            <p className="text-xs font-semibold text-gray-500 uppercase">{t("completed")}</p>
-          </div>
-          <p className="text-2xl font-bold text-gray-900">{completadas}</p>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm p-4 border-l-4 border-orange-400">
-          <div className="flex items-center gap-2 mb-1">
-            <Award size={16} className="text-orange-500" />
-            <p className="text-xs font-semibold text-gray-500 uppercase">{t("totalCompleted")}</p>
-          </div>
-          <p className="text-2xl font-bold text-gray-900">{trabajador?.totalJobsCompleted ?? 0}</p>
         </div>
       </div>
 
-      {/* Perfil tecnico */}
-      {trabajador && (
-        <div className="bg-white rounded-xl shadow-sm p-5">
-          <h2 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-            <Wrench size={16} className="text-primary-600" />
-            {t("techProfile")}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-xs text-gray-500 mb-2 font-semibold uppercase tracking-wider">{t("specialties")}</p>
-              <div className="flex flex-wrap gap-2">
-                {trabajador.specialties.length > 0
-                  ? trabajador.specialties.map((s) => (
-                      <span key={s} className="bg-primary-50 text-primary-700 border border-primary-200 px-3 py-1 rounded-full text-xs font-medium">{s}</span>
-                    ))
-                  : <span className="text-gray-400 text-sm">{t("noSpecialties")}</span>}
-              </div>
+      {/* Stats strip */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="grid grid-cols-3 divide-x divide-gray-100">
+          <div className="p-4 sm:p-5 flex flex-col gap-2">
+            <div className="self-start p-2 rounded-xl text-white bg-gradient-to-br from-amber-500 to-orange-400">
+              <Clock size={16} />
             </div>
-            <div>
-              <p className="text-xs text-gray-500 mb-2 font-semibold uppercase tracking-wider">{t("certifications")}</p>
-              <div className="flex flex-wrap gap-2">
-                {trabajador.certifications.length > 0
-                  ? trabajador.certifications.map((c) => (
-                      <span key={c} className="bg-accent-50 text-accent-700 border border-accent-200 px-3 py-1 rounded-full text-xs font-medium">{c}</span>
-                    ))
-                  : <span className="text-gray-400 text-sm">{t("noCertifications")}</span>}
-              </div>
+            <p className="text-2xl font-bold text-gray-900">{availableOrders.length}</p>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Disponibles</p>
+          </div>
+          <div className="p-4 sm:p-5 flex flex-col gap-2">
+            <div className="self-start p-2 rounded-xl text-white bg-gradient-to-br from-[#1d7291] to-[#2490b5]">
+              <Wrench size={16} />
             </div>
+            <p className="text-2xl font-bold text-gray-900">{active.length}</p>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">En curso</p>
+          </div>
+          <div className="p-4 sm:p-5 flex flex-col gap-2">
+            <div className="self-start p-2 rounded-xl text-white bg-gradient-to-br from-[#008f65] to-[#00b37d]">
+              <Award size={16} />
+            </div>
+            <p className="text-2xl font-bold text-gray-900">{trabajador?.totalJobsCompleted ?? 0}</p>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Completados</p>
           </div>
         </div>
-      )}
+      </div>
 
-      {/* Tareas */}
-      <div className="bg-white rounded-xl shadow-sm p-5">
-        <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <ClipboardList size={16} className="text-primary-600" />
-          {t("assignedTasks")}
-        </h2>
-        {tasks.length === 0 ? (
-          <div className="text-center py-10">
-            <ClipboardList size={40} className="mx-auto text-gray-200 mb-3" />
-            <p className="text-gray-400 text-sm">{t("noTasks")}</p>
+      {/* Available orders */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2"
+          style={{ background: "linear-gradient(to right, #008f6508, #1d729108)" }}>
+          <ShoppingBag size={15} className="text-primary-600" />
+          <h2 className="text-sm font-bold text-gray-900">Pedidos disponibles</h2>
+          <span className="ml-auto text-xs text-gray-400">{availableOrders.length} esperando</span>
+        </div>
+        {availableOrders.length === 0 ? (
+          <div className="py-10 text-center">
+            <ShoppingBag size={36} className="mx-auto mb-3 text-gray-200" />
+            <p className="text-gray-400 text-sm">No hay pedidos disponibles ahora mismo.</p>
           </div>
         ) : (
-          <div className="space-y-2">
-            {tasks.map((task) => (
-              <div key={task.id} className={`rounded-xl p-4 border ${taskColors[task.status] ?? "bg-gray-50 border-gray-200"}`}>
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap mb-1">
-                      <span className="font-semibold text-sm">{t("order")} {task.order.orderNumber}</span>
-                      <span className={`px-2 py-0.5 rounded-lg text-xs font-semibold ${priorityColors[task.priority] ?? "bg-gray-100 text-gray-600"}`}>
-                        {t("priority")}: {task.priority}
-                      </span>
-                    </div>
-                    <p className="text-sm opacity-80 line-clamp-2">{task.description}</p>
-                    {task.order.scheduledDate && (
-                      <p className="text-xs opacity-60 mt-1">
-                        {t("scheduled")}: {new Date(task.order.scheduledDate).toLocaleDateString(locale)}
-                      </p>
-                    )}
-                  </div>
+          <div className="divide-y divide-gray-50">
+            {availableOrders.map(order => (
+              <div key={order.id} className="px-5 py-4 flex items-center gap-4 hover:bg-gray-50/60 transition-colors">
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-gray-900 text-sm">{order.orderNumber}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    {order.user.firstName} {order.user.lastName}
+                    <span className="mx-1.5 text-gray-300">·</span>
+                    {order.items.length} artículo{order.items.length !== 1 ? "s" : ""}
+                  </p>
                 </div>
+                <WorkerActions.Claim orderId={order.id} />
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* My active orders */}
+      {active.length > 0 && (
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2"
+            style={{ background: "linear-gradient(to right, #1d729108, #083a5708)" }}>
+            <Wrench size={15} className="text-accent-600" />
+            <h2 className="text-sm font-bold text-gray-900">Mis pedidos activos</h2>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {active.map(order => (
+              <div key={order.id} className="px-5 py-4 flex items-center gap-4 hover:bg-gray-50/60 transition-colors">
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-gray-900 text-sm">{order.orderNumber}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    {order.user.firstName} {order.user.lastName}
+                    <span className="mx-1.5 text-gray-300">·</span>
+                    {order.items.length} artículo{order.items.length !== 1 ? "s" : ""}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <WorkerActions.Release taskId={order.task!.id} orderId={order.id} />
+                  <WorkerActions.Complete taskId={order.task!.id} orderId={order.id} userId={session.user.id} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Completed */}
+      {completed.length > 0 && (
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
+            <CheckCircle2 size={15} className="text-primary-600" />
+            <h2 className="text-sm font-bold text-gray-900">Completados</h2>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {completed.slice(0, 5).map(order => (
+              <div key={order.id} className="px-5 py-3 flex items-center gap-3">
+                <CheckCircle2 size={14} className="text-green-500 shrink-0" />
+                <p className="text-sm font-medium text-gray-700">{order.orderNumber}</p>
+                <p className="text-xs text-gray-400 ml-auto">{order.user.firstName} {order.user.lastName}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
