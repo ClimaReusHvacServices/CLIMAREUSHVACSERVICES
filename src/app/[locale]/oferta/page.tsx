@@ -38,28 +38,32 @@ export default async function OfertaPage() {
     <main className="bg-gray-50 min-h-screen">
       <Navbar />
 
-      {/* Hero */}
-      <div className="pt-28 pb-12 px-4 text-center" style={{ background: "linear-gradient(160deg, #0d3c4d 0%, #1d7291 100%)" }}>
-        <span className="text-xs font-bold tracking-widest uppercase text-accent-300 mb-2 block">{t("ofertaPage.badge")}</span>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white">{t("ofertaPage.title")}</h1>
-        <p className="mt-3 text-white/70 text-sm sm:text-base max-w-xl mx-auto">
-          {t("ofertaPage.subtitle")}
-        </p>
-      </div>
-
-      {/* Stats bar */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center gap-6 text-xs text-gray-500">
-          <span className="flex items-center gap-1.5 font-semibold text-primary-700">
-            <span className="w-2 h-2 rounded-full bg-primary-500 inline-block" />
-            {products.filter(p => p.discountPrice !== null).length} {t("ofertaPage.statsOffer")}
-          </span>
-          <span>{products.length} {t("ofertaPage.statsTotal")}</span>
-          <span className="ml-auto font-medium text-primary-600">{t("ofertaPage.statsInstall")}</span>
+      {/* Hero — dark bg → white logo */}
+      <div data-logo="white">
+        <div className="pt-28 pb-12 px-4 text-center" style={{ background: "linear-gradient(160deg, #0d3c4d 0%, #1d7291 100%)" }}>
+          <span className="text-xs font-bold tracking-widest uppercase text-accent-300 mb-2 block">{t("ofertaPage.badge")}</span>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-white">{t("ofertaPage.title")}</h1>
+          <p className="mt-3 text-white/70 text-sm sm:text-base max-w-xl mx-auto">
+            {t("ofertaPage.subtitle")}
+          </p>
         </div>
       </div>
 
-      <OfertaPageClient products={products} />
+      {/* Products — white/gray bg → green logo */}
+      <div data-logo="green">
+        {/* Stats bar */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center gap-6 text-xs text-gray-500">
+            <span className="flex items-center gap-1.5 font-semibold text-primary-700">
+              <span className="w-2 h-2 rounded-full bg-primary-500 inline-block" />
+              {products.filter(p => p.discountPrice !== null).length} {t("ofertaPage.statsOffer")}
+            </span>
+            <span>{products.length} {t("ofertaPage.statsTotal")}</span>
+            <span className="ml-auto font-medium text-primary-600">{t("ofertaPage.statsInstall")}</span>
+          </div>
+        </div>
+        <OfertaPageClient products={products} />
+      </div>
 
       <WhatsAppButton />
       <Footer />

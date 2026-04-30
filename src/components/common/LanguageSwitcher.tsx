@@ -27,6 +27,15 @@ export function LanguageSwitcher({ variant = "light" }: { variant?: "light" | "d
 
   const handleLanguageChange = (newLocale: string) => {
     setIsOpen(false);
+    const overlay = document.createElement("div");
+    overlay.style.cssText = "position:fixed;inset:0;z-index:9999;background:#f8fafc;display:flex;align-items:center;justify-content:center;";
+    overlay.innerHTML = `
+      <style>@keyframes shimmerScan{0%{background-position:-300% 0}100%{background-position:300% 0}}</style>
+      <div style="position:relative;width:120px;height:120px;">
+        <img src="/logos/logoverde.png" alt="" style="width:120px;height:120px;object-fit:contain;display:block;" />
+        <div style="position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,0.65) 50%,transparent 70%);background-size:300% 100%;animation:shimmerScan 1.4s ease-in-out infinite;border-radius:8px;pointer-events:none;"></div>
+      </div>`;
+    document.body.appendChild(overlay);
     const segments = window.location.pathname.split("/").filter(Boolean);
     const knownLocales = ["es", "en", "ca"];
     const afterLocale = knownLocales.includes(segments[0]) ? segments.slice(1).join("/") : segments.join("/");

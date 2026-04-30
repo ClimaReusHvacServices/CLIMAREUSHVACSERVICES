@@ -46,16 +46,19 @@ export default async function ServiciosPage() {
     <main>
       <Navbar />
 
-      {/* Hero */}
-      <div className="pt-28 pb-16 px-4 text-center" style={{ background: "linear-gradient(160deg, #0d3c4d 0%, #1d7291 100%)" }}>
-        <span className="text-xs font-bold tracking-widest uppercase text-accent-300 mb-2 block">{t("serviciosPage.badge")}</span>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white">{t("serviciosPage.title")}</h1>
-        <p className="mt-3 text-white/70 text-base max-w-xl mx-auto">
-          {t("serviciosPage.subtitle")}
-        </p>
+      {/* Hero — dark bg → white logo */}
+      <div data-logo="white">
+        <div className="pt-28 pb-16 px-4 text-center" style={{ background: "linear-gradient(160deg, #0d3c4d 0%, #1d7291 100%)" }}>
+          <span className="text-xs font-bold tracking-widest uppercase text-accent-300 mb-2 block">{t("serviciosPage.badge")}</span>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-white">{t("serviciosPage.title")}</h1>
+          <p className="mt-3 text-white/70 text-base max-w-xl mx-auto">
+            {t("serviciosPage.subtitle")}
+          </p>
+        </div>
       </div>
 
-      {/* Grid */}
+      {/* Grid — white bg → green logo */}
+      <div data-logo="green">
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-16 grid grid-cols-1 sm:grid-cols-2 gap-6">
         {SERVICES.map((s, i) => (
           <ScrollReveal key={s.href} delay={i * 100}>
@@ -82,6 +85,7 @@ export default async function ServiciosPage() {
           </ScrollReveal>
         ))}
       </section>
+      </div>
 
       <WhatsAppButton />
       <Footer />
