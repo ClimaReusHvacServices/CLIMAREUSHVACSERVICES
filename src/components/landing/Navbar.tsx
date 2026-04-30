@@ -132,17 +132,27 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [orderCount, setOrderCount] = useState(0);
-  const [scrolled, setScrolled] = useState(false);
+  const [logoColor, setLogoColor] = useState<"white" | "green">("white");
   const locale = useLocale();
   const pathname = usePathname();
   const mobileRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const sections = document.querySelectorAll<HTMLElement>("[data-logo]");
+    if (!sections.length) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setLogoColor((entry.target.getAttribute("data-logo") ?? "white") as "white" | "green");
+          }
+        });
+      },
+      { threshold: 0, rootMargin: "-40% 0px -40% 0px" }
+    );
+    sections.forEach(s => observer.observe(s));
+    return () => observer.disconnect();
   }, []);
 
   const isLoggedIn = status === "authenticated";
@@ -214,23 +224,21 @@ export default function Navbar() {
   return (
     <>
       {/* ── Top-left logo ──────────────────────────────────────────────── */}
-      <div className="hidden sm:block fixed left-10 top-4 sm:top-5 z-50">
+      <div className="hidden sm:block fixed left-20 top-4 sm:top-5 z-50">
         <Link href="/" aria-label="Clima HVAC Service — inicio">
-          <div className="relative h-12">
-            {/* Green logo — shown when scrolled over white sections */}
+          <div className="relative h-14">
             <img
               src="/logos/logo-verde-nombre.png"
               alt="Clima HVAC Service"
-              className="h-12 w-auto object-contain"
-              style={{ opacity: scrolled ? 1 : 0, transition: "opacity 0.45s ease" }}
+              className="h-14 w-auto object-contain"
+              style={{ opacity: logoColor === "green" ? 1 : 0, transition: "opacity 0.45s ease" }}
             />
-            {/* White logo — shown at top over dark hero */}
             <img
               src="/logos/logo-blanco-nombre.png"
               alt=""
               aria-hidden
-              className="absolute inset-0 h-12 w-auto object-contain"
-              style={{ opacity: scrolled ? 0 : 1, transition: "opacity 0.45s ease" }}
+              className="absolute inset-0 h-14 w-auto object-contain"
+              style={{ opacity: logoColor === "white" ? 1 : 0, transition: "opacity 0.45s ease" }}
             />
           </div>
         </Link>

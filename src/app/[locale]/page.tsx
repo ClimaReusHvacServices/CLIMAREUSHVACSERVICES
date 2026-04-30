@@ -51,35 +51,48 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     <main>
       <Navbar />
 
-      {/* Section 1 — Hero */}
-      <Hero />
+      {/* Section 1 — Hero (dark gradient → white logo) */}
+      <div data-logo="white">
+        <Hero />
+      </div>
 
-      {/* Section 2 — Products / Offers */}
-      <ScrollReveal>
-        <ProductsSection products={products} />
-      </ScrollReveal>
+      {/* Section 2 — Products (dark teal bg → white logo) */}
+      <div data-logo="white">
+        <ScrollReveal>
+          <ProductsSection products={products} />
+        </ScrollReveal>
+      </div>
 
-      {/* Section 3 — Why choose us */}
-      <ScrollReveal delay={80}>
-        <WhyChooseUs />
-      </ScrollReveal>
+      {/* Section 3 — Why choose us (white bg → green logo) */}
+      <div data-logo="green">
+        <ScrollReveal delay={80}>
+          <WhyChooseUs />
+        </ScrollReveal>
+      </div>
 
-      {/* Section 4 — Brands */}
-      <ScrollReveal delay={80}>
-        <BrandsSection />
-      </ScrollReveal>
+      {/* Section 4 — Brands (dark bg → white logo) */}
+      <div data-logo="white">
+        <ScrollReveal delay={80}>
+          <BrandsSection />
+        </ScrollReveal>
+      </div>
 
-      {/* Section 5 — FAQ */}
-      <ScrollReveal delay={80}>
-        <FAQSection />
-      </ScrollReveal>
+      {/* Section 5 — FAQ (white bg → green logo) */}
+      <div data-logo="green">
+        <ScrollReveal delay={80}>
+          <FAQSection />
+        </ScrollReveal>
+      </div>
 
-      {/* Section 6 — Testimonials */}
-      <ScrollReveal delay={80}>
-        <TestimonialsSection />
-      </ScrollReveal>
+      {/* Section 6 — Testimonials (dark/colored bg → white logo) */}
+      <div data-logo="white">
+        <ScrollReveal delay={80}>
+          <TestimonialsSection />
+        </ScrollReveal>
+      </div>
 
-      {/* Section 7 — Contact */}
+      {/* Section 7 — Contact (gray-50 bg → green logo) */}
+      <div data-logo="green">
       <ScrollReveal delay={80}>
       <section id="contact" className="bg-gray-50 py-16 sm:py-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
@@ -132,6 +145,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
       </ScrollReveal>
+      </div>
 
       <WhatsAppButton />
       <Footer />
