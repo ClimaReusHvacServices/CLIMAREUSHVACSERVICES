@@ -58,8 +58,6 @@ export async function requestServiceConsultation(serviceTitle: string, locale: s
   const task = await db.task.create({
     data: {
       orderId: order.id,
-      title: `Consulta: ${serviceTitle}`,
-      description: `El cliente solicita información sobre: ${serviceTitle}`,
       status: "pendiente",
       priority: "media",
     },
