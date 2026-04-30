@@ -60,6 +60,7 @@ export async function requestServiceConsultation(serviceTitle: string, locale: s
       orderId: order.id,
       status: "pendiente",
       priority: "media",
+      description: `Solicitud de consulta: ${serviceTitle}`,
     },
   });
 
