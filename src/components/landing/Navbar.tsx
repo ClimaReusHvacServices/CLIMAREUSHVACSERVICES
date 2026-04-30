@@ -139,20 +139,37 @@ export default function Navbar() {
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const sections = document.querySelectorAll<HTMLElement>("[data-logo]");
-    if (!sections.length) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            setLogoColor((entry.target.getAttribute("data-logo") ?? "white") as "white" | "green");
-          }
-        });
-      },
-      { threshold: 0, rootMargin: "-40% 0px -40% 0px" }
-    );
-    sections.forEach(s => observer.observe(s));
-    return () => observer.disconnect();
+    // Logo is fixed at top-1 (4px) with h-20 (80px) → center at 44px from viewport top.
+    // On every scroll tick we check which [data-logo] section contains that Y coordinate.
+    // This is deterministic and correct for both scroll directions.
+    const LOGO_Y = 44;
+    let raf = 0;
+
+    const update = () => {
+      const sections = document.querySelectorAll<HTMLElement>("[data-logo]");
+      if (!sections.length) { raf = 0; return; }
+      let color: "white" | "green" = "white";
+      sections.forEach(s => {
+        const r = s.getBoundingClientRect();
+        if (r.top <= LOGO_Y && r.bottom > LOGO_Y) {
+          color = (s.getAttribute("data-logo") ?? "white") as "white" | "green";
+        }
+      });
+      setLogoColor(color);
+      raf = 0;
+    };
+
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(update);
+    };
+
+    update(); // set correct color on mount
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   const isLoggedIn = status === "authenticated";
@@ -224,21 +241,22 @@ export default function Navbar() {
   return (
     <>
       {/* ── Top-left logo ──────────────────────────────────────────────── */}
-      <div className="hidden sm:block fixed left-20 top-4 sm:top-5 z-50">
+      {/* h-20 (80px) at top-1 (4px) → center at 44px, aligned with navbar pill center */}
+      <div className="hidden sm:block fixed left-24 top-1 z-50">
         <Link href="/" aria-label="Clima HVAC Service — inicio">
-          <div className="relative h-14">
+          <div className="relative h-20">
             <img
               src="/logos/logo-verde-nombre.png"
               alt="Clima HVAC Service"
-              className="h-14 w-auto object-contain"
-              style={{ opacity: logoColor === "green" ? 1 : 0, transition: "opacity 0.45s ease" }}
+              className="h-20 w-auto object-contain"
+              style={{ opacity: logoColor === "green" ? 1 : 0, transition: "opacity 0.4s ease" }}
             />
             <img
               src="/logos/logo-blanco-nombre.png"
               alt=""
               aria-hidden
-              className="absolute inset-0 h-14 w-auto object-contain"
-              style={{ opacity: logoColor === "white" ? 1 : 0, transition: "opacity 0.45s ease" }}
+              className="absolute inset-0 h-20 w-auto object-contain"
+              style={{ opacity: logoColor === "white" ? 1 : 0, transition: "opacity 0.4s ease" }}
             />
           </div>
         </Link>
