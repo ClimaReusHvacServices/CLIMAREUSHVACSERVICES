@@ -209,9 +209,9 @@ export default function Navbar() {
       <div className="hidden sm:block fixed left-6 top-4 z-50">
         <Link href="/" aria-label="Clima HVAC Service — inicio">
           <img
-            src="/logos/horizontal-logoblanco.png"
+            src="/logos/logo-verde-nombre.png"
             alt="Clima HVAC Service"
-            className="h-12 sm:h-14 w-auto object-contain drop-shadow-lg"
+            className="h-14 sm:h-16 w-auto object-contain drop-shadow-lg"
           />
         </Link>
       </div>

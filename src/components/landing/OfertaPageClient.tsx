@@ -17,6 +17,7 @@ export interface ProductItem {
   discountPrice: number | null;
   warranty: string | null;
   stock: number;
+  images: string[];
 }
 
 const WA = "34607953886";
@@ -89,9 +90,15 @@ function ProductModal({ product, onClose, t, role, locale }: {
 
         <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
           {/* Image */}
-          <div className="h-60 sm:h-72 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex flex-col items-center justify-center gap-3 border border-gray-100">
-            <Wind size={80} strokeWidth={0.7} className="text-gray-200" />
-            <p className="text-sm text-gray-300 font-medium">{t("products.modalImage")}</p>
+          <div className="h-60 sm:h-72 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex flex-col items-center justify-center gap-3 border border-gray-100 overflow-hidden">
+            {product.images?.[0] ? (
+              <img src={product.images[0]} alt={product.name} className="w-full h-full object-contain p-3" />
+            ) : (
+              <>
+                <Wind size={80} strokeWidth={0.7} className="text-gray-200" />
+                <p className="text-sm text-gray-300 font-medium">{t("products.modalImage")}</p>
+              </>
+            )}
           </div>
 
           {/* Right */}
@@ -164,7 +171,7 @@ function ProductModal({ product, onClose, t, role, locale }: {
                     : <Wrench size={15} />}
                   Solicitar servicio
                 </button>
-              ) : (
+              ) : role === "" ? (
                 <Link
                   href="/login"
                   className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white text-sm font-bold transition-all hover:opacity-90"
@@ -173,7 +180,7 @@ function ProductModal({ product, onClose, t, role, locale }: {
                   <LogIn size={15} />
                   Iniciar sesión para solicitar
                 </Link>
-              )}
+              ) : null}
             </div>
           </div>
         </div>
@@ -227,11 +234,17 @@ function ProductCard({ product, onClick, highlight = false, t }: { product: Prod
         )}
       </div>
 
-      <div className={`mx-4 h-44 rounded-xl flex flex-col items-center justify-center gap-2 border ${
+      <div className={`mx-4 h-44 rounded-xl flex flex-col items-center justify-center gap-2 border overflow-hidden ${
         highlight ? "bg-gradient-to-br from-amber-50 to-orange-50 border-amber-100/60" : "bg-gradient-to-br from-gray-50 to-gray-100 border-gray-100/60"
       }`}>
-        <Wind size={52} strokeWidth={0.8} className={highlight ? "text-amber-200" : "text-gray-200"} />
-        <p className="text-[11px] text-gray-300 font-medium">{t("products.cardImageSoon")}</p>
+        {product.images?.[0] ? (
+          <img src={product.images[0]} alt={product.name} className="w-full h-full object-contain p-2" />
+        ) : (
+          <>
+            <Wind size={52} strokeWidth={0.8} className={highlight ? "text-amber-200" : "text-gray-200"} />
+            <p className="text-[11px] text-gray-300 font-medium">{t("products.cardImageSoon")}</p>
+          </>
+        )}
       </div>
 
       <div className="px-5 pt-4 pb-5 flex flex-col flex-1">

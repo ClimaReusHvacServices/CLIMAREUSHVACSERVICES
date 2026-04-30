@@ -27,6 +27,7 @@ async function getAllProducts() {
     discountPrice: p.discountPrice ? Number(p.discountPrice) : null,
     warranty: p.warranty,
     stock: p.stock,
+    images: p.images,
   }));
 }
 

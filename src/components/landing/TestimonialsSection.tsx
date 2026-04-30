@@ -64,7 +64,7 @@ export default function TestimonialsSection() {
   return (
     <section className="py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(160deg, #0d3c4d 0%, #083a30 100%)" }}>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center mb-12">
-        <span className="text-xs font-bold tracking-widest uppercase text-primary-300 mb-2 block">{t("testimonials.badge")}</span>
+        <span className="text-sm sm:text-base font-bold tracking-widest uppercase text-primary-300 mb-3 block">{t("testimonials.badge")}</span>
         <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
           {t("testimonials.title")}
         </h2>
