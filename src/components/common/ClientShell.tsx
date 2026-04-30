@@ -38,7 +38,7 @@ function SidebarLink({ href, icon, label }: { href: string; icon: React.ReactNod
 
 export function ClientShell({ children, myOrdersLabel, myProfileLabel }: ClientShellProps) {
   return (
-    <div className="min-h-screen" style={{ background: "linear-gradient(160deg, #eef5f2 0%, #e8f0f5 50%, #eef0ec 100%)" }}>
+    <div className="min-h-screen" data-logo="green" style={{ background: "linear-gradient(160deg, #eef5f2 0%, #e8f0f5 50%, #eef0ec 100%)" }}>
       {/* Landing navbar at top */}
       <Navbar />
 

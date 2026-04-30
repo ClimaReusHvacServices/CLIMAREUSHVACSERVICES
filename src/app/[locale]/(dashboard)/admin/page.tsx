@@ -22,26 +22,38 @@ async function getAdminStats() {
   };
 }
 
-async function getRecentOrders() {
-  return db.order.findMany({
-    include: { user: { select: { firstName: true, lastName: true } } },
-    orderBy: { createdAt: "desc" },
-    take: 5,
-  });
+const PAGE_SIZE = 10;
+
+async function getOrders(page: number) {
+  const [rows, total] = await Promise.all([
+    db.order.findMany({
+      include: { user: { select: { firstName: true, lastName: true } } },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    db.order.count(),
+  ]);
+  return { rows, total };
 }
 
 export default async function AdminDashboard({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ page?: string }>;
 }) {
   const { locale } = await params;
+  const { page: pageStr } = await searchParams;
   setRequestLocale(locale);
 
   const session = await auth();
   if (!session || session.user?.role !== "admin") redirect("/");
 
-  const [stats, recentOrders] = await Promise.all([getAdminStats(), getRecentOrders()]);
+  const page = Math.max(1, parseInt(pageStr ?? "1", 10) || 1);
+  const [stats, { rows: orders, total }] = await Promise.all([getAdminStats(), getOrders(page)]);
+  const totalPages = Math.ceil(total / PAGE_SIZE);
   const t = await getTranslations("admin");
   const tStatus = await getTranslations("status");
 
@@ -117,7 +129,7 @@ export default async function AdminDashboard({
               </tr>
             </thead>
             <tbody>
-              {recentOrders.length === 0 ? (
+              {orders.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="py-8 text-center text-gray-400 text-sm">
                     <ShoppingBag size={32} className="mx-auto mb-2 text-gray-200" />
@@ -125,7 +137,7 @@ export default async function AdminDashboard({
                   </td>
                 </tr>
               ) : (
-                recentOrders.map((order) => (
+                orders.map((order) => (
                   <tr key={order.id} className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
                     <td className="py-3 px-3 font-medium text-gray-900">{order.orderNumber}</td>
                     <td className="py-3 px-3 text-gray-700 hidden sm:table-cell">
@@ -143,6 +155,41 @@ export default async function AdminDashboard({
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-1 pt-4 mt-2 border-t border-gray-100 flex-wrap">
+            {page > 1 && (
+              <Link
+                href={`/admin?page=${page - 1}` as any}
+                className="px-2.5 py-1.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition-colors"
+              >
+                ←
+              </Link>
+            )}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              <Link
+                key={p}
+                href={`/admin?page=${p}` as any}
+                className={`min-w-[32px] text-center px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                  p === page
+                    ? "bg-primary-600 text-white"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
+              >
+                {p}
+              </Link>
+            ))}
+            {page < totalPages && (
+              <Link
+                href={`/admin?page=${page + 1}` as any}
+                className="px-2.5 py-1.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition-colors"
+              >
+                →
+              </Link>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

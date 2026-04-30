@@ -129,7 +129,7 @@ export function DashboardShell({
               alt="Clima HVAC Service"
               width={500}
               height={500}
-              style={{ height: "40px", width: "auto", objectFit: "contain" }}
+              style={{ height: "46px", width: "auto", objectFit: "contain" }}
               priority
             />
           </Link>

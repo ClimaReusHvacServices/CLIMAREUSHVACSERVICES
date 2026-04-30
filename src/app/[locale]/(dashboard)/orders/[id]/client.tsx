@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Link } from "@/i18n/routing";
 import {
   ArrowLeft, Package, MapPin, Clock,
@@ -68,11 +70,18 @@ interface Order {
 }
 
 export function ClientOrderDetailClient({ order, locale }: { order: Order; locale: string }) {
+  const router = useRouter();
   const workerName = order.task?.assignedTo
     ? `${order.task.assignedTo.firstName} ${order.task.assignedTo.lastName}`
     : null;
 
   const canChat = order.status !== "cancelada";
+
+  useEffect(() => {
+    if (order.status === "completada" || order.status === "cancelada") return;
+    const id = setInterval(() => router.refresh(), 5000);
+    return () => clearInterval(id);
+  }, [order.status, router]);
 
   return (
     <div className="space-y-5 max-w-3xl mx-auto">
