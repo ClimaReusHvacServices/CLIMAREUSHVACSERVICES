@@ -211,7 +211,7 @@ export default function Navbar() {
           <img
             src="/logos/logo-verde-nombre.png"
             alt="Clima HVAC Service"
-            className="h-14 sm:h-16 w-auto object-contain drop-shadow-lg"
+            className="h-24 sm:h-28 w-auto object-contain drop-shadow-lg"
           />
         </Link>
       </div>

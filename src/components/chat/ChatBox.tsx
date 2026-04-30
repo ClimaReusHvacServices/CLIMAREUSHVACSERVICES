@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, MessageSquare } from "lucide-react";
+import { Send, MessageSquare, ImagePlus } from "lucide-react";
 import { toast } from "sonner";
 
 export interface ChatComment {
@@ -22,12 +22,50 @@ const ROLE_LABEL: Record<string, string> = {
   cliente:    "Cliente",
 };
 
-// Which role's bubbles go on the right
 const BUBBLE_RIGHT: Record<string, string> = {
   admin:      "bg-primary-600 text-white rounded-tr-sm",
   trabajador: "bg-amber-500 text-white rounded-tr-sm",
   cliente:    "bg-indigo-500 text-white rounded-tr-sm",
 };
+
+const IMG_PREFIX = "[IMG]";
+
+function isImageContent(content: string) {
+  return content.startsWith(IMG_PREFIX);
+}
+
+function getImageSrc(content: string) {
+  return content.slice(IMG_PREFIX.length);
+}
+
+async function compressImage(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const MAX = 1024;
+      let { width, height } = img;
+      if (width > MAX || height > MAX) {
+        if (width >= height) { height = Math.round((height / width) * MAX); width = MAX; }
+        else { width = Math.round((width / height) * MAX); height = MAX; }
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext("2d")!.drawImage(img, 0, 0, width, height);
+      let quality = 0.82;
+      let result = canvas.toDataURL("image/jpeg", quality);
+      while (result.length > 900_000 && quality > 0.3) {
+        quality -= 0.1;
+        result = canvas.toDataURL("image/jpeg", quality);
+      }
+      resolve(IMG_PREFIX + result);
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
 
 interface ChatBoxProps {
   orderId: string;
@@ -37,7 +75,6 @@ interface ChatBoxProps {
   disabled?: boolean;
   placeholder?: string;
   onSend: (content: string) => Promise<void>;
-  /** Optional extra content in the header */
   headerExtra?: React.ReactNode;
 }
 
@@ -56,14 +93,13 @@ export function ChatBox({
   const [sending, setSending] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const latestIdRef = useRef<string>(initialComments[initialComments.length - 1]?.id ?? "");
 
-  // Scroll to bottom on new messages
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [comments.length]);
 
-  // Polling every 5 seconds — only fetches messages, not full page
   const poll = useCallback(async () => {
     try {
       const res = await fetch(`/api/orders/${orderId}/messages`, { cache: "no-store" });
@@ -83,34 +119,48 @@ export function ChatBox({
     return () => clearInterval(id);
   }, [poll]);
 
-  async function handleSend(e: React.FormEvent) {
-    e.preventDefault();
-    const text = msg.trim();
-    if (!text || sending) return;
-
-    // Optimistic update
+  async function sendContent(content: string) {
     const optimistic: ChatComment = {
       id: `temp-${Date.now()}`,
-      content: text,
+      content,
       createdAt: new Date(),
       author: { firstName: "Tú", lastName: "", role: myRole },
     };
     setComments(prev => [...prev, optimistic]);
-    setMsg("");
     setSending(true);
-
     try {
-      await onSend(text);
-      // Fetch real data after send
+      await onSend(content);
       await poll();
     } catch {
-      // Rollback optimistic
       setComments(prev => prev.filter(c => c.id !== optimistic.id));
-      setMsg(text);
       toast.error("Error al enviar");
     } finally {
       setSending(false);
       inputRef.current?.focus();
+    }
+  }
+
+  async function handleSend(e: React.FormEvent) {
+    e.preventDefault();
+    const text = msg.trim();
+    if (!text || sending) return;
+    setMsg("");
+    await sendContent(text);
+  }
+
+  async function handleImageFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = "";
+    if (!file.type.startsWith("image/")) { toast.error("Solo se permiten imágenes"); return; }
+    if (file.size > 8 * 1024 * 1024) { toast.error("La imagen no puede superar 8 MB"); return; }
+    setSending(true);
+    try {
+      const compressed = await compressImage(file);
+      await sendContent(compressed);
+    } catch {
+      toast.error("Error al procesar imagen");
+      setSending(false);
     }
   }
 
@@ -145,6 +195,7 @@ export function ChatBox({
         ) : (
           comments.map(comment => {
             const isMe = comment.author.role === myRole;
+            const isImg = isImageContent(comment.content);
             const bubbleClass = isMe
               ? BUBBLE_RIGHT[myRole] ?? "bg-gray-200 text-gray-800 rounded-tr-sm"
               : "bg-gray-100 text-gray-800 rounded-tl-sm";
@@ -168,15 +219,26 @@ export function ChatBox({
                 <div className={`max-w-xs lg:max-w-sm flex flex-col gap-1 ${isMe ? "items-end" : "items-start"}`}>
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <span className="text-xs font-semibold text-gray-700">
-                      {isMe && comment.id.startsWith("temp-") ? "Tú" : `${comment.author.firstName} ${comment.author.lastName}`}
+                      {isMe && isTemp ? "Tú" : `${comment.author.firstName} ${comment.author.lastName}`}
                     </span>
                     <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-semibold ${ROLE_PILL[comment.author.role] ?? "bg-gray-100 text-gray-600"}`}>
                       {ROLE_LABEL[comment.author.role] ?? comment.author.role}
                     </span>
                   </div>
-                  <div className={`px-3 py-2 rounded-2xl text-sm ${bubbleClass}`}>
-                    {comment.content}
-                  </div>
+
+                  {isImg ? (
+                    <img
+                      src={getImageSrc(comment.content)}
+                      alt="imagen"
+                      className="max-w-[220px] max-h-[220px] object-contain rounded-2xl border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
+                      onClick={() => window.open(getImageSrc(comment.content), "_blank")}
+                    />
+                  ) : (
+                    <div className={`px-3 py-2 rounded-2xl text-sm ${bubbleClass}`}>
+                      {comment.content}
+                    </div>
+                  )}
+
                   <p className="text-[9px] text-gray-400">
                     {new Date(comment.createdAt).toLocaleString(locale, {
                       hour: "2-digit", minute: "2-digit",
@@ -193,7 +255,23 @@ export function ChatBox({
 
       {/* Input */}
       {!disabled && (
-        <form onSubmit={handleSend} className="px-5 py-4 border-t border-gray-100 flex gap-2.5">
+        <form onSubmit={handleSend} className="px-5 py-4 border-t border-gray-100 flex gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageFile}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={sending}
+            className="p-2.5 rounded-xl text-gray-400 hover:text-primary-600 hover:bg-primary-50 transition-all disabled:opacity-40 shrink-0"
+            title="Enviar imagen"
+          >
+            <ImagePlus size={16} />
+          </button>
           <input
             ref={inputRef}
             type="text"
