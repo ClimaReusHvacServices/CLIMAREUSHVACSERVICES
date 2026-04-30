@@ -205,6 +205,17 @@ export default function Navbar() {
 
   return (
     <>
+      {/* ── Top-left logo ──────────────────────────────────────────────── */}
+      <div className="hidden sm:block fixed left-6 top-4 z-50">
+        <Link href="/" aria-label="Clima HVAC Service — inicio">
+          <img
+            src="/logos/horizontal-logoblanco.png"
+            alt="Clima HVAC Service"
+            className="h-12 sm:h-14 w-auto object-contain drop-shadow-lg"
+          />
+        </Link>
+      </div>
+
       {/* ── Centered pill ──────────────────────────────────────────────── */}
       <div ref={mobileRef} className="fixed left-1/2 top-4 sm:top-5 -translate-x-1/2 z-50 w-[calc(100%-2rem)] sm:w-auto">
         <nav className="flex items-center bg-white/80 backdrop-blur-xl px-3 sm:px-5 py-2.5 rounded-full shadow-lg border border-white/40 whitespace-nowrap gap-2 sm:gap-3">
