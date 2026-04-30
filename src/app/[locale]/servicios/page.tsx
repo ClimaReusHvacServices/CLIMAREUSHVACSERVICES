@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import { Link } from "@/i18n/routing";
 import Footer from "@/components/landing/Footer";
 import { getTranslations } from "next-intl/server";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 const Navbar = dynamic(() => import("@/components/landing/Navbar"));
 const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton"));
@@ -56,28 +57,29 @@ export default async function ServiciosPage() {
 
       {/* Grid */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-16 grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {SERVICES.map((s) => (
-          <Link
-            key={s.href}
-            href={s.href as any}
-            className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col"
-          >
-            <div
-              className="h-48 bg-gray-100"
-              style={{ backgroundImage: `url('${s.image}')`, backgroundSize: "cover", backgroundPosition: "center" }}
-            />
-            <div className="p-5 flex flex-col flex-1">
-              <h2 className="text-base font-bold text-gray-900 group-hover:text-primary-700 transition-colors leading-snug">
-                {s.title}
-              </h2>
-              <p className="mt-2 text-sm text-gray-500 leading-relaxed flex-1 line-clamp-3">
-                {s.description}
-              </p>
-              <span className="mt-4 text-sm font-semibold text-primary-600 group-hover:text-primary-800 transition-colors">
-                {t("serviciosPage.ctaMore")}
-              </span>
-            </div>
-          </Link>
+        {SERVICES.map((s, i) => (
+          <ScrollReveal key={s.href} delay={i * 100}>
+            <Link
+              href={s.href as any}
+              className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col"
+            >
+              <div
+                className="h-48 bg-gray-100"
+                style={{ backgroundImage: `url('${s.image}')`, backgroundSize: "cover", backgroundPosition: "center" }}
+              />
+              <div className="p-5 flex flex-col flex-1">
+                <h2 className="text-base font-bold text-gray-900 group-hover:text-primary-700 transition-colors leading-snug">
+                  {s.title}
+                </h2>
+                <p className="mt-2 text-sm text-gray-500 leading-relaxed flex-1 line-clamp-3">
+                  {s.description}
+                </p>
+                <span className="mt-4 text-sm font-semibold text-primary-600 group-hover:text-primary-800 transition-colors">
+                  {t("serviciosPage.ctaMore")}
+                </span>
+              </div>
+            </Link>
+          </ScrollReveal>
         ))}
       </section>
 

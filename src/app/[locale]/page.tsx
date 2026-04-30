@@ -8,6 +8,7 @@ import WhyChooseUs from "@/components/landing/WhyChooseUs";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import FAQSection from "@/components/landing/FAQSection";
 import Footer from "@/components/landing/Footer";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 const Hero = dynamic(() => import("@/components/landing/Hero"));
 const ContactMap = dynamic(() => import("@/components/landing/ContactMap"));
@@ -54,21 +55,32 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <Hero />
 
       {/* Section 2 — Products / Offers */}
-      <ProductsSection products={products} />
+      <ScrollReveal>
+        <ProductsSection products={products} />
+      </ScrollReveal>
 
-      {/* Section 3 — Why choose us (moved up to follow Products) */}
-      <WhyChooseUs />
+      {/* Section 3 — Why choose us */}
+      <ScrollReveal delay={80}>
+        <WhyChooseUs />
+      </ScrollReveal>
 
       {/* Section 4 — Brands */}
-      <BrandsSection />
+      <ScrollReveal delay={80}>
+        <BrandsSection />
+      </ScrollReveal>
 
       {/* Section 5 — FAQ */}
-      <FAQSection />
+      <ScrollReveal delay={80}>
+        <FAQSection />
+      </ScrollReveal>
 
       {/* Section 6 — Testimonials */}
-      <TestimonialsSection />
+      <ScrollReveal delay={80}>
+        <TestimonialsSection />
+      </ScrollReveal>
 
-      {/* Section 5 — Contact */}
+      {/* Section 7 — Contact */}
+      <ScrollReveal delay={80}>
       <section id="contact" className="bg-gray-50 py-16 sm:py-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="mb-10">
@@ -119,6 +131,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
         </div>
       </section>
+      </ScrollReveal>
 
       <WhatsAppButton />
       <Footer />

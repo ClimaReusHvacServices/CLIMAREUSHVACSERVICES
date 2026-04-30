@@ -48,6 +48,21 @@ input:-webkit-autofill:focus {
 }
 .animate-slide-in { animation: slideIn 0.25s ease-out; }
 
+/* ── Scroll reveal ───────────────────────────────────────────────── */
+.sr-reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+  will-change: opacity, transform;
+}
+.sr-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sr-reveal { opacity: 1; transform: none; transition: none; }
+}
+
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: #f0faf5; }
 ::-webkit-scrollbar-thumb { background: #a8e1c8; border-radius: 4px; }
