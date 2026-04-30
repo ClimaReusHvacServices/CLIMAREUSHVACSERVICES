@@ -11,6 +11,10 @@ export const metadata: Metadata = {
   title: "Clima HVAC Service - Servicios de Aire Acondicionado",
   description:
     "Plataforma profesional para venta e instalación de sistemas de aire acondicionado",
+  icons: {
+    icon: "/logos/logoverde.png",
+    apple: "/logos/logoverde.png",
+  },
 };
 
 export function generateStaticParams() {
