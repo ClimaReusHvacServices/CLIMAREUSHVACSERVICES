@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import { db } from "@/db";
 import OfertaPageClient from "@/components/landing/OfertaPageClient";
 import Footer from "@/components/landing/Footer";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 const Navbar = dynamic(() => import("@/components/landing/Navbar"));
 const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton"));
@@ -31,7 +31,9 @@ async function getAllProducts() {
   }));
 }
 
-export default async function OfertaPage() {
+export default async function OfertaPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   const [products, t] = await Promise.all([getAllProducts(), getTranslations("landing")]);
 
   return (

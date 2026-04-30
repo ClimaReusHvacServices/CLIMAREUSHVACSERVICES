@@ -1,7 +1,7 @@
 import { auth } from "@/auth/config";
 import { db } from "@/db";
 import dynamic from "next/dynamic";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ProductsSection } from "@/components/landing/ProductsSection";
 import BrandsSection from "@/components/landing/BrandsSection";
 import WhyChooseUs from "@/components/landing/WhyChooseUs";
@@ -40,6 +40,7 @@ async function getActiveProducts() {
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const [session, t, products] = await Promise.all([
     auth(),
     getTranslations("landing"),

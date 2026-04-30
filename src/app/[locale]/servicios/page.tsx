@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import { Link } from "@/i18n/routing";
 import Footer from "@/components/landing/Footer";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 const Navbar = dynamic(() => import("@/components/landing/Navbar"));
@@ -12,7 +12,9 @@ export const metadata = {
   description: "Instalación, mantenimiento y reparación de aire acondicionado y aerotermia en Reus y Tarragona. Instaladores certificados RITE.",
 };
 
-export default async function ServiciosPage() {
+export default async function ServiciosPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations("landing");
 
   const SERVICES = [
