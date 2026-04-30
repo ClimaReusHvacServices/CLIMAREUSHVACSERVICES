@@ -1,46 +1,11 @@
 "use client";
 import { useTranslations } from "next-intl";
 
-const REVIEWS = [
-  {
-    name: "Carlos Rodríguez",
-    rating: 5,
-    text: "¡Excelente servicio! Clima HVAC Service instaló mi aire el mismo día y todo quedó a la perfección. ¡Muy recomendados!",
-    source: "Google",
-  },
-  {
-    name: "Laura Sánchez",
-    rating: 5,
-    text: "Tuve una emergencia con mi calefacción en pleno invierno y Clima HVAC Service lo solucionó rápidamente. ¡Gracias por el excelente servicio!",
-    source: "Google",
-  },
-  {
-    name: "Pedro Martínez",
-    rating: 4,
-    text: "El mantenimiento preventivo que ofrecen es excelente. Mi sistema HVAC funciona como nuevo y he notado un ahorro en mi factura de energía.",
-    source: "Google",
-  },
-  {
-    name: "Cristina Guzmán",
-    rating: 5,
-    text: "Instaladores profesionales, me atendieron enseguida y me instalaron un aire el mismo día por la tarde. Rápidos y limpios. Los recomiendo.",
-    source: "Google",
-  },
-  {
-    name: "Jordi Puig",
-    rating: 5,
-    text: "Servicio impecable. Vinieron a revisar mi equipo de aerotermia y en una hora ya estaba funcionando al 100%. Muy profesionales y atentos.",
-    source: "Google",
-  },
-  {
-    name: "María Fernández",
-    rating: 5,
-    text: "Contraté la instalación de aire acondicionado multisplit y quedé muy satisfecha. Trabajo limpio, precio justo y sin sorpresas. Totalmente recomendable.",
-    source: "Google",
-  },
+const REVIEW_NAMES = [
+  "Carlos Rodríguez", "Laura Sánchez", "Pedro Martínez",
+  "Cristina Guzmán", "Jordi Puig", "María Fernández",
 ];
-
-const TRACK = [...REVIEWS, ...REVIEWS, ...REVIEWS];
+const REVIEW_RATINGS = [5, 5, 4, 5, 5, 5];
 
 function Stars({ n }: { n: number }) {
   return (
@@ -57,10 +22,29 @@ function Stars({ n }: { n: number }) {
 const CARD_W = 320;
 const GAP = 24;
 const ITEM = CARD_W + GAP;
-const LOOP = REVIEWS.length * ITEM;
+const LOOP = 6 * ITEM;
 
 export default function TestimonialsSection() {
   const t = useTranslations("landing");
+
+  const REVIEW_TEXTS = [
+    t("testimonials.r1text"),
+    t("testimonials.r2text"),
+    t("testimonials.r3text"),
+    t("testimonials.r4text"),
+    t("testimonials.r5text"),
+    t("testimonials.r6text"),
+  ];
+
+  const REVIEWS = REVIEW_NAMES.map((name, i) => ({
+    name,
+    rating: REVIEW_RATINGS[i],
+    text: REVIEW_TEXTS[i],
+    source: "Google",
+  }));
+
+  const TRACK = [...REVIEWS, ...REVIEWS, ...REVIEWS];
+
   return (
     <section className="py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(160deg, #0d3c4d 0%, #083a30 100%)" }}>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center mb-12">

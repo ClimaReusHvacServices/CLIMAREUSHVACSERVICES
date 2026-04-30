@@ -37,7 +37,7 @@ export default async function WhyChooseUs() {
           <div className="mt-4 text-sm text-gray-500 leading-relaxed space-y-0.5">
             <p className="font-semibold text-gray-600">Z-1485584-L</p>
             <p>C/ Balmes, 29 · 43204 - Reus</p>
-            <p>Mòbil 607 953 886</p>
+            <p>{t("why.mobileLabel")} 607 953 886</p>
           </div>
         </div>
 

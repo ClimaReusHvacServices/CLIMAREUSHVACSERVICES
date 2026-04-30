@@ -354,7 +354,10 @@
       "modalRequest": "Request installation",
       "modalNote": "* Standard basic installation included. Special installations subject to quote.",
       "feat1": "Installation included", "feat2": "Technical support",
-      "feat3": "Official warranty", "feat4": "Service in Reus"
+      "feat3": "Official warranty", "feat4": "Service in Reus",
+      "modalRequestService": "Request service",
+      "modalLoginToRequest": "Sign in to request",
+      "modalDescription": "Description"
     },
     "why": {
       "title": "Why choose us?",
@@ -362,7 +365,8 @@
       "b1title": "Local Experience", "b1text": "Over 30 years and 4,000 installations in Reus and Tarragona.",
       "b2title": "Certified Quality", "b2text": "RITE installers and leading brands like Mitsubishi and Haier.",
       "b3title": "Efficiency & Savings", "b3text": "A++ class technology for minimum energy consumption.",
-      "b4title": "Express Service", "b4text": "Free quote and installation in just 24 hours."
+      "b4title": "Express Service", "b4text": "Free quote and installation in just 24 hours.",
+      "mobileLabel": "Mobile"
     },
     "brands": {
       "title": "We work with the best",
@@ -387,7 +391,13 @@
       "title": "What our clients say",
       "subtitle": "At Clima HVAC Service we take pride in a job well done. Over 4,000 installations carried out in Reus, Tarragona and surrounding areas are the best reflection of our commitment to quality, speed and professional service.",
       "cta": "View all testimonials on Google",
-      "source": "Review from"
+      "source": "Review from",
+      "r1text": "Excellent service! Clima HVAC Service installed my air conditioning on the same day and everything was perfect. Highly recommended!",
+      "r2text": "I had an emergency with my heating in the middle of winter and Clima HVAC Service fixed it quickly. Thank you for the excellent service!",
+      "r3text": "The preventive maintenance they offer is excellent. My HVAC system runs like new and I've noticed savings on my energy bill.",
+      "r4text": "Professional installers, they attended to me immediately and installed my air conditioning that same afternoon. Fast and clean. I recommend them.",
+      "r5text": "Impeccable service. They came to check my heat pump and within an hour it was running at 100%. Very professional and attentive.",
+      "r6text": "I hired them for a multi-split air conditioning installation and was very satisfied. Clean work, fair price and no surprises. Totally recommendable."
     },
     "footer": {
       "tagline": "Air conditioning installation and repair in Reus and Tarragona.",

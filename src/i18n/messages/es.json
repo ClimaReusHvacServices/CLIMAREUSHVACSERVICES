@@ -354,7 +354,10 @@
       "modalRequest": "Solicitar instalación",
       "modalNote": "* Instalación básica estándar incluida. Instalaciones especiales bajo presupuesto.",
       "feat1": "Instalación incluida", "feat2": "Soporte técnico",
-      "feat3": "Garantía oficial", "feat4": "Servicio en Reus"
+      "feat3": "Garantía oficial", "feat4": "Servicio en Reus",
+      "modalRequestService": "Solicitar servicio",
+      "modalLoginToRequest": "Iniciar sesión para solicitar",
+      "modalDescription": "Descripción"
     },
     "why": {
       "title": "¿Por qué elegirnos?",
@@ -362,7 +365,8 @@
       "b1title": "Experiencia Local", "b1text": "Más de 30 años y 4.000 instalaciones en Reus y Tarragona.",
       "b2title": "Calidad Certificada", "b2text": "Instaladores RITE y marcas líderes como Mitsubishi y Haier.",
       "b3title": "Eficiencia y Ahorro", "b3text": "Tecnología clase A++ para el mínimo consumo energético.",
-      "b4title": "Servicio Express", "b4text": "Presupuesto gratis e instalación en solo 24 horas."
+      "b4title": "Servicio Express", "b4text": "Presupuesto gratis e instalación en solo 24 horas.",
+      "mobileLabel": "Móvil"
     },
     "brands": {
       "title": "Trabajamos con las mejores",
@@ -387,7 +391,13 @@
       "title": "Lo que dicen nuestros clientes",
       "subtitle": "En Clima HVAC Service nos enorgullece el trabajo bien hecho. Más de 4.000 instalaciones realizadas en Reus, Tarragona y alrededores son el mejor reflejo de nuestro compromiso con la calidad, la rapidez y el trato profesional.",
       "cta": "Ver todos los testimonios en Google",
-      "source": "Testimonio de"
+      "source": "Testimonio de",
+      "r1text": "¡Excelente servicio! Clima HVAC Service instaló mi aire el mismo día y todo quedó a la perfección. ¡Muy recomendados!",
+      "r2text": "Tuve una emergencia con mi calefacción en pleno invierno y Clima HVAC Service lo solucionó rápidamente. ¡Gracias por el excelente servicio!",
+      "r3text": "El mantenimiento preventivo que ofrecen es excelente. Mi sistema HVAC funciona como nuevo y he notado un ahorro en mi factura de energía.",
+      "r4text": "Instaladores profesionales, me atendieron enseguida y me instalaron un aire el mismo día por la tarde. Rápidos y limpios. Los recomiendo.",
+      "r5text": "Servicio impecable. Vinieron a revisar mi equipo de aerotermia y en una hora ya estaba funcionando al 100%. Muy profesionales y atentos.",
+      "r6text": "Contraté la instalación de aire acondicionado multisplit y quedé muy satisfecha. Trabajo limpio, precio justo y sin sorpresas. Totalmente recomendable."
     },
     "footer": {
       "tagline": "Instalación y reparación de aire acondicionado en Reus y Tarragona.",

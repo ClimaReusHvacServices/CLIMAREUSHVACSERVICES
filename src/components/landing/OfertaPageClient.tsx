@@ -169,7 +169,7 @@ function ProductModal({ product, onClose, t, role, locale }: {
                   {requesting
                     ? <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     : <Wrench size={15} />}
-                  Solicitar servicio
+                  {t("products.modalRequestService")}
                 </button>
               ) : role === "" ? (
                 <Link
@@ -178,7 +178,7 @@ function ProductModal({ product, onClose, t, role, locale }: {
                   style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
                 >
                   <LogIn size={15} />
-                  Iniciar sesión para solicitar
+                  {t("products.modalLoginToRequest")}
                 </Link>
               ) : null}
             </div>
@@ -187,7 +187,7 @@ function ProductModal({ product, onClose, t, role, locale }: {
 
         {product.description && (
           <div className="px-6 pb-4">
-            <h4 className="text-sm font-bold text-gray-700 mb-1.5">Descripción</h4>
+            <h4 className="text-sm font-bold text-gray-700 mb-1.5">{t("products.modalDescription")}</h4>
             <p className="text-gray-500 text-sm leading-relaxed">{product.description}</p>
           </div>
         )}
