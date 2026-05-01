@@ -327,7 +327,7 @@
   },
   "landing": {
     "navbar": {
-      "home": "Inici", "offer": "Oferta", "services": "Serveis", "contact": "Contacte",
+      "home": "Inici", "offer": "Oferta", "services": "Serveis", "blog": "Blog", "contact": "Contacte",
       "login": "Accedir", "loginMobile": "Iniciar sessió",
       "myAccount": "El meu compte", "dashboard": "El meu panell", "profile": "El meu perfil",
       "orders": "Les meves comandes", "logout": "Tancar sessió",
@@ -547,6 +547,18 @@
         "h4": "Garantia en totes les nostres reparacions",
         "p4": "Totes les reparacions inclouen garantia per escrit sobre la peça substituïda i la mà d'obra. Si el problema reapareix dins del període de garantia, tornem sense cost addicional."
       }
+    },
+    "blogPage": {
+      "badge": "El nostre Blog",
+      "title": "Blog de Climatització",
+      "subtitle": "Guies, consells i novetats sobre aire condicionat i climatització a Reus i Tarragona.",
+      "readMore": "Llegir article",
+      "readTime": "min de lectura",
+      "noArticles": "Pròximament, articles i guies sobre climatització.",
+      "backToBlog": "Tornar al blog",
+      "ctaTitle": "Necessites instal·lar o revisar la teva climatització?",
+      "ctaSubtitle": "El nostre equip tècnic a Reus i Tarragona està llest per ajudar-te.",
+      "ctaButton": "Truca'ns ara — 877 234 166"
     }
   },
   "serviceRequest": {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
 import { Search, UserPlus, Pencil, Trash2, Wrench, Eye, EyeOff, X } from "lucide-react";
@@ -10,34 +10,24 @@ interface WorkerRow {
   id: string;
   isAvailable: boolean;
   specialties: string[];
-  hourlyRate: any;
   totalJobsCompleted: number;
-  verificationStatus: string;
   user: { firstName: string; lastName: string; email: string; isActive: boolean };
 }
 
-const verificationColors: Record<string, string> = {
-  verified: "bg-green-50 text-green-700",
-  pending:  "bg-amber-50 text-amber-700",
-  rejected: "bg-red-50 text-red-600",
-};
+const defaultCreate = { firstName: "", lastName: "", email: "", password: "", specialties: "" };
+const defaultEdit = { firstName: "", lastName: "", isActive: true, specialties: "", isAvailable: true };
 
-const verificationLabel: Record<string, string> = {
-  verified: "Verificado",
-  pending:  "Pendiente",
-  rejected: "Rechazado",
-};
-
-const defaultCreate = { firstName: "", lastName: "", email: "", password: "", specialties: "", hourlyRate: "" };
-const defaultEdit = { firstName: "", lastName: "", isActive: true, specialties: "", hourlyRate: "", isAvailable: true, verificationStatus: "pending" };
-
+// El efecto usa ref para onClose → deps vacías → sin cleanup en cada render → sin pérdida de foco
 function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
   useEffect(() => {
-    const h = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    const h = (e: KeyboardEvent) => { if (e.key === "Escape") onCloseRef.current(); };
     document.addEventListener("keydown", h);
     document.body.style.overflow = "hidden";
     return () => { document.removeEventListener("keydown", h); document.body.style.overflow = ""; };
-  }, [onClose]);
+  }, []);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -101,9 +91,7 @@ export function WorkersTable({ workers }: { workers: WorkerRow[] }) {
       lastName: w.user.lastName,
       isActive: w.user.isActive,
       specialties: w.specialties.join(", "),
-      hourlyRate: w.hourlyRate ? String(Number(w.hourlyRate)) : "",
       isAvailable: w.isAvailable,
-      verificationStatus: w.verificationStatus,
     });
     setModal("edit");
   }
@@ -119,7 +107,6 @@ export function WorkersTable({ workers }: { workers: WorkerRow[] }) {
         email: createForm.email,
         password: createForm.password,
         specialties,
-        hourlyRate: createForm.hourlyRate ? parseFloat(createForm.hourlyRate) : undefined,
       });
       toast.success("Trabajador creado correctamente");
       setModal(null);
@@ -140,9 +127,7 @@ export function WorkersTable({ workers }: { workers: WorkerRow[] }) {
         lastName: editForm.lastName,
         isActive: editForm.isActive,
         specialties,
-        hourlyRate: editForm.hourlyRate ? parseFloat(editForm.hourlyRate) : undefined,
         isAvailable: editForm.isAvailable,
-        verificationStatus: editForm.verificationStatus,
       });
       toast.success("Trabajador actualizado");
       setModal(null);
@@ -195,14 +180,13 @@ export function WorkersTable({ workers }: { workers: WorkerRow[] }) {
                 <th className="text-left py-3 px-4 font-semibold text-gray-500 text-xs uppercase tracking-wider hidden sm:table-cell">Email</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-500 text-xs uppercase tracking-wider hidden md:table-cell">Especialidades</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Disponible</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-500 text-xs uppercase tracking-wider hidden lg:table-cell">Verificación</th>
                 <th className="py-3 px-4 w-20" />
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-16 text-center">
+                  <td colSpan={5} className="py-16 text-center">
                     <Wrench size={40} className="mx-auto mb-3 text-gray-200" />
                     <p className="text-gray-400 text-sm">{workers.length === 0 ? "No hay trabajadores registrados" : "Sin resultados"}</p>
                   </td>
@@ -240,11 +224,6 @@ export function WorkersTable({ workers }: { workers: WorkerRow[] }) {
                       {w.isAvailable ? "Sí" : "No"}
                     </span>
                   </td>
-                  <td className="py-3 px-4 hidden lg:table-cell">
-                    <span className={`inline-block px-2.5 py-1 rounded-lg text-xs font-semibold ${verificationColors[w.verificationStatus] ?? "bg-gray-100 text-gray-500"}`}>
-                      {verificationLabel[w.verificationStatus] ?? w.verificationStatus}
-                    </span>
-                  </td>
                   <td className="py-3 px-4">
                     <div className="flex items-center justify-end gap-1">
                       <button onClick={() => openEdit(w)} className="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors" title="Editar">
@@ -267,7 +246,7 @@ export function WorkersTable({ workers }: { workers: WorkerRow[] }) {
         )}
       </div>
 
-      {/* Create Modal */}
+      {/* Modal crear */}
       {modal === "create" && (
         <Modal title="Nuevo Trabajador" onClose={() => setModal(null)}>
           <form onSubmit={handleCreate} className="space-y-4">
@@ -293,9 +272,6 @@ export function WorkersTable({ workers }: { workers: WorkerRow[] }) {
             <Field label="Especialidades (separadas por coma)">
               <input className={inputCls} value={createForm.specialties} onChange={e => setCreateForm(f => ({ ...f, specialties: e.target.value }))} placeholder="ej: Instalación, Mantenimiento" />
             </Field>
-            <Field label="Tarifa por hora (€)">
-              <input type="number" step="0.01" min="0" className={inputCls} value={createForm.hourlyRate} onChange={e => setCreateForm(f => ({ ...f, hourlyRate: e.target.value }))} />
-            </Field>
             <div className="flex gap-2 justify-end pt-2 border-t border-gray-100">
               <button type="button" onClick={() => setModal(null)} disabled={isLoading} className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50">Cancelar</button>
               <button type="submit" disabled={isLoading} className="px-5 py-2 text-sm font-semibold text-white rounded-xl disabled:opacity-60 flex items-center gap-2" style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}>
@@ -307,7 +283,7 @@ export function WorkersTable({ workers }: { workers: WorkerRow[] }) {
         </Modal>
       )}
 
-      {/* Edit Modal */}
+      {/* Modal editar */}
       {modal === "edit" && (
         <Modal title="Editar Trabajador" onClose={() => setModal(null)}>
           <form onSubmit={handleEdit} className="space-y-4">
@@ -321,16 +297,6 @@ export function WorkersTable({ workers }: { workers: WorkerRow[] }) {
             </div>
             <Field label="Especialidades (separadas por coma)">
               <input className={inputCls} value={editForm.specialties} onChange={e => setEditForm(f => ({ ...f, specialties: e.target.value }))} placeholder="ej: Instalación, Mantenimiento" />
-            </Field>
-            <Field label="Tarifa por hora (€)">
-              <input type="number" step="0.01" min="0" className={inputCls} value={editForm.hourlyRate} onChange={e => setEditForm(f => ({ ...f, hourlyRate: e.target.value }))} />
-            </Field>
-            <Field label="Verificación">
-              <select className={inputCls} value={editForm.verificationStatus} onChange={e => setEditForm(f => ({ ...f, verificationStatus: e.target.value }))}>
-                <option value="pending">Pendiente</option>
-                <option value="verified">Verificado</option>
-                <option value="rejected">Rechazado</option>
-              </select>
             </Field>
             <div className="flex gap-4">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -353,7 +319,7 @@ export function WorkersTable({ workers }: { workers: WorkerRow[] }) {
         </Modal>
       )}
 
-      {/* Delete confirmation */}
+      {/* Confirmación borrado */}
       {deleteTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setDeleteTarget(null)} />

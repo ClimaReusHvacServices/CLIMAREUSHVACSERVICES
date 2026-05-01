@@ -176,6 +176,7 @@ export default function Navbar() {
     const sub = segs[1] ?? "";
     if (!section) return "Clima HVAC";
     if (section === "oferta") return t("navbar.offer");
+    if (section === "blog") return t("navbar.blog");
     if (section === "servicios") {
       if (!sub) return t("navbar.services");
       return sub.charAt(0).toUpperCase() + sub.slice(1);
@@ -193,6 +194,7 @@ export default function Navbar() {
     { href: "/",          label: t("navbar.home") },
     { href: "/#oferta",   label: t("navbar.offer") },
     { href: "/servicios", label: t("navbar.services") },
+    { href: "/blog",      label: t("navbar.blog") },
     { href: "/#contact",  label: t("navbar.contact") },
   ] as const;
 

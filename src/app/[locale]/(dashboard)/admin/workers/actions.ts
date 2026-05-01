@@ -16,7 +16,6 @@ export async function createWorker(data: {
   email: string;
   password: string;
   specialties: string[];
-  hourlyRate?: number;
 }) {
   await checkAdmin();
   const username = `worker${Date.now().toString().slice(-6)}`;
@@ -34,9 +33,8 @@ export async function createWorker(data: {
       trabajador: {
         create: {
           specialties: data.specialties,
-          hourlyRate: data.hourlyRate ?? null,
           isAvailable: true,
-          verificationStatus: "pending",
+          verificationStatus: "verified",
         },
       },
     },
@@ -49,9 +47,7 @@ export async function updateWorker(trabajadorId: string, data: {
   lastName: string;
   isActive: boolean;
   specialties: string[];
-  hourlyRate?: number;
   isAvailable: boolean;
-  verificationStatus: string;
 }) {
   await checkAdmin();
   const trabajador = await db.trabajador.findUnique({
@@ -72,9 +68,7 @@ export async function updateWorker(trabajadorId: string, data: {
     where: { id: trabajadorId },
     data: {
       specialties: data.specialties,
-      hourlyRate: data.hourlyRate ?? null,
       isAvailable: data.isAvailable,
-      verificationStatus: data.verificationStatus,
     },
   });
   revalidatePath("/[locale]/admin/workers", "page");

@@ -327,7 +327,7 @@
   },
   "landing": {
     "navbar": {
-      "home": "Home", "offer": "Offers", "services": "Services", "contact": "Contact",
+      "home": "Home", "offer": "Offers", "services": "Services", "blog": "Blog", "contact": "Contact",
       "login": "Sign In", "loginMobile": "Sign in",
       "myAccount": "My account", "dashboard": "My dashboard", "profile": "My Profile",
       "orders": "My orders", "logout": "Sign out",
@@ -547,6 +547,18 @@
         "h4": "Guarantee on all our repairs",
         "p4": "All repairs include a written guarantee on the replaced part and labour. If the problem recurs within the guarantee period, we return at no additional cost."
       }
+    },
+    "blogPage": {
+      "badge": "Our Blog",
+      "title": "HVAC Blog",
+      "subtitle": "Guides, tips and news about air conditioning and climate control in Reus and Tarragona.",
+      "readMore": "Read article",
+      "readTime": "min read",
+      "noArticles": "Articles and guides coming soon.",
+      "backToBlog": "Back to blog",
+      "ctaTitle": "Need to install or service your AC?",
+      "ctaSubtitle": "Our technical team in Reus and Tarragona is ready to help you.",
+      "ctaButton": "Call us now — 877 234 166"
     }
   },
   "serviceRequest": {

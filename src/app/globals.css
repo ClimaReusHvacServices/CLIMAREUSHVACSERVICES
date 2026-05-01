@@ -73,3 +73,23 @@ input:-webkit-autofill:focus {
 ::-webkit-scrollbar-track { background: #f0faf5; }
 ::-webkit-scrollbar-thumb { background: #a8e1c8; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #72c9a8; }
+
+/* ── Contenido de artículos del blog ─────────────────────────────── */
+.blog-content { color: #374151; line-height: 1.75; font-size: 0.9375rem; }
+.blog-content p { margin: 0 0 1.25rem; }
+.blog-content h2 { font-size: 1.35rem; font-weight: 800; color: #111827; margin: 2rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0faf5; }
+.blog-content h3 { font-size: 1.05rem; font-weight: 700; color: #1d7291; margin: 1.5rem 0 0.5rem; }
+.blog-content ul { margin: 0 0 1.25rem 0; padding-left: 0; list-style: none; }
+.blog-content ul li { position: relative; padding-left: 1.4rem; margin-bottom: 0.5rem; }
+.blog-content ul li::before { content: ""; position: absolute; left: 0; top: 0.55rem; width: 6px; height: 6px; border-radius: 50%; background: linear-gradient(to right, #008f65, #1d7291); }
+.blog-content strong { font-weight: 700; color: #111827; }
+.blog-content a { color: #1d7291; text-decoration: underline; text-underline-offset: 3px; }
+.blog-content a:hover { color: #008f65; }
+.blog-content table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.875rem; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.blog-content table thead tr { background: linear-gradient(to right, #008f65, #1d7291); color: white; }
+.blog-content table th { padding: 0.7rem 1rem; text-align: left; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.03em; }
+.blog-content table td { padding: 0.65rem 1rem; border-bottom: 1px solid #f0faf5; color: #374151; }
+.blog-content table tbody tr:last-child td { border-bottom: none; }
+.blog-content table tbody tr:nth-child(even) { background: #f8fafc; }
+.blog-content .nota-final { background: linear-gradient(135deg, #f0faf5, #f0f8fc); border-left: 4px solid #1d7291; border-radius: 0 12px 12px 0; padding: 1.25rem 1.5rem; margin: 2rem 0; }
+.blog-content .nota-final p { margin: 0; font-size: 1rem; font-weight: 600; color: #0d3c4d; line-height: 1.6; }
