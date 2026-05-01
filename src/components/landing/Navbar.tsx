@@ -82,66 +82,6 @@ function LangPicker() {
   );
 }
 
-// ── Compact mobile lang picker (shown inline in pill) ─────────────────────────
-function MobileLangPicker() {
-  const locale = useLocale();
-  const [open, setOpen] = useState(false);
-  const [dropPos, setDropPos] = useState({ top: 0, right: 0 });
-  const btnRef = useRef<HTMLButtonElement>(null);
-  const dropRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const h = (e: MouseEvent) => {
-      if (
-        dropRef.current && !dropRef.current.contains(e.target as Node) &&
-        btnRef.current && !btnRef.current.contains(e.target as Node)
-      ) setOpen(false);
-    };
-    document.addEventListener("mousedown", h);
-    return () => document.removeEventListener("mousedown", h);
-  }, []);
-
-  const handleToggle = () => {
-    if (btnRef.current) {
-      const r = btnRef.current.getBoundingClientRect();
-      setDropPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
-    }
-    setOpen((v) => !v);
-  };
-
-  return (
-    <div className="sm:hidden">
-      <button
-        ref={btnRef}
-        onClick={handleToggle}
-        className="flex items-center gap-0.5 px-2 py-1 rounded-full text-[10px] font-bold text-gray-600 hover:bg-gray-100 transition-colors shrink-0"
-        aria-label="Idioma"
-      >
-        <Globe size={11} />
-        <span>{locale.toUpperCase()}</span>
-      </button>
-      {open && (
-        <div
-          ref={dropRef}
-          style={{ position: "fixed", top: dropPos.top, right: dropPos.right, zIndex: 200 }}
-          className="w-32 bg-white rounded-xl shadow-xl border border-gray-100"
-        >
-          {LOCALES.map((l) => (
-            <button
-              key={l.code}
-              onClick={() => { setOpen(false); switchLocale(l.code); }}
-              className={`w-full text-left px-3 py-2.5 text-xs font-medium transition-colors first:rounded-t-xl last:rounded-b-xl ${
-                locale === l.code ? "bg-primary-50 text-primary-700 font-bold" : "text-gray-700 hover:bg-gray-50"
-              }`}
-            >
-              {l.name}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 // ── Main Navbar ───────────────────────────────────────────────────────────────
 export default function Navbar() {
@@ -314,9 +254,6 @@ export default function Navbar() {
             </Link>
           )}
 
-          {/* Mobile — lang picker (always visible) */}
-          <MobileLangPicker />
-
           {/* Desktop — nav links */}
           <div className="hidden sm:flex items-center gap-4">
             {NAV_LINKS.map(({ href, label }) => (
@@ -348,6 +285,24 @@ export default function Navbar() {
         {/* Mobile dropdown */}
         {open && (
           <div className="sm:hidden mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 overflow-hidden">
+            {/* Language selector row */}
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100/80">
+              <Globe size={13} className="text-gray-400 shrink-0" />
+              <div className="flex gap-1.5">
+                {LOCALES.map((l) => (
+                  <button
+                    key={l.code}
+                    onClick={() => { setOpen(false); switchLocale(l.code); }}
+                    className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${
+                      locale === l.code ? "text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                    }`}
+                    style={locale === l.code ? { background: "linear-gradient(to right, #008f65, #1d7291)" } : undefined}
+                  >
+                    {l.name}
+                  </button>
+                ))}
+              </div>
+            </div>
             {NAV_LINKS.map(({ href, label }) => (
               <Link
                 key={href}
