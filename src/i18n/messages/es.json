@@ -550,6 +550,8 @@
     "namePlaceholder": "Nombre completo",
     "phone": "WhatsApp",
     "phonePlaceholder": "Número de teléfono",
+    "phonePlaceholderFree": "Ej: +34 607 953 886",
+    "phoneHint": "Incluye el prefijo de tu país (ej: +34 para España)",
     "description": "Describe el problema",
     "descriptionPlaceholder": "¿Qué le pasa a tu equipo? Cuéntanos con detalle...",
     "submit": "Enviar solicitud",

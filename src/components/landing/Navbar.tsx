@@ -254,6 +254,25 @@ export default function Navbar() {
             </Link>
           )}
 
+          {/* Mobile — inline language switcher (no dropdown, just 3 tiny pills) */}
+          <div className="sm:hidden flex items-center gap-0.5 shrink-0">
+            {LOCALES.map((l) => (
+              <button
+                key={l.code}
+                onClick={() => { if (locale !== l.code) switchLocale(l.code); }}
+                className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold transition-colors ${
+                  locale === l.code
+                    ? "text-white"
+                    : "text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+                }`}
+                style={locale === l.code ? { background: "linear-gradient(to right, #008f65, #1d7291)" } : undefined}
+                aria-label={l.name}
+              >
+                {l.label}
+              </button>
+            ))}
+          </div>
+
           {/* Desktop — nav links */}
           <div className="hidden sm:flex items-center gap-4">
             {NAV_LINKS.map(({ href, label }) => (
@@ -285,24 +304,6 @@ export default function Navbar() {
         {/* Mobile dropdown */}
         {open && (
           <div className="sm:hidden mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 overflow-hidden">
-            {/* Language selector row */}
-            <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100/80">
-              <Globe size={13} className="text-gray-400 shrink-0" />
-              <div className="flex gap-1.5">
-                {LOCALES.map((l) => (
-                  <button
-                    key={l.code}
-                    onClick={() => { setOpen(false); switchLocale(l.code); }}
-                    className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${
-                      locale === l.code ? "text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-                    }`}
-                    style={locale === l.code ? { background: "linear-gradient(to right, #008f65, #1d7291)" } : undefined}
-                  >
-                    {l.name}
-                  </button>
-                ))}
-              </div>
-            </div>
             {NAV_LINKS.map(({ href, label }) => (
               <Link
                 key={href}

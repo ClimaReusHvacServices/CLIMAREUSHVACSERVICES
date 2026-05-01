@@ -4,24 +4,11 @@ import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { X, Send, CheckCircle2, Wrench } from "lucide-react";
 
-const COUNTRY_CODES = [
-  { code: "+34", label: "🇪🇸 +34" },
-  { code: "+376", label: "🇦🇩 +376" },
-  { code: "+33", label: "🇫🇷 +33" },
-  { code: "+351", label: "🇵🇹 +351" },
-  { code: "+1", label: "🇺🇸 +1" },
-  { code: "+44", label: "🇬🇧 +44" },
-  { code: "+52", label: "🇲🇽 +52" },
-  { code: "+54", label: "🇦🇷 +54" },
-  { code: "+57", label: "🇨🇴 +57" },
-];
-
 export default function ServiceRequestWidget() {
   const t = useTranslations("serviceRequest");
 
   const [showBubble, setShowBubble] = useState(false);
   const [open, setOpen] = useState(false);
-  const [countryCode, setCountryCode] = useState("+34");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [description, setDescription] = useState("");
@@ -60,7 +47,7 @@ export default function ServiceRequestWidget() {
       const res = await fetch("/api/solicitudes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), phone: `${countryCode} ${phone.trim()}`, description: description.trim() }),
+        body: JSON.stringify({ name: name.trim(), phone: phone.trim(), description: description.trim() }),
       });
       if (!res.ok) throw new Error();
       setDone(true);
@@ -78,7 +65,7 @@ export default function ServiceRequestWidget() {
         {/* Speech bubble notification */}
         {showBubble && !open && (
           <div
-            className="bg-white rounded-2xl shadow-xl border border-gray-100 px-4 py-2.5 text-sm text-gray-800 max-w-[200px] text-center cursor-pointer animate-fade-in relative"
+            className="bg-white rounded-2xl shadow-xl border border-gray-100 px-4 py-2.5 text-sm text-gray-800 max-w-[200px] text-center cursor-pointer relative"
             style={{ filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.12))" }}
             onClick={openForm}
           >
@@ -89,7 +76,7 @@ export default function ServiceRequestWidget() {
             >
               <X size={10} />
             </button>
-            {/* Tail */}
+            {/* Tail pointing down-right */}
             <div className="absolute -bottom-2 right-4 w-4 h-2 overflow-hidden">
               <div className="w-3 h-3 bg-white border-r border-b border-gray-100 rotate-45 translate-y-[-50%] translate-x-[4px] shadow" />
             </div>
@@ -171,28 +158,18 @@ export default function ServiceRequestWidget() {
                     />
                   </div>
 
-                  {/* Phone */}
+                  {/* Phone — free text, user writes full number with country code */}
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1.5">{t("phone")} *</label>
-                    <div className="flex gap-2">
-                      <select
-                        value={countryCode}
-                        onChange={(e) => setCountryCode(e.target.value)}
-                        className="px-2 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-colors bg-white"
-                      >
-                        {COUNTRY_CODES.map((c) => (
-                          <option key={c.code} value={c.code}>{c.label}</option>
-                        ))}
-                      </select>
-                      <input
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder={t("phonePlaceholder")}
-                        required
-                        className="flex-1 px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-colors"
-                      />
-                    </div>
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder={t("phonePlaceholderFree")}
+                      required
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-colors"
+                    />
+                    <p className="text-[10px] text-gray-400 mt-1">{t("phoneHint")}</p>
                   </div>
 
                   {/* Description */}
