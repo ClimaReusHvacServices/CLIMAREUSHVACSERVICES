@@ -363,6 +363,7 @@ export function ProductsManager({ products, services, packages }: {
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-3">
                         {p.images?.[0] ? (
+                          // eslint-disable-next-line @next/next/no-img-element
                           <img src={p.images[0]} alt={p.name} className="w-10 h-10 object-contain rounded-lg border border-gray-100 bg-gray-50 shrink-0" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
                         ) : (
                           <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center shrink-0"><Wind size={16} className="text-gray-300" /></div>
@@ -512,7 +513,8 @@ export function ProductsManager({ products, services, packages }: {
                 </label>
                 {productForm.imageUrl && (
                   <div className="mt-2 flex items-start gap-2">
-                    <img
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
                       src={productForm.imageUrl}
                       alt="preview"
                       className="h-20 w-20 object-contain rounded-lg border border-gray-100 bg-gray-50 shrink-0"
