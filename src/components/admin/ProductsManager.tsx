@@ -12,7 +12,7 @@ import {
   createPackage, updatePackage, deletePackage,
 } from "@/app/[locale]/(dashboard)/admin/products/actions";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ─── Tipos ────────────────────────────────────────────────────────────────────
 
 interface ProductRow {
   id: string; name: string; description: string; category: string;
@@ -37,7 +37,7 @@ const defaultProductForm = { name: "", description: "", category: "", manufactur
 const defaultServiceForm = { name: "", description: "", type: "instalacion", basePrice: "", estimatedDuration: "60", difficulty: "media", isActive: true };
 const defaultPackageForm = { name: "", description: "", productId: "", serviceId: "", packagePrice: "", discountPercentage: "", isActive: true };
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// ─── Subcomponentes ───────────────────────────────────────────────────────────
 
 function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   useEffect(() => {
@@ -118,7 +118,7 @@ function Field({ label, required, children }: { label: string; required?: boolea
 
 const inputCls = "w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-accent-400 focus:ring-1 focus:ring-accent-100 transition-colors bg-white";
 
-// ─── Main component ───────────────────────────────────────────────────────────
+// ─── Componente principal ─────────────────────────────────────────────────────
 
 export function ProductsManager({ products, services, packages }: {
   products: ProductRow[]; services: ServiceRow[]; packages: PackageRow[];
@@ -148,7 +148,7 @@ export function ProductsManager({ products, services, packages }: {
     e.target.value = "";
   }
 
-  // Filter
+  // Filtrar según búsqueda activa
   const q = search.toLowerCase();
   const filteredProducts = products.filter(p => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
   const filteredServices = services.filter(s => s.name.toLowerCase().includes(q) || s.type.toLowerCase().includes(q));
@@ -160,7 +160,7 @@ export function ProductsManager({ products, services, packages }: {
   const from = allCurrent.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const to = Math.min(page * PAGE_SIZE, allCurrent.length);
 
-  // Modal helpers
+  // Funciones auxiliares del modal
   function openCreate(type: Tab) {
     if (type === "products") setProductForm({ ...defaultProductForm });
     if (type === "services") setServiceForm({ ...defaultServiceForm });
@@ -191,7 +191,7 @@ export function ProductsManager({ products, services, packages }: {
     setModal({ mode: "edit", entityType: type, id: item.id });
   }
 
-  // Submit handlers
+  // Manejadores de envío de formularios
   async function handleProductSubmit(e: React.FormEvent) {
     e.preventDefault();
     setIsSubmitting(true);

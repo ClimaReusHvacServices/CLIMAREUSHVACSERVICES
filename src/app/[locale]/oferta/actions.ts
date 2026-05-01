@@ -17,7 +17,7 @@ export async function requestService(productId: string, locale: string) {
 
   if (!product || !cliente) throw new Error("Product or client not found");
 
-  // Get or create a default address for the client
+  // Obtener o crear la dirección por defecto del cliente
   let address = await db.clientAddress.findFirst({
     where: { clienteId: cliente.id },
     orderBy: { isDefault: "desc" },
@@ -46,7 +46,7 @@ export async function requestService(productId: string, locale: string) {
   const taxAmount = Math.round(subtotal * 21) / 100;
   const total = subtotal + taxAmount;
 
-  // Generate order number
+  // Generar número de pedido único
   const count = await db.order.count();
   const orderNumber = `ORD-${new Date().getFullYear()}-${String(count + 1).padStart(3, "0")}`;
 

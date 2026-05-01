@@ -37,7 +37,7 @@ function getInitials(name: string) {
   return name.slice(0, 2).toUpperCase();
 }
 
-// ── Desktop lang picker ───────────────────────────────────────────────────────
+// ── Selector de idioma (escritorio) ──────────────────────────────────────────
 function LangPicker() {
   const locale = useLocale();
   const [open, setOpen] = useState(false);
@@ -83,7 +83,7 @@ function LangPicker() {
 }
 
 
-// ── Main Navbar ───────────────────────────────────────────────────────────────
+// ── Componente principal Navbar ───────────────────────────────────────────────
 export default function Navbar() {
   const t = useTranslations("landing");
   const { data: session, status } = useSession();
@@ -97,9 +97,9 @@ export default function Navbar() {
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Logo is fixed at top-1 (4px) with h-20 (80px) → center at 44px from viewport top.
-    // On every scroll tick we check which [data-logo] section contains that Y coordinate.
-    // This is deterministic and correct for both scroll directions.
+    // El logo está fijo en top-1 (4px) con h-20 (80px) → su centro queda a 44px del borde superior.
+    // En cada tick de scroll revisamos qué sección [data-logo] contiene esa coordenada Y.
+    // Es determinista y funciona igual en ambas direcciones de scroll.
     const LOGO_Y = 44;
     let raf = 0;
 
@@ -122,7 +122,7 @@ export default function Navbar() {
       raf = requestAnimationFrame(update);
     };
 
-    update(); // set correct color on mount
+    update(); // aplicar color correcto al montar
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
@@ -134,7 +134,7 @@ export default function Navbar() {
   const user = session?.user;
   const role = (user as any)?.role ?? "";
 
-  // Fetch order count for cart badge
+  // Obtener número de pedidos activos para el badge del carrito
   useEffect(() => {
     if (!isLoggedIn || role !== "cliente") return;
     fetch("/api/orders/count")
@@ -169,7 +169,7 @@ export default function Navbar() {
   const firstName = displayName.split(" ")[0];
   const initials = displayName ? getInitials(displayName) : "?";
 
-  // Page-aware mobile brand label
+  // Etiqueta de sección dinámica para móvil (según la ruta activa)
   function getMobileLabel(): string {
     const segs = pathname.split("/").filter((s) => !LOCALE_CODES.includes(s));
     const section = segs[0] ?? "";
@@ -198,8 +198,8 @@ export default function Navbar() {
 
   return (
     <>
-      {/* ── Top-left logo ──────────────────────────────────────────────── */}
-      {/* h-20 (80px) at top-1 (4px) → center at 44px, aligned with navbar pill center */}
+      {/* ── Logo superior izquierda ────────────────────────────────────── */}
+      {/* h-20 (80px) en top-1 (4px) → centro a 44px, alineado con el centro de la píldora */}
       <div className="hidden sm:block fixed left-24 top-1 z-50">
         <Link href="/" aria-label="Clima HVAC Service — inicio">
           <div className="relative h-20">
@@ -220,11 +220,11 @@ export default function Navbar() {
         </Link>
       </div>
 
-      {/* ── Centered pill ──────────────────────────────────────────────── */}
+      {/* ── Píldora central de navegación ─────────────────────────────── */}
       <div ref={mobileRef} className="fixed left-1/2 top-4 sm:top-5 -translate-x-1/2 z-50 w-[calc(100%-2rem)] sm:w-auto">
         <nav className="flex items-center bg-white/80 backdrop-blur-xl px-3 sm:px-5 py-2.5 rounded-full shadow-lg border border-white/40 whitespace-nowrap gap-2 sm:gap-3">
 
-          {/* Mobile — hamburger */}
+          {/* Móvil — botón hamburguesa */}
           <button
             onClick={() => setOpen((v) => !v)}
             className="sm:hidden w-7 h-7 flex items-center justify-center rounded-full text-gray-700 hover:bg-gray-100 transition-colors shrink-0"
@@ -233,12 +233,12 @@ export default function Navbar() {
             {open ? <X size={16} /> : <Menu size={16} />}
           </button>
 
-          {/* Mobile — page-aware brand label */}
+          {/* Móvil — etiqueta de sección dinámica */}
           <Link href="/" onClick={() => setOpen(false)} className="sm:hidden text-sm font-bold text-primary-800 mr-auto">
             {mobileLabel}
           </Link>
 
-          {/* Mobile — cart (always visible, clients only) */}
+          {/* Móvil — carrito (solo clientes) */}
           {isLoggedIn && role === "cliente" && (
             <Link
               href="/orders"
@@ -254,7 +254,7 @@ export default function Navbar() {
             </Link>
           )}
 
-          {/* Mobile — inline language switcher (no dropdown, just 3 tiny pills) */}
+          {/* Móvil — selector de idioma inline (3 píldoras, sin desplegable) */}
           <div className="sm:hidden flex items-center gap-0.5 shrink-0">
             {LOCALES.map((l) => (
               <button
@@ -273,7 +273,7 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Desktop — nav links */}
+          {/* Escritorio — enlaces de navegación */}
           <div className="hidden sm:flex items-center gap-4">
             {NAV_LINKS.map(({ href, label }) => (
               <Link
@@ -375,9 +375,9 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* ── Top-right: Lang + Cart + User/Login (desktop only) ───────── */}
+      {/* ── Derecha: Idioma + Carrito + Usuario/Login (solo escritorio) ─ */}
       <div className="fixed right-4 sm:right-6 top-4 sm:top-5 z-50 hidden sm:flex items-center gap-2">
-        {/* Language pill */}
+        {/* Píldora de idioma */}
         <div className="bg-white/80 backdrop-blur-xl rounded-full shadow-lg border border-white/40">
           <LangPicker />
         </div>

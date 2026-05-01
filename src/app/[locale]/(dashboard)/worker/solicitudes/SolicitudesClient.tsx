@@ -93,7 +93,7 @@ export function SolicitudesClient({
   const t = useTranslations("serviceRequest");
   const router = useRouter();
 
-  // Poll every 5s so workers see newly available requests and taken ones disappear
+  // Refresca cada 5 segundos para mostrar solicitudes nuevas y ocultar las ya tomadas
   useEffect(() => {
     const id = setInterval(() => router.refresh(), 5000);
     return () => clearInterval(id);

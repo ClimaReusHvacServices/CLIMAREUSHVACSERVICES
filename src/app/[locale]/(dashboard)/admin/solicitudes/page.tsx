@@ -5,6 +5,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { MessageSquare } from "lucide-react";
 import { BackButton } from "@/components/common/BackButton";
 
+export const dynamic = "force-dynamic";
+
 async function getAllRequests() {
   return db.serviceRequest.findMany({
     include: { takenBy: { select: { firstName: true, lastName: true } } },

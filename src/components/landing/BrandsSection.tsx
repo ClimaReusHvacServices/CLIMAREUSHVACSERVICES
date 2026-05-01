@@ -9,10 +9,10 @@ const BRANDS = [
   { name: "Seico",               logo: "/logos/seico.avif" },
 ];
 
-// More copies for a smoother, less noticeable loop start
+// Duplicamos las marcas para que el bucle sea continuo y sin salto visible
 const TRACK = [...BRANDS, ...BRANDS, ...BRANDS, ...BRANDS, ...BRANDS, ...BRANDS];
 
-// Desktop target width used for animation math; layout uses responsive Tailwind classes
+// Ancho objetivo en escritorio para calcular la distancia de desplazamiento de la animación
 const LOGO_W = 240; // px (desktop)
 const GAP_TOTAL = 24; // px total gap
 const ITEM_W = LOGO_W + GAP_TOTAL;

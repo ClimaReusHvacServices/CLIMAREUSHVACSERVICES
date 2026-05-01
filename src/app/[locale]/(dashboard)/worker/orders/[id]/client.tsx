@@ -96,7 +96,7 @@ export function WorkerOrderDetailClient({
     setPaying(true);
     try {
       await markOrderPaid(order.id);
-      toast.success("Pago confirmado ✓");
+      toast.success("Pago confirmado");
       router.refresh();
     } catch { toast.error("Error al confirmar pago"); }
     finally { setPaying(false); }

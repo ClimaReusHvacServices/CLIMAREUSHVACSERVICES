@@ -17,7 +17,7 @@ export default async function DashboardLayout({
   const user = session?.user;
   const t = await getTranslations("nav");
 
-  // Clients get the landing-page-style shell; admin/worker keep DashboardShell
+  // Clientes usan el shell estilo landing; admin/trabajador usan DashboardShell
   if (user?.role === "cliente") {
     return (
       <ClientShell

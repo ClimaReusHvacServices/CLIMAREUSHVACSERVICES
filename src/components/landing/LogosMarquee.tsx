@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 
 export default function LogosMarquee({ logos = [] }: { logos?: string[] }) {
-  const items = [...logos, ...logos]; // duplicate for smooth loop
+  const items = [...logos, ...logos]; // duplicar para bucle continuo sin salto
 
   return (
     <div className="overflow-hidden py-6 bg-white">
