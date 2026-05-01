@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Link, usePathname } from "@/i18n/routing";
 import {
   LayoutDashboard, Users, Wrench, ShoppingBag, Package,
-  ClipboardList, UserCircle, Store, Menu, X, History,
+  ClipboardList, UserCircle, Store, Menu, X, History, MessageSquare,
 } from "lucide-react";
 import Image from "next/image";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -12,7 +12,7 @@ import { UserAvatar } from "./UserAvatar";
 
 const ICON_MAP = {
   LayoutDashboard, Users, Wrench, ShoppingBag, Package,
-  ClipboardList, UserCircle, Store, History,
+  ClipboardList, UserCircle, Store, History, MessageSquare,
 };
 type IconName = keyof typeof ICON_MAP;
 
@@ -22,7 +22,7 @@ interface NavLabels {
   adminSection: string; clienteSection: string; trabajadorSection: string;
   adminHome: string; users: string; workers: string; orders: string;
   products: string; shop: string; myOrders: string; myProfile: string; myTasks: string;
-  historial?: string;
+  historial?: string; solicitudes?: string;
 }
 
 function buildNav(role: string, l: NavLabels): { section: string; items: NavItem[] } {
@@ -34,7 +34,8 @@ function buildNav(role: string, l: NavLabels): { section: string; items: NavItem
       { href: "/admin/workers",    iconName: "Wrench",          label: l.workers },
       { href: "/admin/orders",     iconName: "ShoppingBag",     label: l.orders },
       { href: "/admin/products",   iconName: "Package",         label: l.products },
-      { href: "/admin/historial",  iconName: "History",         label: l.historial ?? "Historial" },
+      { href: "/admin/historial",    iconName: "History",         label: l.historial ?? "Historial" },
+      { href: "/admin/solicitudes",  iconName: "MessageSquare",   label: l.solicitudes ?? "Solicitudes" },
     ],
   };
   if (role === "cliente") return {
@@ -48,7 +49,8 @@ function buildNav(role: string, l: NavLabels): { section: string; items: NavItem
     section: l.trabajadorSection,
     items: [
       { href: "/worker",           iconName: "ClipboardList", label: l.myTasks },
-      { href: "/worker/historial", iconName: "History",       label: l.historial ?? "Historial" },
+      { href: "/worker/historial",    iconName: "History",         label: l.historial ?? "Historial" },
+      { href: "/worker/solicitudes",  iconName: "MessageSquare",   label: l.solicitudes ?? "Solicitudes" },
     ],
   };
 }

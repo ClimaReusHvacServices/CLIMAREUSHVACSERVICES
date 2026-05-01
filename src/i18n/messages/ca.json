@@ -59,7 +59,9 @@
     "shop": "Botiga",
     "myOrders": "Les meves comandes",
     "myProfile": "El meu perfil",
-    "myTasks": "Les meves tasques"
+    "myTasks": "Les meves tasques",
+    "historial": "Historial",
+    "solicitudes": "Sol·licituds"
   },
   "admin": {
     "title": "Tauler d'Administrador",
@@ -538,5 +540,48 @@
         "p4": "Totes les reparacions inclouen garantia per escrit sobre la peça substituïda i la mà d'obra. Si el problema reapareix dins del període de garantia, tornem sense cost addicional."
       }
     }
+  },
+  "serviceRequest": {
+    "widgetTitle": "Necessites ajuda?",
+    "widgetSubtitle": "Explica'ns el teu problema, un tècnic es posarà en contacte per WhatsApp",
+    "bubbleText": "Problemes amb el teu clima? T'ajudem!",
+    "formTitle": "Sol·licitar visita tècnica",
+    "name": "El teu nom",
+    "namePlaceholder": "Nom complet",
+    "phone": "WhatsApp",
+    "phonePlaceholder": "Número de telèfon",
+    "description": "Descriu el problema",
+    "descriptionPlaceholder": "Què li passa al teu equip? Explica'ns amb detall...",
+    "submit": "Enviar sol·licitud",
+    "submitting": "Enviant...",
+    "successTitle": "Sol·licitud rebuda!",
+    "successDesc": "Ens posarem en contacte amb tu aviat per WhatsApp.",
+    "sendAnother": "Nova sol·licitud",
+    "errorDesc": "Error en enviar. Torna-ho a intentar.",
+    "adminTitle": "Sol·licituds de visita",
+    "adminSubtitle": "Sol·licituds de clients sense registre previ",
+    "workerTitle": "Sol·licituds disponibles",
+    "workerSubtitle": "Clients que necessiten visita tècnica",
+    "colNumber": "Núm.",
+    "colName": "Client",
+    "colPhone": "WhatsApp",
+    "colDescription": "Problema",
+    "colStatus": "Estat",
+    "colTakenBy": "Tècnic",
+    "colDate": "Data",
+    "status_nueva": "Nova",
+    "status_tomada": "Agafada",
+    "status_resuelta": "Resolta",
+    "status_cancelada": "Cancel·lada",
+    "takeSolicitud": "Agafar",
+    "taking": "Agafant...",
+    "takenSuccess": "Sol·licitud agafada! Contacta el client per WhatsApp.",
+    "takenError": "Aquesta sol·licitud ja ha estat agafada per un altre tècnic.",
+    "available": "disponibles",
+    "myRequests": "Les meves sol·licituds",
+    "noAvailable": "No hi ha sol·licituds disponibles ara mateix.",
+    "noMine": "No tens sol·licituds agafades.",
+    "markResolved": "Marcar com a resolta",
+    "resolvedSuccess": "Sol·licitud marcada com a resolta."
   }
 }

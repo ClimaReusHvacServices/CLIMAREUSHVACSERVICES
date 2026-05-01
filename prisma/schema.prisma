@@ -43,6 +43,13 @@ enum TaskStatus {
   cancelada
 }
 
+enum ServiceRequestStatus {
+  nueva
+  tomada
+  resuelta
+  cancelada
+}
+
 // ============================================
 // USUARIOS
 // ============================================
@@ -78,6 +85,7 @@ model User {
   tasks             Task[]
   taskComments      TaskComment[]
   notifications     Notification[]
+  serviceRequests   ServiceRequest[]
 
   @@index([email])
   @@index([username])
@@ -512,6 +520,34 @@ model Notification {
 
   @@index([userId])
   @@index([isRead])
+  @@index([createdAt])
+}
+
+// ============================================
+// AUDITORÍA
+// ============================================
+
+// ============================================
+// SOLICITUDES DE VISITA (sin registro)
+// ============================================
+
+model ServiceRequest {
+  id          String               @id @default(cuid())
+  number      Int                  @unique @default(autoincrement())
+  name        String
+  phone       String
+  description String               @db.Text
+  status      ServiceRequestStatus @default(nueva)
+  takenById   String?
+  takenAt     DateTime?
+  adminNotes  String?              @db.Text
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  takenBy     User?                @relation(fields: [takenById], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([takenById])
   @@index([createdAt])
 }
 

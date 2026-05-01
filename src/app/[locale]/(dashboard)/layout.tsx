@@ -42,7 +42,8 @@ export default async function DashboardLayout({
     myOrders:          t("myOrders"),
     myProfile:         t("myProfile"),
     myTasks:           t("myTasks"),
-    historial:         "Historial",
+    historial:         t("historial"),
+    solicitudes:       t("solicitudes"),
   };
 
   return (

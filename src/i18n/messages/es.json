@@ -59,7 +59,9 @@
     "shop": "Tienda",
     "myOrders": "Mis Pedidos",
     "myProfile": "Mi Perfil",
-    "myTasks": "Mis Tareas"
+    "myTasks": "Mis Tareas",
+    "historial": "Historial",
+    "solicitudes": "Solicitudes"
   },
   "admin": {
     "title": "Panel de Administrador",
@@ -538,5 +540,48 @@
         "p4": "Todas las reparaciones incluyen garantía por escrito sobre la pieza sustituida y la mano de obra. Si el problema reaparece dentro del período de garantía, volvemos sin coste adicional."
       }
     }
+  },
+  "serviceRequest": {
+    "widgetTitle": "¿Necesitas ayuda?",
+    "widgetSubtitle": "Cuéntanos tu problema, un técnico te contactará por WhatsApp",
+    "bubbleText": "¿Problemas con tu clima? ¡Te ayudamos!",
+    "formTitle": "Solicitar visita técnica",
+    "name": "Tu nombre",
+    "namePlaceholder": "Nombre completo",
+    "phone": "WhatsApp",
+    "phonePlaceholder": "Número de teléfono",
+    "description": "Describe el problema",
+    "descriptionPlaceholder": "¿Qué le pasa a tu equipo? Cuéntanos con detalle...",
+    "submit": "Enviar solicitud",
+    "submitting": "Enviando...",
+    "successTitle": "¡Solicitud recibida!",
+    "successDesc": "Nos pondremos en contacto contigo pronto por WhatsApp.",
+    "sendAnother": "Nueva solicitud",
+    "errorDesc": "Error al enviar. Inténtalo de nuevo.",
+    "adminTitle": "Solicitudes de visita",
+    "adminSubtitle": "Solicitudes de clientes sin registro previo",
+    "workerTitle": "Solicitudes disponibles",
+    "workerSubtitle": "Clientes que necesitan visita técnica",
+    "colNumber": "N°",
+    "colName": "Cliente",
+    "colPhone": "WhatsApp",
+    "colDescription": "Problema",
+    "colStatus": "Estado",
+    "colTakenBy": "Técnico",
+    "colDate": "Fecha",
+    "status_nueva": "Nueva",
+    "status_tomada": "Tomada",
+    "status_resuelta": "Resuelta",
+    "status_cancelada": "Cancelada",
+    "takeSolicitud": "Tomar",
+    "taking": "Tomando...",
+    "takenSuccess": "¡Solicitud tomada! Contacta al cliente por WhatsApp.",
+    "takenError": "Esta solicitud ya fue tomada por otro técnico.",
+    "available": "disponibles",
+    "myRequests": "Mis solicitudes tomadas",
+    "noAvailable": "No hay solicitudes disponibles ahora mismo.",
+    "noMine": "No tienes solicitudes tomadas.",
+    "markResolved": "Marcar resuelta",
+    "resolvedSuccess": "Solicitud marcada como resuelta."
   }
 }

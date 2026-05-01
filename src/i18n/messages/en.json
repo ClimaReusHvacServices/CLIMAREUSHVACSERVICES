@@ -59,7 +59,9 @@
     "shop": "Shop",
     "myOrders": "My Orders",
     "myProfile": "My Profile",
-    "myTasks": "My Tasks"
+    "myTasks": "My Tasks",
+    "historial": "History",
+    "solicitudes": "Requests"
   },
   "admin": {
     "title": "Admin Dashboard",
@@ -538,5 +540,48 @@
         "p4": "All repairs include a written guarantee on the replaced part and labour. If the problem recurs within the guarantee period, we return at no additional cost."
       }
     }
+  },
+  "serviceRequest": {
+    "widgetTitle": "Need help?",
+    "widgetSubtitle": "Tell us your problem, a technician will contact you via WhatsApp",
+    "bubbleText": "AC problems? We can help!",
+    "formTitle": "Request a technical visit",
+    "name": "Your name",
+    "namePlaceholder": "Full name",
+    "phone": "WhatsApp",
+    "phonePlaceholder": "Phone number",
+    "description": "Describe the problem",
+    "descriptionPlaceholder": "What's wrong with your unit? Tell us in detail...",
+    "submit": "Send request",
+    "submitting": "Sending...",
+    "successTitle": "Request received!",
+    "successDesc": "We will contact you soon via WhatsApp.",
+    "sendAnother": "New request",
+    "errorDesc": "Error sending. Please try again.",
+    "adminTitle": "Visit requests",
+    "adminSubtitle": "Requests from unregistered clients",
+    "workerTitle": "Available requests",
+    "workerSubtitle": "Clients that need a technical visit",
+    "colNumber": "No.",
+    "colName": "Client",
+    "colPhone": "WhatsApp",
+    "colDescription": "Problem",
+    "colStatus": "Status",
+    "colTakenBy": "Technician",
+    "colDate": "Date",
+    "status_nueva": "New",
+    "status_tomada": "Taken",
+    "status_resuelta": "Resolved",
+    "status_cancelada": "Cancelled",
+    "takeSolicitud": "Take",
+    "taking": "Taking...",
+    "takenSuccess": "Request taken! Contact the client via WhatsApp.",
+    "takenError": "This request was already taken by another technician.",
+    "available": "available",
+    "myRequests": "My taken requests",
+    "noAvailable": "No requests available right now.",
+    "noMine": "You have no taken requests.",
+    "markResolved": "Mark resolved",
+    "resolvedSuccess": "Request marked as resolved."
   }
 }
