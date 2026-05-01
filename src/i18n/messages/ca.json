@@ -359,7 +359,8 @@
       "feat3": "Garantia oficial", "feat4": "Servei a Reus",
       "modalRequestService": "Sol·licitar servei",
       "modalLoginToRequest": "Inicia sessió per sol·licitar",
-      "modalDescription": "Descripció"
+      "modalDescription": "Descripció",
+      "staffCannotBuy": "Les comandes són per a clients. Registra't amb un compte de client."
     },
     "why": {
       "title": "Per què triar-nos?",

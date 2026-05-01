@@ -359,7 +359,8 @@
       "feat3": "Official warranty", "feat4": "Service in Reus",
       "modalRequestService": "Request service",
       "modalLoginToRequest": "Sign in to request",
-      "modalDescription": "Description"
+      "modalDescription": "Description",
+      "staffCannotBuy": "Orders are for clients. Register with a client account."
     },
     "why": {
       "title": "Why choose us?",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { X, Wind, CheckCircle2, Star, Wrench, LogIn } from "lucide-react";
+import { X, Wind, CheckCircle2, Star, Wrench, LogIn, Lock } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { useLocale, useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
@@ -247,7 +247,12 @@ function ProductModal({ product, onClose, t, role, locale }: {
                   <LogIn size={15} />
                   Iniciar sesión para solicitar
                 </Link>
-              ) : null}
+              ) : (
+                <div className="flex items-center justify-center gap-2 w-full py-2.5 px-3 rounded-xl bg-gray-50 border border-gray-200 text-xs text-gray-500">
+                  <Lock size={12} className="shrink-0" />
+                  {t("products.staffCannotBuy")}
+                </div>
+              )}
             </div>
           </div>
         </div>

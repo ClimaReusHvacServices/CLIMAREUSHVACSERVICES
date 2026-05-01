@@ -2,10 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 import { X, Send, CheckCircle2, Wrench } from "lucide-react";
 
 export default function ServiceRequestWidget() {
   const t = useTranslations("serviceRequest");
+  const { data: session, status } = useSession();
+  const role = (session?.user as any)?.role ?? "";
 
   const [showBubble, setShowBubble] = useState(false);
   const [open, setOpen] = useState(false);
@@ -58,9 +61,12 @@ export default function ServiceRequestWidget() {
     }
   }
 
+  // Administradores y trabajadores no ven el widget — tienen su propio panel
+  if (status !== "loading" && (role === "admin" || role === "trabajador")) return null;
+
   return (
     <>
-      {/* Floating button — bottom-24 to sit above WhatsApp button */}
+      {/* Botón flotante — bottom-24 para quedar encima del botón de WhatsApp */}
       <div className="fixed bottom-24 right-6 z-40 flex flex-col items-end gap-2">
         {/* Speech bubble notification */}
         {showBubble && !open && (
