@@ -275,7 +275,14 @@
     "difficultyMedia": "Media",
     "difficultyAlta": "Alta",
     "selectProduct": "Selecciona un equipo",
-    "selectService": "Selecciona un servicio"
+    "selectService": "Selecciona un servicio",
+    "offerSet": "Poner en oferta",
+    "offerRemove": "Quitar oferta",
+    "offerTitle": "Establecer precio de oferta",
+    "offerPriceLabel": "Precio de oferta (€)",
+    "offerSuccess": "Oferta establecida correctamente",
+    "offerRemoveSuccess": "Oferta eliminada correctamente",
+    "offerError": "Error al actualizar la oferta. Verifica que el precio sea menor al original."
   },
   "clientOrders": {
     "title": "Mis Pedidos",

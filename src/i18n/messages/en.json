@@ -275,7 +275,14 @@
     "difficultyMedia": "Medium",
     "difficultyAlta": "High",
     "selectProduct": "Select an equipment",
-    "selectService": "Select a service"
+    "selectService": "Select a service",
+    "offerSet": "Put on sale",
+    "offerRemove": "Remove sale",
+    "offerTitle": "Set sale price",
+    "offerPriceLabel": "Sale price (€)",
+    "offerSuccess": "Sale price set successfully",
+    "offerRemoveSuccess": "Sale removed successfully",
+    "offerError": "Error updating the sale. Make sure the price is lower than the original."
   },
   "clientOrders": {
     "title": "My Orders",

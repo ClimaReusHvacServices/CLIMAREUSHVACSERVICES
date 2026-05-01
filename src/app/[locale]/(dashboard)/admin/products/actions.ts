@@ -125,3 +125,12 @@ export async function deletePackage(id: string) {
   await db.servicePackage.delete({ where: { id } });
   revalidatePath("/[locale]/admin/products", "page");
 }
+
+// ─── Ofertas ──────────────────────────────────────────────────────────────────
+
+export async function setProductDiscount(id: string, discountPrice: number | null) {
+  await checkAdmin();
+  await db.product.update({ where: { id }, data: { discountPrice } });
+  revalidatePath("/[locale]/admin/products", "page");
+  revalidatePath("/[locale]/oferta", "page");
+}

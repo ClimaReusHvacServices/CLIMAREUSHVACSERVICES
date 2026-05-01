@@ -4,12 +4,13 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Search, Package, Wrench, Box, X, Wind, Upload } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Package, Wrench, Box, X, Wind, Upload, Tag } from "lucide-react";
 import { Pagination } from "@/components/common/Pagination";
 import {
   createProduct, updateProduct, deleteProduct,
   createService, updateService, deleteService,
   createPackage, updatePackage, deletePackage,
+  setProductDiscount,
 } from "@/app/[locale]/(dashboard)/admin/products/actions";
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
@@ -138,6 +139,10 @@ export function ProductsManager({ products, services, packages }: {
   const [serviceForm, setServiceForm] = useState({ ...defaultServiceForm });
   const [packageForm, setPackageForm] = useState({ ...defaultPackageForm });
 
+  const [offerModal, setOfferModal] = useState<{ id: string; name: string; price: number } | null>(null);
+  const [offerPrice, setOfferPrice] = useState("");
+  const [isTogglingOffer, setIsTogglingOffer] = useState(false);
+
   function handleImageFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -146,6 +151,34 @@ export function ProductsManager({ products, services, packages }: {
     reader.onload = (ev) => setProductForm(f => ({ ...f, imageUrl: ev.target?.result as string ?? "" }));
     reader.readAsDataURL(file);
     e.target.value = "";
+  }
+
+  async function handleSetOffer(e: React.FormEvent) {
+    e.preventDefault();
+    if (!offerModal) return;
+    const val = parseFloat(offerPrice);
+    if (isNaN(val) || val <= 0 || val >= offerModal.price) {
+      toast.error(t("offerError"));
+      return;
+    }
+    setIsTogglingOffer(true);
+    try {
+      await setProductDiscount(offerModal.id, val);
+      toast.success(t("offerSuccess"));
+      setOfferModal(null);
+      router.refresh();
+    } catch { toast.error(t("offerError")); }
+    finally { setIsTogglingOffer(false); }
+  }
+
+  async function handleRemoveOffer(id: string) {
+    setIsTogglingOffer(true);
+    try {
+      await setProductDiscount(id, null);
+      toast.success(t("offerRemoveSuccess"));
+      router.refresh();
+    } catch { toast.error(t("offerError")); }
+    finally { setIsTogglingOffer(false); }
   }
 
   // Filtrar según búsqueda activa
@@ -388,6 +421,24 @@ export function ProductsManager({ products, services, packages }: {
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center justify-end gap-1">
+                        {p.discountPrice ? (
+                          <button
+                            onClick={() => handleRemoveOffer(p.id)}
+                            disabled={isTogglingOffer}
+                            title={t("offerRemove")}
+                            className="p-1.5 text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition-colors disabled:opacity-40"
+                          >
+                            <Tag size={14} />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => { setOfferPrice(""); setOfferModal({ id: p.id, name: p.name, price: Number(p.price) }); }}
+                            title={t("offerSet")}
+                            className="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                          >
+                            <Tag size={14} />
+                          </button>
+                        )}
                         <button onClick={() => openEdit("products", p)} className="p-1.5 text-gray-400 hover:text-accent-600 hover:bg-accent-50 rounded-lg transition-colors"><Pencil size={14} /></button>
                         <button onClick={() => setDeleteTarget({ id: p.id, name: p.name, entityType: "products" })} className="p-1.5 text-gray-400 hover:text-accent-600 hover:bg-accent-50 rounded-lg transition-colors"><Trash2 size={14} /></button>
                       </div>
@@ -618,6 +669,33 @@ export function ProductsManager({ products, services, packages }: {
               <ModalActions onCancel={() => setModal(null)} isLoading={isSubmitting} tCommon={tCommon} />
             </form>
           )}
+        </Modal>
+      )}
+
+      {/* ─── Modal para establecer precio de oferta ─────────────────────── */}
+      {offerModal && (
+        <Modal title={t("offerTitle")} onClose={() => setOfferModal(null)}>
+          <form onSubmit={handleSetOffer} className="space-y-4">
+            <div className="p-3 bg-gray-50 rounded-xl">
+              <p className="text-sm font-medium text-gray-800">{offerModal.name}</p>
+              <p className="text-xs text-gray-400 mt-0.5">{t("fieldPrice")}: €{offerModal.price.toFixed(2)}</p>
+            </div>
+            <Field label={t("offerPriceLabel")} required>
+              <input
+                required
+                autoFocus
+                type="number"
+                step="0.01"
+                min="0.01"
+                max={offerModal.price - 0.01}
+                className={inputCls}
+                value={offerPrice}
+                onChange={e => setOfferPrice(e.target.value)}
+                placeholder={`< €${offerModal.price.toFixed(2)}`}
+              />
+            </Field>
+            <ModalActions onCancel={() => setOfferModal(null)} isLoading={isTogglingOffer} tCommon={tCommon} />
+          </form>
         </Modal>
       )}
 

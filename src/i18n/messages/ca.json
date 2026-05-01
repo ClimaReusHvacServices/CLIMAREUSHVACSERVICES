@@ -275,7 +275,14 @@
     "difficultyMedia": "Mitjana",
     "difficultyAlta": "Alta",
     "selectProduct": "Selecciona un equip",
-    "selectService": "Selecciona un servei"
+    "selectService": "Selecciona un servei",
+    "offerSet": "Posar en oferta",
+    "offerRemove": "Treure oferta",
+    "offerTitle": "Establir preu d'oferta",
+    "offerPriceLabel": "Preu d'oferta (€)",
+    "offerSuccess": "Oferta establerta correctament",
+    "offerRemoveSuccess": "Oferta eliminada correctament",
+    "offerError": "Error en actualitzar l'oferta. Verifica que el preu sigui menor a l'original."
   },
   "clientOrders": {
     "title": "Les meves comandes",
