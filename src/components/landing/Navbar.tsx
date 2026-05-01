@@ -86,20 +86,34 @@ function LangPicker() {
 function MobileLangPicker() {
   const locale = useLocale();
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [dropPos, setDropPos] = useState({ top: 0, right: 0 });
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const dropRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const h = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (
+        dropRef.current && !dropRef.current.contains(e.target as Node) &&
+        btnRef.current && !btnRef.current.contains(e.target as Node)
+      ) setOpen(false);
     };
     document.addEventListener("mousedown", h);
     return () => document.removeEventListener("mousedown", h);
   }, []);
 
+  const handleToggle = () => {
+    if (btnRef.current) {
+      const r = btnRef.current.getBoundingClientRect();
+      setDropPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
+    }
+    setOpen((v) => !v);
+  };
+
   return (
-    <div ref={ref} className="relative sm:hidden">
+    <div className="sm:hidden">
       <button
-        onClick={() => setOpen((v) => !v)}
+        ref={btnRef}
+        onClick={handleToggle}
         className="flex items-center gap-0.5 px-2 py-1 rounded-full text-[10px] font-bold text-gray-600 hover:bg-gray-100 transition-colors shrink-0"
         aria-label="Idioma"
       >
@@ -107,12 +121,16 @@ function MobileLangPicker() {
         <span>{locale.toUpperCase()}</span>
       </button>
       {open && (
-        <div className="absolute right-0 top-[calc(100%+6px)] w-28 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-[70]">
+        <div
+          ref={dropRef}
+          style={{ position: "fixed", top: dropPos.top, right: dropPos.right, zIndex: 200 }}
+          className="w-32 bg-white rounded-xl shadow-xl border border-gray-100"
+        >
           {LOCALES.map((l) => (
             <button
               key={l.code}
               onClick={() => { setOpen(false); switchLocale(l.code); }}
-              className={`w-full text-left px-3 py-2 text-xs font-medium transition-colors ${
+              className={`w-full text-left px-3 py-2.5 text-xs font-medium transition-colors first:rounded-t-xl last:rounded-b-xl ${
                 locale === l.code ? "bg-primary-50 text-primary-700 font-bold" : "text-gray-700 hover:bg-gray-50"
               }`}
             >
@@ -366,7 +384,7 @@ export default function Navbar() {
                     className="flex items-center gap-2 px-5 py-3.5 text-sm font-semibold text-primary-700 hover:bg-primary-50 transition-colors border-b border-gray-100/80"
                   >
                     <ShoppingCart size={15} />
-                    Mis pedidos
+                    {t("navbar.myOrders")}
                   </Link>
                 )}
                 {role === "cliente" && (
