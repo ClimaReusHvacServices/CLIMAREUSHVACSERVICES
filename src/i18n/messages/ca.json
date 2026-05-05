@@ -282,7 +282,15 @@
     "offerPriceLabel": "Preu d'oferta (€)",
     "offerSuccess": "Oferta establerta correctament",
     "offerRemoveSuccess": "Oferta eliminada correctament",
-    "offerError": "Error en actualitzar l'oferta. Verifica que el preu sigui menor a l'original."
+    "offerError": "Error en actualitzar l'oferta. Verifica que el preu sigui menor a l'original.",
+    "fieldSpecsSection": "Característiques tècniques (opcional)",
+    "fieldEnergyLabel": "Etiqueta energètica (ex: A++)",
+    "fieldEfficiency": "Eficiència (ex: 5.0 kW)",
+    "fieldNoiseLevel": "Nivell de soroll (ex: 21 dB)",
+    "fieldQuality": "Qualitat (ex: Premium)",
+    "fieldWifi": "Té WiFi",
+    "fieldCoolyScore": "Puntuació Coolfy (ex: 4.8)",
+    "fieldCoverage": "Cobertura (ex: 20 m²)"
   },
   "clientOrders": {
     "title": "Les meves comandes",
@@ -559,6 +567,36 @@
       "ctaTitle": "Necessites instal·lar o revisar la teva climatització?",
       "ctaSubtitle": "El nostre equip tècnic a Reus i Tarragona està llest per ajudar-te.",
       "ctaButton": "Truca'ns ara — 877 234 166"
+    },
+    "productoPage": {
+      "breadcrumbHome": "Inici",
+      "breadcrumbCatalog": "Catàleg",
+      "requestService": "Sol·licitar instal·lació",
+      "loginToRequest": "Inicia sessió per sol·licitar",
+      "installTitle": "Detalls d'instal·lació",
+      "installNote3m": "Instal·lació amb 3 metres de tuberia inclosa",
+      "installExcess": "Metres addicionals amb cost extra",
+      "warrantyTitle": "Garantia",
+      "warrantyEquipTitle": "Garantia de l'equip",
+      "warrantyEquip": "3 anys",
+      "warrantyInstallTitle": "Garantia d'instal·lació",
+      "warrantyInstall": "1 any",
+      "specsTitle": "Característiques tècniques",
+      "descTitle": "Descripció del producte",
+      "energyLabel": "Etiqueta energètica",
+      "efficiency": "Eficiència",
+      "noiseLevel": "Nivell de soroll",
+      "quality": "Qualitat",
+      "coolyScore": "Puntuació Coolfy",
+      "coverage": "Cobertura",
+      "wifiYes": "Amb WiFi",
+      "wifiNo": "Sense WiFi",
+      "notFound": "Producte no trobat",
+      "backToCatalog": "Tornar al catàleg",
+      "saved": "Estalvies",
+      "includesInstall": "Preu amb instal·lació bàsica inclosa",
+      "ctaTitle": "T'interessa aquest equip?",
+      "ctaSubtitle": "El nostre equip tècnic a Reus i Tarragona està llest per instal·lar-lo."
     }
   },
   "serviceRequest": {

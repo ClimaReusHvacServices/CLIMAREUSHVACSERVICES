@@ -282,7 +282,15 @@
     "offerPriceLabel": "Precio de oferta (€)",
     "offerSuccess": "Oferta establecida correctamente",
     "offerRemoveSuccess": "Oferta eliminada correctamente",
-    "offerError": "Error al actualizar la oferta. Verifica que el precio sea menor al original."
+    "offerError": "Error al actualizar la oferta. Verifica que el precio sea menor al original.",
+    "fieldSpecsSection": "Características técnicas (opcional)",
+    "fieldEnergyLabel": "Etiqueta energética (ej: A++)",
+    "fieldEfficiency": "Eficiencia (ej: 5.0 kW)",
+    "fieldNoiseLevel": "Nivel de ruido (ej: 21 dB)",
+    "fieldQuality": "Calidad (ej: Premium)",
+    "fieldWifi": "Tiene WiFi",
+    "fieldCoolyScore": "Puntuación Coolfy (ej: 4.8)",
+    "fieldCoverage": "Cobertura (ej: 20 m²)"
   },
   "clientOrders": {
     "title": "Mis Pedidos",
@@ -559,6 +567,36 @@
       "ctaTitle": "¿Necesitas instalar o revisar tu climatización?",
       "ctaSubtitle": "Nuestro equipo técnico en Reus y Tarragona está listo para ayudarte.",
       "ctaButton": "Llámanos ahora — 877 234 166"
+    },
+    "productoPage": {
+      "breadcrumbHome": "Inicio",
+      "breadcrumbCatalog": "Catálogo",
+      "requestService": "Solicitar instalación",
+      "loginToRequest": "Inicia sesión para solicitar",
+      "installTitle": "Detalles de instalación",
+      "installNote3m": "Instalación con 3 metros de tubería incluida",
+      "installExcess": "Metros adicionales con coste extra",
+      "warrantyTitle": "Garantía",
+      "warrantyEquipTitle": "Garantía del equipo",
+      "warrantyEquip": "3 años",
+      "warrantyInstallTitle": "Garantía instalación",
+      "warrantyInstall": "1 año",
+      "specsTitle": "Características técnicas",
+      "descTitle": "Descripción del producto",
+      "energyLabel": "Etiqueta energética",
+      "efficiency": "Eficiencia",
+      "noiseLevel": "Nivel de ruido",
+      "quality": "Calidad",
+      "coolyScore": "Puntuación Coolfy",
+      "coverage": "Cobertura",
+      "wifiYes": "Con WiFi",
+      "wifiNo": "Sin WiFi",
+      "notFound": "Producto no encontrado",
+      "backToCatalog": "Volver al catálogo",
+      "saved": "Ahorras",
+      "includesInstall": "Precio con instalación básica incluida",
+      "ctaTitle": "¿Te interesa este equipo?",
+      "ctaSubtitle": "Nuestro equipo técnico en Reus y Tarragona está listo para instalarlo."
     }
   },
   "serviceRequest": {

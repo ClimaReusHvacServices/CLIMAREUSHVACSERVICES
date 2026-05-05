@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
@@ -19,6 +19,7 @@ interface ProductRow {
   id: string; name: string; description: string; category: string;
   manufacturer: string | null; price: any; discountPrice: any;
   stock: number; warranty: string | null; isActive: boolean; images: string[];
+  specifications: string | null;
 }
 interface ServiceRow {
   id: string; name: string; description: string; type: string;
@@ -34,22 +35,29 @@ interface PackageRow {
 type Tab = "products" | "services" | "packages";
 const PAGE_SIZE = 10;
 
-const defaultProductForm = { name: "", description: "", category: "", manufacturer: "", price: "", discountPrice: "", stock: "1", warranty: "", isActive: true, imageUrl: "" };
+const defaultProductForm = {
+  name: "", description: "", category: "", manufacturer: "", price: "", discountPrice: "",
+  stock: "1", warranty: "", isActive: true, imageUrl: "",
+  specEnergyLabel: "", specEfficiency: "", specNoiseLevel: "", specQuality: "",
+  specWifi: false, specCoolyScore: "", specCoverage: "",
+};
 const defaultServiceForm = { name: "", description: "", type: "instalacion", basePrice: "", estimatedDuration: "60", difficulty: "media", isActive: true };
 const defaultPackageForm = { name: "", description: "", productId: "", serviceId: "", packagePrice: "", discountPercentage: "", isActive: true };
 
 // ─── Subcomponentes ───────────────────────────────────────────────────────────
 
 function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
   useEffect(() => {
-    const handle = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    const handle = (e: KeyboardEvent) => { if (e.key === "Escape") onCloseRef.current(); };
     document.addEventListener("keydown", handle);
     document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", handle);
       document.body.style.overflow = "";
     };
-  }, [onClose]);
+  }, []);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -202,13 +210,24 @@ export function ProductsManager({ products, services, packages }: {
   }
 
   function openEdit(type: Tab, item: any) {
-    if (type === "products") setProductForm({
-      name: item.name, description: item.description, category: item.category,
-      manufacturer: item.manufacturer ?? "", price: String(Number(item.price)),
-      discountPrice: item.discountPrice ? String(Number(item.discountPrice)) : "",
-      stock: String(item.stock), warranty: item.warranty ?? "", isActive: item.isActive,
-      imageUrl: item.images?.[0] ?? "",
-    });
+    if (type === "products") {
+      let existingSpecs: Record<string, any> = {};
+      try { if (item.specifications) existingSpecs = JSON.parse(item.specifications); } catch {}
+      setProductForm({
+        name: item.name, description: item.description, category: item.category,
+        manufacturer: item.manufacturer ?? "", price: String(Number(item.price)),
+        discountPrice: item.discountPrice ? String(Number(item.discountPrice)) : "",
+        stock: String(item.stock), warranty: item.warranty ?? "", isActive: item.isActive,
+        imageUrl: item.images?.[0] ?? "",
+        specEnergyLabel: existingSpecs.energyLabel ?? "",
+        specEfficiency: existingSpecs.efficiency ?? "",
+        specNoiseLevel: existingSpecs.noiseLevel ?? "",
+        specQuality: existingSpecs.quality ?? "",
+        specWifi: existingSpecs.wifi ?? false,
+        specCoolyScore: existingSpecs.coolyScore !== undefined ? String(existingSpecs.coolyScore) : "",
+        specCoverage: existingSpecs.coverage ?? "",
+      });
+    }
     if (type === "services") setServiceForm({
       name: item.name, description: item.description, type: item.type,
       basePrice: String(Number(item.basePrice)), estimatedDuration: String(item.estimatedDuration),
@@ -229,6 +248,16 @@ export function ProductsManager({ products, services, packages }: {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      const specs: Record<string, any> = {};
+      if (productForm.specEnergyLabel) specs.energyLabel = productForm.specEnergyLabel;
+      if (productForm.specEfficiency) specs.efficiency = productForm.specEfficiency;
+      if (productForm.specNoiseLevel) specs.noiseLevel = productForm.specNoiseLevel;
+      if (productForm.specQuality) specs.quality = productForm.specQuality;
+      if (productForm.specWifi) specs.wifi = productForm.specWifi;
+      if (productForm.specCoolyScore) specs.coolyScore = parseFloat(productForm.specCoolyScore);
+      if (productForm.specCoverage) specs.coverage = productForm.specCoverage;
+      const specifications = Object.keys(specs).length > 0 ? JSON.stringify(specs) : undefined;
+
       const data = {
         name: productForm.name, description: productForm.description,
         category: productForm.category,
@@ -239,6 +268,7 @@ export function ProductsManager({ products, services, packages }: {
         warranty: productForm.warranty || undefined,
         isActive: productForm.isActive,
         imageUrl: productForm.imageUrl || undefined,
+        specifications,
       };
       if (modal?.mode === "edit" && modal.id) await updateProduct(modal.id, data);
       else await createProduct(data);
@@ -582,6 +612,35 @@ export function ProductsManager({ products, services, packages }: {
                   </div>
                 )}
               </Field>
+              {/* Specs section */}
+              <div className="pt-2 border-t border-gray-100">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{t("fieldSpecsSection")}</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label={t("fieldEnergyLabel")}>
+                    <input className={inputCls} value={productForm.specEnergyLabel} onChange={e => setProductForm(f => ({ ...f, specEnergyLabel: e.target.value }))} placeholder="A++" />
+                  </Field>
+                  <Field label={t("fieldEfficiency")}>
+                    <input className={inputCls} value={productForm.specEfficiency} onChange={e => setProductForm(f => ({ ...f, specEfficiency: e.target.value }))} placeholder="5.0 kW" />
+                  </Field>
+                  <Field label={t("fieldNoiseLevel")}>
+                    <input className={inputCls} value={productForm.specNoiseLevel} onChange={e => setProductForm(f => ({ ...f, specNoiseLevel: e.target.value }))} placeholder="21 dB" />
+                  </Field>
+                  <Field label={t("fieldQuality")}>
+                    <input className={inputCls} value={productForm.specQuality} onChange={e => setProductForm(f => ({ ...f, specQuality: e.target.value }))} placeholder="Premium" />
+                  </Field>
+                  <Field label={t("fieldCoolyScore")}>
+                    <input type="number" step="0.1" min="1" max="5" className={inputCls} value={productForm.specCoolyScore} onChange={e => setProductForm(f => ({ ...f, specCoolyScore: e.target.value }))} placeholder="4.8" />
+                  </Field>
+                  <Field label={t("fieldCoverage")}>
+                    <input className={inputCls} value={productForm.specCoverage} onChange={e => setProductForm(f => ({ ...f, specCoverage: e.target.value }))} placeholder="20 m²" />
+                  </Field>
+                </div>
+                <label className="flex items-center gap-2 cursor-pointer mt-3">
+                  <input type="checkbox" checked={productForm.specWifi} onChange={e => setProductForm(f => ({ ...f, specWifi: e.target.checked }))} className="w-4 h-4 rounded border-gray-300 text-primary-600" />
+                  <span className="text-sm font-medium text-gray-700">{t("fieldWifi")}</span>
+                </label>
+              </div>
+
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" checked={productForm.isActive} onChange={e => setProductForm(f => ({ ...f, isActive: e.target.checked }))} className="w-4 h-4 rounded border-gray-300 text-primary-600" />
                 <span className="text-sm font-medium text-gray-700">{t("fieldIsActive")}</span>

@@ -14,7 +14,7 @@ async function checkAdmin() {
 export async function createProduct(data: {
   name: string; description: string; category: string; manufacturer?: string;
   price: number; discountPrice?: number; stock: number; warranty?: string;
-  isActive: boolean; imageUrl?: string;
+  isActive: boolean; imageUrl?: string; specifications?: string;
 }) {
   await checkAdmin();
   await db.product.create({
@@ -26,6 +26,7 @@ export async function createProduct(data: {
       isActive: data.isActive,
       sku: `SKU-${Date.now()}`,
       images: data.imageUrl ? [data.imageUrl] : [],
+      specifications: data.specifications ?? null,
     },
   });
   revalidatePath("/[locale]/admin/products", "page");
@@ -34,7 +35,7 @@ export async function createProduct(data: {
 export async function updateProduct(id: string, data: {
   name: string; description: string; category: string; manufacturer?: string;
   price: number; discountPrice?: number; stock: number; warranty?: string;
-  isActive: boolean; imageUrl?: string;
+  isActive: boolean; imageUrl?: string; specifications?: string;
 }) {
   await checkAdmin();
   await db.product.update({
@@ -46,6 +47,7 @@ export async function updateProduct(id: string, data: {
       stock: data.stock, warranty: data.warranty ?? null,
       isActive: data.isActive,
       images: data.imageUrl ? [data.imageUrl] : [],
+      specifications: data.specifications ?? null,
     },
   });
   revalidatePath("/[locale]/admin/products", "page");

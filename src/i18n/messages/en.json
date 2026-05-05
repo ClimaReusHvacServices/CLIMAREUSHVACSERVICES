@@ -282,7 +282,15 @@
     "offerPriceLabel": "Sale price (€)",
     "offerSuccess": "Sale price set successfully",
     "offerRemoveSuccess": "Sale removed successfully",
-    "offerError": "Error updating the sale. Make sure the price is lower than the original."
+    "offerError": "Error updating the sale. Make sure the price is lower than the original.",
+    "fieldSpecsSection": "Technical specifications (optional)",
+    "fieldEnergyLabel": "Energy label (e.g. A++)",
+    "fieldEfficiency": "Efficiency (e.g. 5.0 kW)",
+    "fieldNoiseLevel": "Noise level (e.g. 21 dB)",
+    "fieldQuality": "Quality (e.g. Premium)",
+    "fieldWifi": "Has WiFi",
+    "fieldCoolyScore": "Coolfy score (e.g. 4.8)",
+    "fieldCoverage": "Coverage (e.g. 20 m²)"
   },
   "clientOrders": {
     "title": "My Orders",
@@ -559,6 +567,36 @@
       "ctaTitle": "Need to install or service your AC?",
       "ctaSubtitle": "Our technical team in Reus and Tarragona is ready to help you.",
       "ctaButton": "Call us now — 877 234 166"
+    },
+    "productoPage": {
+      "breadcrumbHome": "Home",
+      "breadcrumbCatalog": "Catalogue",
+      "requestService": "Request installation",
+      "loginToRequest": "Log in to request",
+      "installTitle": "Installation details",
+      "installNote3m": "Installation with 3 metres of tubing included",
+      "installExcess": "Additional metres at extra cost",
+      "warrantyTitle": "Warranty",
+      "warrantyEquipTitle": "Equipment warranty",
+      "warrantyEquip": "3 years",
+      "warrantyInstallTitle": "Installation warranty",
+      "warrantyInstall": "1 year",
+      "specsTitle": "Technical specifications",
+      "descTitle": "Product description",
+      "energyLabel": "Energy label",
+      "efficiency": "Efficiency",
+      "noiseLevel": "Noise level",
+      "quality": "Quality",
+      "coolyScore": "Coolfy score",
+      "coverage": "Coverage",
+      "wifiYes": "WiFi included",
+      "wifiNo": "No WiFi",
+      "notFound": "Product not found",
+      "backToCatalog": "Back to catalogue",
+      "saved": "You save",
+      "includesInstall": "Price includes basic installation",
+      "ctaTitle": "Interested in this unit?",
+      "ctaSubtitle": "Our technical team in Reus and Tarragona is ready to install it."
     }
   },
   "serviceRequest": {
