@@ -3,6 +3,7 @@ import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { Link } from "@/i18n/routing";
 
 const WA_NUMBER = "34607953886";
+const WA_TEXT = encodeURIComponent("Hola, les escribo desde vuestra página web. ¿Podéis ayudarme?");
 
 export default async function Footer() {
   const t = await getTranslations("landing");
@@ -50,7 +51,7 @@ export default async function Footer() {
             </a>
             {/* WhatsApp */}
             <a
-              href={`https://wa.me/${WA_NUMBER}`}
+              href={`https://wa.me/${WA_NUMBER}?text=${WA_TEXT}`}
               target="_blank"
               rel="noreferrer"
               aria-label="WhatsApp"
@@ -112,7 +113,7 @@ export default async function Footer() {
             </p>
             <p>
               <span className="font-semibold text-gray-600">{t("footer.waLabel")}</span>{" "}
-              <a href={`https://wa.me/${WA_NUMBER}`} className="hover:text-primary-600 transition-colors">
+              <a href={`https://wa.me/${WA_NUMBER}?text=${WA_TEXT}`} className="hover:text-primary-600 transition-colors">
                 +34 607 953 886
               </a>
             </p>

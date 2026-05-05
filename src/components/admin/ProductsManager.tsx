@@ -39,7 +39,7 @@ const defaultProductForm = {
   name: "", description: "", category: "", manufacturer: "", price: "", discountPrice: "",
   stock: "1", warranty: "", isActive: true, imageUrl: "",
   specEnergyLabel: "", specEfficiency: "", specNoiseLevel: "", specQuality: "",
-  specWifi: false, specCoolyScore: "", specCoverage: "",
+  specWifi: false, specCoverage: "",
 };
 const defaultServiceForm = { name: "", description: "", type: "instalacion", basePrice: "", estimatedDuration: "60", difficulty: "media", isActive: true };
 const defaultPackageForm = { name: "", description: "", productId: "", serviceId: "", packagePrice: "", discountPercentage: "", isActive: true };
@@ -224,7 +224,6 @@ export function ProductsManager({ products, services, packages }: {
         specNoiseLevel: existingSpecs.noiseLevel ?? "",
         specQuality: existingSpecs.quality ?? "",
         specWifi: existingSpecs.wifi ?? false,
-        specCoolyScore: existingSpecs.coolyScore !== undefined ? String(existingSpecs.coolyScore) : "",
         specCoverage: existingSpecs.coverage ?? "",
       });
     }
@@ -254,7 +253,6 @@ export function ProductsManager({ products, services, packages }: {
       if (productForm.specNoiseLevel) specs.noiseLevel = productForm.specNoiseLevel;
       if (productForm.specQuality) specs.quality = productForm.specQuality;
       if (productForm.specWifi) specs.wifi = productForm.specWifi;
-      if (productForm.specCoolyScore) specs.coolyScore = parseFloat(productForm.specCoolyScore);
       if (productForm.specCoverage) specs.coverage = productForm.specCoverage;
       const specifications = Object.keys(specs).length > 0 ? JSON.stringify(specs) : undefined;
 
@@ -627,9 +625,6 @@ export function ProductsManager({ products, services, packages }: {
                   </Field>
                   <Field label={t("fieldQuality")}>
                     <input className={inputCls} value={productForm.specQuality} onChange={e => setProductForm(f => ({ ...f, specQuality: e.target.value }))} placeholder="Premium" />
-                  </Field>
-                  <Field label={t("fieldCoolyScore")}>
-                    <input type="number" step="0.1" min="1" max="5" className={inputCls} value={productForm.specCoolyScore} onChange={e => setProductForm(f => ({ ...f, specCoolyScore: e.target.value }))} placeholder="4.8" />
                   </Field>
                   <Field label={t("fieldCoverage")}>
                     <input className={inputCls} value={productForm.specCoverage} onChange={e => setProductForm(f => ({ ...f, specCoverage: e.target.value }))} placeholder="20 m²" />

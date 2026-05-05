@@ -78,8 +78,9 @@ export default async function ProductoPage({
   const hasSpecs = Object.keys(specs).length > 0;
 
   const waMessage = encodeURIComponent(
-    `Hola, me interesa el equipo "${product.name}"${product.manufacturer ? ` de ${product.manufacturer}` : ""}. ¿Podéis informarme?`
+    `Hola, les escribo desde vuestra página web. Me interesa el equipo "${product.name}"${product.manufacturer ? ` de ${product.manufacturer}` : ""}. ¿Podéis informarme?`
   );
+  const waGeneral = encodeURIComponent("Hola, les escribo desde vuestra página web. ¿Podéis ayudarme?");
 
   return (
     <main className="bg-gray-50 min-h-screen">
@@ -315,7 +316,7 @@ export default async function ProductoPage({
                   877 234 166
                 </a>
                 <a
-                  href={`https://wa.me/${WA_NUMBER}`}
+                  href={`https://wa.me/${WA_NUMBER}?text=${waGeneral}`}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-7 py-3.5 font-bold rounded-xl text-white text-sm transition-all hover:opacity-90 shadow-sm"

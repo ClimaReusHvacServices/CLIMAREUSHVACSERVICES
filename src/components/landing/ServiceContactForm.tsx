@@ -16,7 +16,7 @@ export default function ServiceContactForm({ serviceTitle }: { serviceTitle: str
   const [requesting, startRequest] = useTransition();
 
   const waMsg = encodeURIComponent(
-    `Hola, me interesa el servicio de *${serviceTitle}*. ¿Podéis informarme y darme presupuesto sin compromiso?`
+    `Hola, les escribo desde vuestra página web. Me interesa el servicio de *${serviceTitle}*. ¿Podéis informarme y darme presupuesto sin compromiso?`
   );
 
   function handleRequest() {

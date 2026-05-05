@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { CheckCircle2, PhoneCall } from "lucide-react";
+import { CheckCircle2, PhoneCall, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import { takeServiceRequest, resolveServiceRequest } from "./actions";
 import { toast } from "sonner";
+
+const PAGE_SIZE = 10;
 
 interface Request {
   id: string;
@@ -81,6 +83,40 @@ function ResolveButton({ id }: { id: string }) {
   );
 }
 
+function Pagination({
+  total,
+  page,
+  onPage,
+}: {
+  total: number;
+  page: number;
+  onPage: (p: number) => void;
+}) {
+  const pages = Math.ceil(total / PAGE_SIZE);
+  if (pages <= 1) return null;
+  return (
+    <div className="flex items-center justify-center gap-2 px-5 py-3 border-t border-gray-50">
+      <button
+        onClick={() => onPage(page - 1)}
+        disabled={page === 0}
+        className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 transition-colors"
+      >
+        <ChevronLeft size={14} />
+      </button>
+      <span className="text-xs text-gray-500 font-medium">
+        {page + 1} / {pages}
+      </span>
+      <button
+        onClick={() => onPage(page + 1)}
+        disabled={page >= pages - 1}
+        className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 transition-colors"
+      >
+        <ChevronRight size={14} />
+      </button>
+    </div>
+  );
+}
+
 export function SolicitudesClient({
   available,
   mine,
@@ -92,15 +128,19 @@ export function SolicitudesClient({
 }) {
   const t = useTranslations("serviceRequest");
   const router = useRouter();
+  const [availablePage, setAvailablePage] = useState(0);
+  const [minePage, setMinePage] = useState(0);
 
-  // Refresca cada 5 segundos para mostrar solicitudes nuevas y ocultar las ya tomadas
   useEffect(() => {
     const id = setInterval(() => router.refresh(), 5000);
     return () => clearInterval(id);
   }, [router]);
 
   const fmt = (d: Date) =>
-    d.toLocaleDateString(locale, { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+    d.toLocaleDateString(locale, { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+
+  const availableSlice = available.slice(availablePage * PAGE_SIZE, (availablePage + 1) * PAGE_SIZE);
+  const mineSlice = mine.slice(minePage * PAGE_SIZE, (minePage + 1) * PAGE_SIZE);
 
   return (
     <div className="space-y-6">
@@ -120,33 +160,39 @@ export function SolicitudesClient({
             <p className="text-gray-400 text-sm">{t("noAvailable")}</p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-50">
-            {available.map((r) => (
-              <div key={r.id} className="px-5 py-4 flex gap-4 hover:bg-gray-50/50 transition-colors">
-                <div className="flex-1 min-w-0 space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-gray-900 text-sm">{r.name}</span>
-                    <span className="text-gray-300">·</span>
-                    <span className="text-xs text-gray-400 font-mono">#{r.number}</span>
+          <>
+            <div className="divide-y divide-gray-50">
+              {availableSlice.map((r) => (
+                <div key={r.id} className="px-5 py-4 flex gap-4 hover:bg-gray-50/50 transition-colors">
+                  <div className="flex-1 min-w-0 space-y-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-semibold text-gray-900 text-sm">{r.name}</span>
+                      <span className="text-gray-300">·</span>
+                      <span className="text-xs text-gray-400 font-mono">#{r.number}</span>
+                    </div>
+                    <p className="text-xs text-gray-600 line-clamp-2">{r.description}</p>
+                    <div className="flex items-center gap-3 pt-0.5 flex-wrap">
+                      <a
+                        href={`https://wa.me/${r.phone.replace(/[^0-9]/g, "")}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-1 text-xs font-medium text-primary-700 hover:underline"
+                      >
+                        <PhoneCall size={10} />
+                        {r.phone}
+                      </a>
+                      <span className="flex items-center gap-1 text-xs text-primary-600 font-semibold bg-primary-50 px-2 py-0.5 rounded-md">
+                        <Calendar size={10} />
+                        {fmt(r.createdAt)}
+                      </span>
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-600 line-clamp-2">{r.description}</p>
-                  <div className="flex items-center gap-3 pt-0.5">
-                    <a
-                      href={`https://wa.me/${r.phone.replace(/[^0-9]/g, "")}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center gap-1 text-xs font-medium text-primary-700 hover:underline"
-                    >
-                      <PhoneCall size={10} />
-                      {r.phone}
-                    </a>
-                    <span className="text-xs text-gray-400">{fmt(r.createdAt)}</span>
-                  </div>
+                  <TakeButton id={r.id} />
                 </div>
-                <TakeButton id={r.id} />
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+            <Pagination total={available.length} page={availablePage} onPage={setAvailablePage} />
+          </>
         )}
       </div>
 
@@ -166,40 +212,49 @@ export function SolicitudesClient({
             <p className="text-gray-400 text-sm">{t("noMine")}</p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-50">
-            {mine.map((r) => (
-              <div key={r.id} className="px-5 py-4 flex gap-4 hover:bg-gray-50/50 transition-colors">
-                <div className="flex-1 min-w-0 space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-gray-900 text-sm">{r.name}</span>
-                    <span className="text-gray-300">·</span>
-                    <span className="text-xs text-gray-400 font-mono">#{r.number}</span>
-                    {r.status === "resuelta" && (
-                      <span className="px-1.5 py-0.5 rounded-md text-xs font-semibold bg-green-50 text-green-700 border border-green-200">
-                        {t("status_resuelta")}
+          <>
+            <div className="divide-y divide-gray-50">
+              {mineSlice.map((r) => (
+                <div key={r.id} className="px-5 py-4 flex gap-4 hover:bg-gray-50/50 transition-colors">
+                  <div className="flex-1 min-w-0 space-y-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-semibold text-gray-900 text-sm">{r.name}</span>
+                      <span className="text-gray-300">·</span>
+                      <span className="text-xs text-gray-400 font-mono">#{r.number}</span>
+                      {r.status === "resuelta" && (
+                        <span className="px-1.5 py-0.5 rounded-md text-xs font-semibold bg-green-50 text-green-700 border border-green-200">
+                          {t("status_resuelta")}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-600 line-clamp-2">{r.description}</p>
+                    <div className="flex items-center gap-3 pt-0.5 flex-wrap">
+                      <a
+                        href={`https://wa.me/${r.phone.replace(/[^0-9]/g, "")}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-1 text-xs font-medium text-primary-700 hover:underline"
+                      >
+                        <PhoneCall size={10} />
+                        {r.phone}
+                      </a>
+                      <span className="flex items-center gap-1 text-xs text-primary-600 font-semibold bg-primary-50 px-2 py-0.5 rounded-md">
+                        <Calendar size={10} />
+                        {fmt(r.createdAt)}
                       </span>
-                    )}
+                      {r.takenAt && (
+                        <span className="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-0.5 rounded-md">
+                          Tomada: {fmt(r.takenAt)}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-600 line-clamp-2">{r.description}</p>
-                  <div className="flex items-center gap-3 pt-0.5">
-                    <a
-                      href={`https://wa.me/${r.phone.replace(/[^0-9]/g, "")}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center gap-1 text-xs font-medium text-primary-700 hover:underline"
-                    >
-                      <PhoneCall size={10} />
-                      {r.phone}
-                    </a>
-                    {r.takenAt && (
-                      <span className="text-xs text-gray-400">Tomada {fmt(r.takenAt)}</span>
-                    )}
-                  </div>
+                  {r.status === "tomada" && <ResolveButton id={r.id} />}
                 </div>
-                {r.status === "tomada" && <ResolveButton id={r.id} />}
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+            <Pagination total={mine.length} page={minePage} onPage={setMinePage} />
+          </>
         )}
       </div>
     </div>
