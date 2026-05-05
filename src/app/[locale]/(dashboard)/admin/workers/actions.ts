@@ -40,6 +40,7 @@ export async function createWorker(data: {
     },
   });
   revalidatePath("/[locale]/admin/workers", "page");
+  return { username };
 }
 
 export async function updateWorker(trabajadorId: string, data: {

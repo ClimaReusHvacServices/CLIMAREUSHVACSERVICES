@@ -9,7 +9,7 @@ import { WorkersTable } from "@/components/admin/WorkersTable";
 async function getAllWorkers() {
   return db.trabajador.findMany({
     include: {
-      user: { select: { firstName: true, lastName: true, email: true, isActive: true } },
+      user: { select: { firstName: true, lastName: true, email: true, username: true, isActive: true } },
     },
     orderBy: { createdAt: "desc" },
   });

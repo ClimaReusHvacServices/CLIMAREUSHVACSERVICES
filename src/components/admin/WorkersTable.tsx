@@ -11,7 +11,7 @@ interface WorkerRow {
   isAvailable: boolean;
   specialties: string[];
   totalJobsCompleted: number;
-  user: { firstName: string; lastName: string; email: string; isActive: boolean };
+  user: { firstName: string; lastName: string; email: string; username: string; isActive: boolean };
 }
 
 const defaultCreate = { firstName: "", lastName: "", email: "", password: "", specialties: "" };
@@ -101,14 +101,17 @@ export function WorkersTable({ workers }: { workers: WorkerRow[] }) {
     setIsLoading(true);
     try {
       const specialties = createForm.specialties.split(",").map(s => s.trim()).filter(Boolean);
-      await createWorker({
+      const result = await createWorker({
         firstName: createForm.firstName,
         lastName: createForm.lastName,
         email: createForm.email,
         password: createForm.password,
         specialties,
       });
-      toast.success("Trabajador creado correctamente");
+      toast.success(
+        `Trabajador creado. Login: ${result.username} | Email: ${createForm.email}`,
+        { duration: 8000 }
+      );
       setModal(null);
       router.refresh();
     } catch (err: any) {
@@ -207,7 +210,10 @@ export function WorkersTable({ workers }: { workers: WorkerRow[] }) {
                       </div>
                     </div>
                   </td>
-                  <td className="py-3 px-4 text-gray-600 hidden sm:table-cell">{w.user.email}</td>
+                  <td className="py-3 px-4 hidden sm:table-cell">
+                    <p className="text-gray-600 text-sm">{w.user.email}</p>
+                    <p className="text-[11px] text-gray-400 font-mono mt-0.5">@{w.user.username}</p>
+                  </td>
                   <td className="py-3 px-4 hidden md:table-cell">
                     {w.specialties.length > 0 ? (
                       <div className="flex flex-wrap gap-1">
