@@ -130,6 +130,41 @@ export async function deletePackage(id: string) {
   revalidatePath("/[locale]/admin/products", "page");
 }
 
+// ─── Categories ───────────────────────────────────────────────────────────────
+
+function toSlug(name: string) {
+  return name
+    .toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim().replace(/\s+/g, "-");
+}
+
+export async function createCategory(data: { name: string; isActive: boolean }) {
+  await checkAdmin();
+  await db.productCategory.create({
+    data: { name: data.name, slug: toSlug(data.name), isActive: data.isActive },
+  });
+  revalidatePath("/[locale]/admin/products", "page");
+}
+
+export async function updateCategory(id: string, data: { name: string; isActive: boolean }) {
+  await checkAdmin();
+  await db.productCategory.update({
+    where: { id },
+    data: { name: data.name, slug: toSlug(data.name), isActive: data.isActive },
+  });
+  revalidatePath("/[locale]/admin/products", "page");
+}
+
+export async function deleteCategory(id: string) {
+  await checkAdmin();
+  const count = await db.product.count({ where: { categoryId: id } });
+  if (count > 0) throw new Error("CATEGORY_HAS_PRODUCTS");
+  await db.productCategory.delete({ where: { id } });
+  revalidatePath("/[locale]/admin/products", "page");
+}
+
 // ─── Ofertas ──────────────────────────────────────────────────────────────────
 
 export async function setProductDiscount(id: string, discountPrice: number | null) {

@@ -4,13 +4,14 @@ import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Search, Package, Wrench, Box, X, Wind, Upload, Tag } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Package, Wrench, Box, X, Wind, Upload, Tag, FolderOpen, CheckCircle2, XCircle } from "lucide-react";
 import { Pagination } from "@/components/common/Pagination";
 import {
   createProduct, updateProduct, deleteProduct,
   createService, updateService, deleteService,
   createPackage, updatePackage, deletePackage,
   setProductDiscount,
+  createCategory, updateCategory, deleteCategory,
 } from "@/app/[locale]/(dashboard)/admin/products/actions";
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
@@ -32,7 +33,7 @@ interface PackageRow {
   product: { name: string }; service: { name: string };
 }
 
-type Tab = "products" | "services" | "packages";
+type Tab = "products" | "services" | "packages" | "categories";
 const PAGE_SIZE = 10;
 
 const defaultProductForm = {
@@ -129,7 +130,7 @@ const inputCls = "w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl f
 
 // ─── Componente principal ─────────────────────────────────────────────────────
 
-interface CategoryRow { id: string; name: string; slug: string; }
+interface CategoryRow { id: string; name: string; slug: string; isActive: boolean; _count?: { products: number }; }
 
 export function ProductsManager({ products, services, packages, categories = [] }: {
   products: ProductRow[]; services: ServiceRow[]; packages: PackageRow[];
@@ -153,6 +154,11 @@ export function ProductsManager({ products, services, packages, categories = [] 
   const [offerModal, setOfferModal] = useState<{ id: string; name: string; price: number } | null>(null);
   const [offerPrice, setOfferPrice] = useState("");
   const [isTogglingOffer, setIsTogglingOffer] = useState(false);
+
+  const defaultCategoryForm = { name: "", isActive: true };
+  const [categoryForm, setCategoryForm] = useState({ ...defaultCategoryForm });
+  const [categoryModal, setCategoryModal] = useState<{ mode: "create" | "edit"; id?: string } | null>(null);
+  const [deleteCategoryTarget, setDeleteCategoryTarget] = useState<{ id: string; name: string } | null>(null);
 
   function handleImageFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -198,7 +204,7 @@ export function ProductsManager({ products, services, packages, categories = [] 
   const filteredServices = services.filter(s => s.name.toLowerCase().includes(q) || s.type.toLowerCase().includes(q));
   const filteredPackages = packages.filter(p => p.name.toLowerCase().includes(q) || p.product.name.toLowerCase().includes(q) || p.service.name.toLowerCase().includes(q));
 
-  const allCurrent = tab === "products" ? filteredProducts : tab === "services" ? filteredServices : filteredPackages;
+  const allCurrent = tab === "products" ? filteredProducts : tab === "services" ? filteredServices : tab === "packages" ? filteredPackages : [];
   const totalPages = Math.ceil(allCurrent.length / PAGE_SIZE);
   const current = allCurrent.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const from = allCurrent.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
@@ -335,6 +341,36 @@ export function ProductsManager({ products, services, packages, categories = [] 
     finally { setIsSubmitting(false); }
   }
 
+  async function handleCategorySubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      if (categoryModal?.mode === "edit" && categoryModal.id) {
+        await updateCategory(categoryModal.id, categoryForm);
+      } else {
+        await createCategory(categoryForm);
+      }
+      toast.success(t("saveSuccess"));
+      setCategoryModal(null);
+      router.refresh();
+    } catch { toast.error(t("saveError")); }
+    finally { setIsSubmitting(false); }
+  }
+
+  async function handleCategoryDelete() {
+    if (!deleteCategoryTarget) return;
+    setIsSubmitting(true);
+    try {
+      await deleteCategory(deleteCategoryTarget.id);
+      toast.success(t("deleteSuccess"));
+      setDeleteCategoryTarget(null);
+      router.refresh();
+    } catch (err: any) {
+      toast.error(err?.message === "CATEGORY_HAS_PRODUCTS" ? t("categoryHasProducts") : t("deleteError"));
+    }
+    finally { setIsSubmitting(false); }
+  }
+
   const statusCls = (active: boolean) =>
     active ? "bg-primary-50 text-primary-700" : "bg-gray-100 text-gray-600";
 
@@ -342,11 +378,12 @@ export function ProductsManager({ products, services, packages, categories = [] 
     <div className="space-y-5">
       {/* Tabs */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-        <div className="flex gap-1 bg-gray-100 p-1 rounded-xl">
+        <div className="flex gap-1 bg-gray-100 p-1 rounded-xl flex-wrap">
           {([
             { key: "products", label: t("tabProducts"), icon: <Package size={14} /> },
             { key: "services", label: t("tabServices"), icon: <Wrench size={14} /> },
             { key: "packages", label: t("tabPackages"), icon: <Box size={14} /> },
+            { key: "categories", label: t("tabCategories"), icon: <FolderOpen size={14} /> },
           ] as const).map(({ key, label, icon }) => (
             <button
               key={key}
@@ -371,18 +408,90 @@ export function ProductsManager({ products, services, packages, categories = [] 
             />
           </div>
           <button
-            onClick={() => openCreate(tab)}
+            onClick={() => {
+              if (tab === "categories") {
+                setCategoryForm({ name: "", isActive: true });
+                setCategoryModal({ mode: "create" });
+              } else {
+                openCreate(tab);
+              }
+            }}
             className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-white rounded-xl transition-colors"
             style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
           >
             <Plus size={15} />
-            {tab === "products" ? t("addProduct") : tab === "services" ? t("addService") : t("addPackage")}
+            {tab === "products" ? t("addProduct") : tab === "services" ? t("addService") : tab === "packages" ? t("addPackage") : t("addCategory")}
           </button>
         </div>
       </div>
 
+      {/* ─── Categories tab ───────────────────────────────────────────────── */}
+      {tab === "categories" && (
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gray-100 bg-gray-50/60">
+                <th className="text-left py-3 px-4 font-semibold text-gray-400 text-xs uppercase tracking-wider">{t("colName")}</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-400 text-xs uppercase tracking-wider">Slug</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-400 text-xs uppercase tracking-wider">{t("colProducts")}</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-400 text-xs uppercase tracking-wider">{t("colStatus")}</th>
+                <th className="py-3 px-4 w-20" />
+              </tr>
+            </thead>
+            <tbody>
+              {categories.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-14 text-center text-gray-400 text-sm">
+                    <FolderOpen size={36} className="mx-auto mb-3 text-gray-200" />
+                    {t("noCategories")}
+                  </td>
+                </tr>
+              ) : categories.map(cat => (
+                <tr key={cat.id} className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center shrink-0">
+                        <FolderOpen size={14} className="text-primary-600" />
+                      </div>
+                      <span className="font-medium text-gray-900">{cat.name}</span>
+                    </div>
+                  </td>
+                  <td className="py-3 px-4">
+                    <code className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-lg">{cat.slug}</code>
+                  </td>
+                  <td className="py-3 px-4 text-gray-600">
+                    <span className="inline-flex items-center gap-1 text-xs font-medium bg-gray-100 text-gray-600 px-2 py-1 rounded-lg">
+                      <Package size={11} />
+                      {cat._count?.products ?? 0} {t("products").toLowerCase()}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4">
+                    {cat.isActive
+                      ? <span className="inline-flex items-center gap-1 text-xs font-semibold bg-primary-50 text-primary-700 px-2 py-1 rounded-lg"><CheckCircle2 size={11} />{t("active")}</span>
+                      : <span className="inline-flex items-center gap-1 text-xs font-semibold bg-gray-100 text-gray-500 px-2 py-1 rounded-lg"><XCircle size={11} />{t("inactive")}</span>
+                    }
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="flex items-center justify-end gap-1">
+                      <button
+                        onClick={() => { setCategoryForm({ name: cat.name, isActive: cat.isActive }); setCategoryModal({ mode: "edit", id: cat.id }); }}
+                        className="p-1.5 text-gray-400 hover:text-accent-600 hover:bg-accent-50 rounded-lg transition-colors"
+                      ><Pencil size={14} /></button>
+                      <button
+                        onClick={() => setDeleteCategoryTarget({ id: cat.id, name: cat.name })}
+                        className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      ><Trash2 size={14} /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      {tab !== "categories" && <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -530,7 +639,8 @@ export function ProductsManager({ products, services, packages, categories = [] 
             <Pagination page={page} totalPages={totalPages} onChange={setPage} />
           </div>
         )}
-      </div>
+      </div>}
+
 
       {/* ─── Modal de formulario ─────────────────────────────────────────── */}
       {modal && (
@@ -790,6 +900,49 @@ export function ProductsManager({ products, services, packages, categories = [] 
           itemName={deleteTarget.name}
           onConfirm={handleDelete}
           onCancel={() => setDeleteTarget(null)}
+          isLoading={isSubmitting}
+        />
+      )}
+
+      {/* ─── Modal de categoría ──────────────────────────────────────────── */}
+      {categoryModal && (
+        <Modal
+          title={categoryModal.mode === "create" ? t("createCategory") : t("editCategory")}
+          onClose={() => setCategoryModal(null)}
+        >
+          <form onSubmit={handleCategorySubmit} className="space-y-4">
+            <Field label={t("fieldName")} required>
+              <input
+                required
+                autoFocus
+                className={inputCls}
+                value={categoryForm.name}
+                onChange={e => setCategoryForm(f => ({ ...f, name: e.target.value }))}
+                placeholder="Ej. Aire Acondicionado Split"
+              />
+            </Field>
+            {categoryForm.name && (
+              <p className="text-xs text-gray-400 -mt-2 px-1">
+                Slug: <code className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">{categoryForm.name.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-")}</code>
+              </p>
+            )}
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={categoryForm.isActive} onChange={e => setCategoryForm(f => ({ ...f, isActive: e.target.checked }))} className="w-4 h-4 rounded border-gray-300 text-primary-600 accent-primary-600" />
+              <span className="text-sm font-medium text-gray-700">{t("fieldIsActive")}</span>
+            </label>
+            <ModalActions onCancel={() => setCategoryModal(null)} isLoading={isSubmitting} tCommon={tCommon} />
+          </form>
+        </Modal>
+      )}
+
+      {/* ─── Confirmación de borrado de categoría ───────────────────────── */}
+      {deleteCategoryTarget && (
+        <ConfirmDialog
+          title={t("confirmDeleteTitle")}
+          desc={t("confirmDeleteDesc")}
+          itemName={deleteCategoryTarget.name}
+          onConfirm={handleCategoryDelete}
+          onCancel={() => setDeleteCategoryTarget(null)}
           isLoading={isSubmitting}
         />
       )}

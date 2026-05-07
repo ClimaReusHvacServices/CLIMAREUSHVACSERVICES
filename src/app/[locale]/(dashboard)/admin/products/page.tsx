@@ -18,7 +18,10 @@ async function getProductsData() {
       },
       orderBy: { createdAt: "desc" },
     }),
-    db.productCategory.findMany({ where: { isActive: true }, orderBy: { name: "asc" } }),
+    db.productCategory.findMany({
+      orderBy: { name: "asc" },
+      include: { _count: { select: { products: true } } },
+    }),
   ]);
   return { products, services, packages, categories };
 }
