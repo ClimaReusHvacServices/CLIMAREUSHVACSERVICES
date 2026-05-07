@@ -8,7 +8,7 @@ import { BackButton } from "@/components/common/BackButton";
 import { ProductsManager } from "@/components/admin/ProductsManager";
 
 async function getProductsData() {
-  const [products, services, packages] = await Promise.all([
+  const [products, services, packages, categories] = await Promise.all([
     db.product.findMany({ orderBy: { createdAt: "desc" } }),
     db.service.findMany({ orderBy: { createdAt: "desc" } }),
     db.servicePackage.findMany({
@@ -18,8 +18,9 @@ async function getProductsData() {
       },
       orderBy: { createdAt: "desc" },
     }),
+    db.productCategory.findMany({ where: { isActive: true }, orderBy: { name: "asc" } }),
   ]);
-  return { products, services, packages };
+  return { products, services, packages, categories };
 }
 
 export default async function AdminProductsPage({
@@ -33,7 +34,7 @@ export default async function AdminProductsPage({
   const session = await auth();
   if (!session || session.user?.role !== "admin") redirect("/");
 
-  const { products, services, packages } = await getProductsData();
+  const { products, services, packages, categories } = await getProductsData();
   const t = await getTranslations("adminProducts");
 
   return (
@@ -51,6 +52,7 @@ export default async function AdminProductsPage({
         products={products as any}
         services={services as any}
         packages={packages as any}
+        categories={categories}
       />
     </div>
   );

@@ -16,7 +16,7 @@ import {
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
 interface ProductRow {
-  id: string; name: string; description: string; category: string;
+  id: string; name: string; description: string; category: string; categoryId: string | null;
   manufacturer: string | null; price: any; discountPrice: any;
   stock: number; warranty: string | null; isActive: boolean; images: string[];
   specifications: string | null;
@@ -36,7 +36,7 @@ type Tab = "products" | "services" | "packages";
 const PAGE_SIZE = 10;
 
 const defaultProductForm = {
-  name: "", description: "", category: "", manufacturer: "", price: "", discountPrice: "",
+  name: "", description: "", category: "", categoryId: "", manufacturer: "", price: "", discountPrice: "",
   stock: "1", warranty: "", isActive: true, imageUrl: "",
   specEnergyLabel: "", specEfficiency: "", specNoiseLevel: "", specQuality: "",
   specWifi: false, specCoverage: "",
@@ -46,7 +46,7 @@ const defaultPackageForm = { name: "", description: "", productId: "", serviceId
 
 // ─── Subcomponentes ───────────────────────────────────────────────────────────
 
-function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+function Modal({ title, onClose, wide, children }: { title: string; onClose: () => void; wide?: boolean; children: React.ReactNode }) {
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
   useEffect(() => {
@@ -62,9 +62,9 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[92vh] flex flex-col">
+      <div className={`relative bg-white rounded-2xl shadow-2xl w-full ${wide ? "max-w-2xl" : "max-w-lg"} max-h-[92vh] flex flex-col`}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
-          <h2 className="font-bold text-gray-900">{title}</h2>
+          <h2 className="font-bold text-gray-900 text-base">{title}</h2>
           <button onClick={onClose} className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
             <X size={16} />
           </button>
@@ -129,8 +129,11 @@ const inputCls = "w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl f
 
 // ─── Componente principal ─────────────────────────────────────────────────────
 
-export function ProductsManager({ products, services, packages }: {
+interface CategoryRow { id: string; name: string; slug: string; }
+
+export function ProductsManager({ products, services, packages, categories = [] }: {
   products: ProductRow[]; services: ServiceRow[]; packages: PackageRow[];
+  categories?: CategoryRow[];
 }) {
   const t = useTranslations("adminProducts");
   const tCommon = useTranslations("common");
@@ -215,6 +218,7 @@ export function ProductsManager({ products, services, packages }: {
       try { if (item.specifications) existingSpecs = JSON.parse(item.specifications); } catch {}
       setProductForm({
         name: item.name, description: item.description, category: item.category,
+        categoryId: item.categoryId ?? "",
         manufacturer: item.manufacturer ?? "", price: String(Number(item.price)),
         discountPrice: item.discountPrice ? String(Number(item.discountPrice)) : "",
         stock: String(item.stock), warranty: item.warranty ?? "", isActive: item.isActive,
@@ -259,6 +263,7 @@ export function ProductsManager({ products, services, packages }: {
       const data = {
         name: productForm.name, description: productForm.description,
         category: productForm.category,
+        categoryId: productForm.categoryId || undefined,
         manufacturer: productForm.manufacturer || undefined,
         price: parseFloat(productForm.price),
         discountPrice: productForm.discountPrice ? parseFloat(productForm.discountPrice) : undefined,
@@ -537,83 +542,102 @@ export function ProductsManager({ products, services, packages }: {
               ? (modal.mode === "create" ? t("createService") : t("editService"))
               : (modal.mode === "create" ? t("createPackage") : t("editPackage"))
           }
+          wide={modal.entityType === "products"}
           onClose={() => setModal(null)}
         >
           {/* Product form */}
           {modal.entityType === "products" && (
-            <form onSubmit={handleProductSubmit} className="space-y-4">
-              <Field label={t("fieldName")} required>
-                <input required className={inputCls} value={productForm.name} onChange={e => setProductForm(f => ({ ...f, name: e.target.value }))} />
-              </Field>
-              <Field label={t("fieldDescription")} required>
-                <textarea required className={`${inputCls} resize-none min-h-[72px]`} value={productForm.description} onChange={e => setProductForm(f => ({ ...f, description: e.target.value }))} />
-              </Field>
-              <div className="grid grid-cols-2 gap-3">
-                <Field label={t("fieldCategory")} required>
-                  <input required className={inputCls} value={productForm.category} onChange={e => setProductForm(f => ({ ...f, category: e.target.value }))} />
+            <form onSubmit={handleProductSubmit} className="space-y-5">
+
+              {/* ── Sección: Información básica ── */}
+              <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 space-y-3">
+                <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">{t("sectionBasic")}</p>
+                <Field label={t("fieldName")} required>
+                  <input required className={inputCls} value={productForm.name} onChange={e => setProductForm(f => ({ ...f, name: e.target.value }))} placeholder="Ej. Daikin FTXC25C" />
                 </Field>
-                <Field label={t("fieldManufacturer")}>
-                  <input className={inputCls} value={productForm.manufacturer} onChange={e => setProductForm(f => ({ ...f, manufacturer: e.target.value }))} />
+                <Field label={t("fieldDescription")} required>
+                  <textarea required rows={3} className={`${inputCls} resize-none`} value={productForm.description} onChange={e => setProductForm(f => ({ ...f, description: e.target.value }))} placeholder="Descripción breve del producto..." />
                 </Field>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <Field label={t("fieldPrice")} required>
-                  <input required type="number" step="0.01" min="0" className={inputCls} value={productForm.price} onChange={e => setProductForm(f => ({ ...f, price: e.target.value }))} />
-                </Field>
-                <Field label={t("fieldDiscountPrice")}>
-                  <input type="number" step="0.01" min="0" className={inputCls} value={productForm.discountPrice} onChange={e => setProductForm(f => ({ ...f, discountPrice: e.target.value }))} />
-                </Field>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <Field label={t("fieldStock")} required>
-                  <input required type="number" min="0" className={inputCls} value={productForm.stock} onChange={e => setProductForm(f => ({ ...f, stock: e.target.value }))} />
-                </Field>
-                <Field label={t("fieldWarranty")}>
-                  <input className={inputCls} value={productForm.warranty} onChange={e => setProductForm(f => ({ ...f, warranty: e.target.value }))} />
-                </Field>
-              </div>
-              <Field label="Imagen">
-                <input
-                  type="url"
-                  className={inputCls}
-                  value={productForm.imageUrl.startsWith("data:") ? "" : productForm.imageUrl}
-                  onChange={e => setProductForm(f => ({ ...f, imageUrl: e.target.value }))}
-                  placeholder="https://... (URL de imagen)"
-                />
-                <div className="flex items-center gap-2 my-2">
-                  <div className="flex-1 h-px bg-gray-100" />
-                  <span className="text-xs text-gray-400 shrink-0">o subir archivo</span>
-                  <div className="flex-1 h-px bg-gray-100" />
-                </div>
-                <label className="flex items-center gap-2 cursor-pointer px-3 py-2.5 border border-dashed border-gray-200 rounded-xl hover:border-primary-300 hover:bg-primary-50/30 transition-colors text-sm text-gray-500">
-                  <Upload size={14} className="shrink-0 text-gray-400" />
-                  <span>Elegir imagen (máx. 2 MB)</span>
-                  <input type="file" accept="image/*" className="hidden" onChange={handleImageFile} />
-                </label>
-                {productForm.imageUrl && (
-                  <div className="mt-2 flex items-start gap-2">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                      src={productForm.imageUrl}
-                      alt="preview"
-                      className="h-20 w-20 object-contain rounded-lg border border-gray-100 bg-gray-50 shrink-0"
-                      onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setProductForm(f => ({ ...f, imageUrl: "" }))}
-                      className="p-1 text-gray-400 hover:text-red-500 rounded-lg transition-colors"
-                      title="Eliminar imagen"
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
-                )}
-              </Field>
-              {/* Specs section */}
-              <div className="pt-2 border-t border-gray-100">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{t("fieldSpecsSection")}</p>
                 <div className="grid grid-cols-2 gap-3">
+                  <Field label={t("fieldCategory")} required>
+                    <select
+                      required
+                      className={inputCls}
+                      value={productForm.categoryId}
+                      onChange={e => {
+                        const cat = categories.find(c => c.id === e.target.value);
+                        setProductForm(f => ({ ...f, categoryId: e.target.value, category: cat?.slug ?? e.target.value }));
+                      }}
+                    >
+                      <option value="">{t("selectCategory")}</option>
+                      {categories.map(cat => (
+                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                      ))}
+                    </select>
+                  </Field>
+                  <Field label={t("fieldManufacturer")}>
+                    <input className={inputCls} value={productForm.manufacturer} onChange={e => setProductForm(f => ({ ...f, manufacturer: e.target.value }))} placeholder="Ej. Daikin, Mitsubishi..." />
+                  </Field>
+                </div>
+              </div>
+
+              {/* ── Sección: Precio y stock ── */}
+              <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 space-y-3">
+                <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">{t("sectionPricing")}</p>
+                <div className="grid grid-cols-3 gap-3">
+                  <Field label={t("fieldPrice")} required>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">€</span>
+                      <input required type="number" step="0.01" min="0" className={`${inputCls} pl-7`} value={productForm.price} onChange={e => setProductForm(f => ({ ...f, price: e.target.value }))} placeholder="0.00" />
+                    </div>
+                  </Field>
+                  <Field label={t("fieldDiscountPrice")}>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">€</span>
+                      <input type="number" step="0.01" min="0" className={`${inputCls} pl-7`} value={productForm.discountPrice} onChange={e => setProductForm(f => ({ ...f, discountPrice: e.target.value }))} placeholder="0.00" />
+                    </div>
+                  </Field>
+                  <Field label={t("fieldStock")} required>
+                    <input required type="number" min="0" className={inputCls} value={productForm.stock} onChange={e => setProductForm(f => ({ ...f, stock: e.target.value }))} />
+                  </Field>
+                </div>
+                <Field label={t("fieldWarranty")}>
+                  <input className={inputCls} value={productForm.warranty} onChange={e => setProductForm(f => ({ ...f, warranty: e.target.value }))} placeholder="Ej. 2 años oficial fabricante" />
+                </Field>
+              </div>
+
+              {/* ── Sección: Imagen ── */}
+              <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 space-y-3">
+                <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">{t("sectionImage")}</p>
+                <div className="flex gap-3 items-start">
+                  {productForm.imageUrl ? (
+                    <div className="relative shrink-0">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={productForm.imageUrl} alt="preview" className="h-20 w-20 object-contain rounded-xl border border-gray-200 bg-white" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                      <button type="button" onClick={() => setProductForm(f => ({ ...f, imageUrl: "" }))} className="absolute -top-1.5 -right-1.5 bg-white border border-gray-200 rounded-full p-0.5 text-gray-400 hover:text-red-500 shadow-sm transition-colors">
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="h-20 w-20 rounded-xl border-2 border-dashed border-gray-200 bg-white flex items-center justify-center shrink-0 text-gray-300">
+                      <Package size={24} />
+                    </div>
+                  )}
+                  <div className="flex-1 space-y-2">
+                    <input type="url" className={inputCls} value={productForm.imageUrl.startsWith("data:") ? "" : productForm.imageUrl} onChange={e => setProductForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://... (URL de imagen)" />
+                    <label className="flex items-center gap-2 cursor-pointer px-3 py-2 border border-dashed border-gray-200 rounded-xl hover:border-primary-300 hover:bg-primary-50/30 transition-colors text-sm text-gray-500 bg-white">
+                      <Upload size={13} className="shrink-0 text-gray-400" />
+                      <span>Subir imagen (máx. 2 MB)</span>
+                      <input type="file" accept="image/*" className="hidden" onChange={handleImageFile} />
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Sección: Especificaciones técnicas ── */}
+              <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 space-y-3">
+                <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">{t("fieldSpecsSection")}</p>
+                <div className="grid grid-cols-3 gap-3">
                   <Field label={t("fieldEnergyLabel")}>
                     <input className={inputCls} value={productForm.specEnergyLabel} onChange={e => setProductForm(f => ({ ...f, specEnergyLabel: e.target.value }))} placeholder="A++" />
                   </Field>
@@ -629,18 +653,23 @@ export function ProductsManager({ products, services, packages }: {
                   <Field label={t("fieldCoverage")}>
                     <input className={inputCls} value={productForm.specCoverage} onChange={e => setProductForm(f => ({ ...f, specCoverage: e.target.value }))} placeholder="20 m²" />
                   </Field>
+                  <div className="flex flex-col justify-end pb-0.5">
+                    <label className="flex items-center gap-2 cursor-pointer h-[42px] px-3 bg-white border border-gray-200 rounded-xl hover:border-primary-300 transition-colors">
+                      <input type="checkbox" checked={productForm.specWifi} onChange={e => setProductForm(f => ({ ...f, specWifi: e.target.checked }))} className="w-4 h-4 rounded border-gray-300 text-primary-600 accent-primary-600" />
+                      <span className="text-sm font-medium text-gray-700">{t("fieldWifi")}</span>
+                    </label>
+                  </div>
                 </div>
-                <label className="flex items-center gap-2 cursor-pointer mt-3">
-                  <input type="checkbox" checked={productForm.specWifi} onChange={e => setProductForm(f => ({ ...f, specWifi: e.target.checked }))} className="w-4 h-4 rounded border-gray-300 text-primary-600" />
-                  <span className="text-sm font-medium text-gray-700">{t("fieldWifi")}</span>
-                </label>
               </div>
 
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={productForm.isActive} onChange={e => setProductForm(f => ({ ...f, isActive: e.target.checked }))} className="w-4 h-4 rounded border-gray-300 text-primary-600" />
-                <span className="text-sm font-medium text-gray-700">{t("fieldIsActive")}</span>
-              </label>
-              <ModalActions onCancel={() => setModal(null)} isLoading={isSubmitting} tCommon={tCommon} />
+              {/* ── Footer: activo + botones ── */}
+              <div className="flex items-center justify-between pt-1">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked={productForm.isActive} onChange={e => setProductForm(f => ({ ...f, isActive: e.target.checked }))} className="w-4 h-4 rounded border-gray-300 text-primary-600 accent-primary-600" />
+                  <span className="text-sm font-medium text-gray-700">{t("fieldIsActive")}</span>
+                </label>
+                <ModalActions onCancel={() => setModal(null)} isLoading={isSubmitting} tCommon={tCommon} />
+              </div>
             </form>
           )}
 

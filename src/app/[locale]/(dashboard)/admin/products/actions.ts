@@ -12,7 +12,7 @@ async function checkAdmin() {
 // ─── Products ─────────────────────────────────────────────────────────────────
 
 export async function createProduct(data: {
-  name: string; description: string; category: string; manufacturer?: string;
+  name: string; description: string; category: string; categoryId?: string; manufacturer?: string;
   price: number; discountPrice?: number; stock: number; warranty?: string;
   isActive: boolean; imageUrl?: string; specifications?: string;
 }) {
@@ -20,6 +20,7 @@ export async function createProduct(data: {
   await db.product.create({
     data: {
       name: data.name, description: data.description, category: data.category,
+      categoryId: data.categoryId ?? null,
       manufacturer: data.manufacturer ?? null,
       price: data.price, discountPrice: data.discountPrice ?? null,
       stock: data.stock, warranty: data.warranty ?? null,
@@ -33,7 +34,7 @@ export async function createProduct(data: {
 }
 
 export async function updateProduct(id: string, data: {
-  name: string; description: string; category: string; manufacturer?: string;
+  name: string; description: string; category: string; categoryId?: string; manufacturer?: string;
   price: number; discountPrice?: number; stock: number; warranty?: string;
   isActive: boolean; imageUrl?: string; specifications?: string;
 }) {
@@ -42,6 +43,7 @@ export async function updateProduct(id: string, data: {
     where: { id },
     data: {
       name: data.name, description: data.description, category: data.category,
+      categoryId: data.categoryId ?? null,
       manufacturer: data.manufacturer ?? null,
       price: data.price, discountPrice: data.discountPrice ?? null,
       stock: data.stock, warranty: data.warranty ?? null,
