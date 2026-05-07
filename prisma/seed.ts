@@ -12,6 +12,24 @@ async function main() {
   console.log("Iniciando seed de base de datos...");
 
   try {
+    // ── CATEGORÍAS ────────────────────────────────────────────
+    const CATEGORIES = [
+      { name: "Aire Acondicionado Split",    slug: "aire-acondicionado",  icon: "Wind" },
+      { name: "Aire Acondicionado Multisplit", slug: "multisplit",         icon: "Wind" },
+      { name: "Aerotermia",                  slug: "aerotermia",          icon: "Thermometer" },
+      { name: "Caldera de Gas",              slug: "calderas",            icon: "Flame" },
+      { name: "Accesorios y Repuestos",      slug: "accesorios",          icon: "Wrench" },
+    ];
+
+    for (const cat of CATEGORIES) {
+      await db.productCategory.upsert({
+        where: { slug: cat.slug },
+        update: { name: cat.name, icon: cat.icon },
+        create: cat,
+      });
+    }
+    console.log("Categorías creadas");
+
     // ── USUARIOS ──────────────────────────────────────────────
 
     const adminUser = await db.user.upsert({

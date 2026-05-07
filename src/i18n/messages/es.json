@@ -336,9 +336,10 @@
   "landing": {
     "navbar": {
       "home": "Inicio", "offer": "Oferta", "services": "Servicios", "blog": "Blog", "contact": "Contacto",
+      "aerotermia": "Aerotermia", "calderas": "Calderas", "aboutUs": "Nosotros",
       "login": "Acceder", "loginMobile": "Iniciar sesión",
       "myAccount": "Mi cuenta", "dashboard": "Mi panel", "profile": "Mi Perfil",
-      "orders": "Mis pedidos", "logout": "Cerrar sesión",
+      "myOrders": "Mis pedidos", "orders": "Mis pedidos", "logout": "Cerrar sesión",
       "roleAdmin": "Administrador", "roleCliente": "Cliente", "roleTrabajador": "Técnico"
     },
     "hero": {

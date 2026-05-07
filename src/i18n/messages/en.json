@@ -336,9 +336,10 @@
   "landing": {
     "navbar": {
       "home": "Home", "offer": "Offers", "services": "Services", "blog": "Blog", "contact": "Contact",
+      "aerotermia": "Heat Pumps", "calderas": "Boilers", "aboutUs": "About us",
       "login": "Sign In", "loginMobile": "Sign in",
       "myAccount": "My account", "dashboard": "My dashboard", "profile": "My Profile",
-      "orders": "My orders", "logout": "Sign out",
+      "myOrders": "My orders", "orders": "My orders", "logout": "Sign out",
       "roleAdmin": "Administrator", "roleCliente": "Client", "roleTrabajador": "Technician"
     },
     "hero": {

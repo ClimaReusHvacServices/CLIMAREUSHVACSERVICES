@@ -45,6 +45,11 @@ enum TaskStatus {
 
 enum ServiceRequestStatus {
   nueva
+  en_revision
+  presupuestada
+  asignada
+  en_camino
+  completada
   tomada
   resuelta
   cancelada
@@ -71,8 +76,9 @@ model User {
   isActive          Boolean   @default(true)
   emailVerified     Boolean   @default(false)
   emailVerifiedAt   DateTime?
-  rememberTokenHash String?   // Para "Recuérdame" - hash seguro del token
-  lastLoginAt       DateTime?
+  rememberTokenHash        String?
+  lastLoginAt              DateTime?
+  requiresPasswordChange   Boolean   @default(false)
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
@@ -86,6 +92,7 @@ model User {
   taskComments      TaskComment[]
   notifications     Notification[]
   serviceRequests   ServiceRequest[]
+  pushSubscriptions PushSubscription[]
 
   @@index([email])
   @@index([username])
@@ -211,6 +218,7 @@ model Trabajador {
   // Relaciones
   user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   reviews             Review[]
+  assignedRequests    ServiceRequest[]
 
   @@index([userId])
   @@index([isAvailable])
@@ -226,7 +234,8 @@ model Product {
   name                String
   description         String    @db.Text
   shortDescription    String?
-  category            String    // aire-acondicionado, repuestos, etc.
+  category            String    // kept for legacy
+  categoryId          String?
   sku                 String    @unique
   manufacturer        String?
   modelNumber         String?
@@ -243,11 +252,31 @@ model Product {
   updatedAt           DateTime  @updatedAt
 
   // Relaciones
+  productCategory     ProductCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   orderItems          OrderItem[]
   servicePackages     ServicePackage[]
 
   @@index([category])
+  @@index([categoryId])
   @@index([sku])
+  @@index([isActive])
+}
+
+// ============================================
+// CATEGORÍAS DE PRODUCTOS
+// ============================================
+
+model ProductCategory {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  icon      String?
+  isActive  Boolean   @default(true)
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([slug])
   @@index([isActive])
 }
 
@@ -538,17 +567,40 @@ model ServiceRequest {
   phone       String
   description String               @db.Text
   status      ServiceRequestStatus @default(nueva)
-  takenById   String?
-  takenAt     DateTime?
-  adminNotes  String?              @db.Text
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
+  takenById        String?
+  takenAt          DateTime?
+  assignedToId     String?
+  assignedAt       DateTime?
+  budget           Decimal?             @db.Decimal(10, 2)
+  budgetNotes      String?              @db.Text
+  adminNotes       String?              @db.Text
+  clientEmail      String?
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
 
-  takenBy     User?                @relation(fields: [takenById], references: [id], onDelete: SetNull)
+  takenBy          User?                @relation(fields: [takenById], references: [id], onDelete: SetNull)
+  assignedTo       Trabajador?          @relation(fields: [assignedToId], references: [id], onDelete: SetNull)
 
   @@index([status])
   @@index([takenById])
   @@index([createdAt])
+}
+
+// ============================================
+// PUSH NOTIFICATIONS
+// ============================================
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 // ============================================

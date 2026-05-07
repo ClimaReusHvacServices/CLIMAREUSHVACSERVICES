@@ -1,6 +1,6 @@
 "use client";
 import { Link } from "@/i18n/routing";
-import { Phone, Menu, X, LogIn, Globe, ChevronDown, LogOut, User, LayoutDashboard, ShoppingCart } from "lucide-react";
+import { Phone, Menu, X, LogIn, Globe, ChevronDown, LogOut, User, LayoutDashboard, ShoppingCart, Thermometer, Flame, Info } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
@@ -191,11 +191,14 @@ export default function Navbar() {
   const mobileLabel = getMobileLabel();
 
   const NAV_LINKS = [
-    { href: "/",          label: t("navbar.home") },
-    { href: "/#oferta",   label: t("navbar.offer") },
-    { href: "/servicios", label: t("navbar.services") },
-    { href: "/blog",      label: t("navbar.blog") },
-    { href: "/#contact",  label: t("navbar.contact") },
+    { href: "/",             label: t("navbar.home") },
+    { href: "/#oferta",      label: t("navbar.offer") },
+    { href: "/aerotermia",   label: t("navbar.aerotermia") },
+    { href: "/calderas",     label: t("navbar.calderas") },
+    { href: "/servicios",    label: t("navbar.services") },
+    { href: "/blog",         label: t("navbar.blog") },
+    { href: "/sobre-nosotros", label: t("navbar.aboutUs") },
+    { href: "/#contact",     label: t("navbar.contact") },
   ] as const;
 
   return (

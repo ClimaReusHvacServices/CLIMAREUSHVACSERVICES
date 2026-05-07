@@ -336,9 +336,10 @@
   "landing": {
     "navbar": {
       "home": "Inici", "offer": "Oferta", "services": "Serveis", "blog": "Blog", "contact": "Contacte",
+      "aerotermia": "Aerotèrmia", "calderas": "Calderes", "aboutUs": "Nosaltres",
       "login": "Accedir", "loginMobile": "Iniciar sessió",
       "myAccount": "El meu compte", "dashboard": "El meu panell", "profile": "El meu perfil",
-      "orders": "Les meves comandes", "logout": "Tancar sessió",
+      "myOrders": "Les meves comandes", "orders": "Les meves comandes", "logout": "Tancar sessió",
       "roleAdmin": "Administrador", "roleCliente": "Client", "roleTrabajador": "Tècnic"
     },
     "hero": {
