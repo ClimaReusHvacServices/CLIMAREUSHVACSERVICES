@@ -7,7 +7,7 @@ import {
   Wind, CheckCircle2, Shield, Wrench,
   Zap, Volume2, Award, Wifi, Star, Home, ChevronRight, Phone,
 } from "lucide-react";
-import RequestServiceButton from "@/components/landing/RequestServiceButton";
+import AddToCartButton from "@/components/cart/AddToCartButton";
 import Footer from "@/components/landing/Footer";
 
 const Navbar = dynamic(() => import("@/components/landing/Navbar"));
@@ -215,7 +215,14 @@ export default async function ProductoPage({
 
               {/* CTAs */}
               <div className="space-y-2.5">
-                <RequestServiceButton productId={product.id} />
+                <AddToCartButton
+                  productId={product.id}
+                  name={product.name}
+                  price={displayPrice}
+                  originalPrice={price}
+                  imageUrl={product.images?.[0] ?? null}
+                  stock={product.stock}
+                />
 
                 <a
                   href={`https://wa.me/${WA_NUMBER}?text=${waMessage}`}

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Wind, CheckCircle2, Star, Filter, ChevronDown, Flame, Tag } from "lucide-react";
+import { Wind, CheckCircle2, Star, Filter, ChevronDown, Flame, Tag, ShoppingCart, Check } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
+import { useCart } from "@/store/cart";
 
 export interface ProductItem {
   id: string;
@@ -32,6 +33,34 @@ function Stars({ n = 5 }: { n?: number }) {
   );
 }
 
+function AddToCartInline({ product }: { product: ProductItem }) {
+  const { addItem, items } = useCart();
+  const [justAdded, setJustAdded] = useState(false);
+  const hasDiscount = product.discountPrice !== null && product.discountPrice < product.price;
+  const displayPrice = hasDiscount ? product.discountPrice! : product.price;
+  const inCart = items.some(i => i.productId === product.id);
+
+  function handle(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    addItem({ productId: product.id, name: product.name, price: displayPrice, originalPrice: product.price, imageUrl: product.images?.[0] ?? null });
+    setJustAdded(true);
+    setTimeout(() => setJustAdded(false), 1800);
+  }
+
+  if (product.stock === 0) return null;
+
+  return (
+    <button
+      onClick={handle}
+      className={`flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-sm font-bold text-white transition-all ${justAdded ? "bg-green-500" : "hover:opacity-90"}`}
+      style={justAdded ? {} : { background: "linear-gradient(to right, #008f65, #1d7291)" }}
+    >
+      {justAdded ? <><Check size={14} />¡Añadido!</> : <><ShoppingCart size={14} />{inCart ? "Añadir otra" : "Añadir al carrito"}</>}
+    </button>
+  );
+}
+
 function ProductCard({ product, highlight = false, t }: {
   product: ProductItem;
   highlight?: boolean;
@@ -44,67 +73,69 @@ function ProductCard({ product, highlight = false, t }: {
     : 0;
 
   return (
-    <Link
-      href={`/producto/${product.id}`}
-      className={`group bg-white rounded-2xl overflow-hidden border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col ${
-        highlight ? "border-amber-200 shadow-md" : "border-gray-100 shadow-sm"
-      }`}
-    >
-      <div className="px-4 pt-4 h-8 flex items-center gap-2">
-        {hasDiscount && (
-          <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-widest uppercase text-white bg-red-500 px-2.5 py-0.5 rounded-full">
-            <Flame size={9} /> -{savingsPct}%
-          </span>
-        )}
-        {product.stock === 0 && (
-          <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2.5 py-0.5 rounded-full">
-            {t("products.modalOutStock")}
-          </span>
-        )}
-      </div>
+    <div className={`group bg-white rounded-2xl overflow-hidden border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col ${
+      highlight ? "border-amber-200 shadow-md" : "border-gray-100 shadow-sm"
+    }`}>
+      <Link href={`/producto/${product.id}`} className="flex flex-col flex-1">
+        <div className="px-4 pt-4 h-8 flex items-center gap-2">
+          {hasDiscount && (
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-widest uppercase text-white bg-red-500 px-2.5 py-0.5 rounded-full">
+              <Flame size={9} /> -{savingsPct}%
+            </span>
+          )}
+          {product.stock === 0 && (
+            <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2.5 py-0.5 rounded-full">
+              {t("products.modalOutStock")}
+            </span>
+          )}
+        </div>
 
-      <div className={`mx-4 h-44 rounded-xl flex flex-col items-center justify-center gap-2 border overflow-hidden ${
-        highlight ? "bg-gradient-to-br from-amber-50 to-orange-50 border-amber-100/60" : "bg-gradient-to-br from-gray-50 to-gray-100 border-gray-100/60"
-      }`}>
-        {product.images?.[0] ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={product.images[0]} alt={product.name} className="w-full h-full object-contain p-2" />
-        ) : (
-          <>
-            <Wind size={52} strokeWidth={0.8} className={highlight ? "text-amber-200" : "text-gray-200"} />
-            <p className="text-[11px] text-gray-300 font-medium">{t("products.cardImageSoon")}</p>
-          </>
-        )}
-      </div>
+        <div className={`mx-4 h-44 rounded-xl flex flex-col items-center justify-center gap-2 border overflow-hidden ${
+          highlight ? "bg-gradient-to-br from-amber-50 to-orange-50 border-amber-100/60" : "bg-gradient-to-br from-gray-50 to-gray-100 border-gray-100/60"
+        }`}>
+          {product.images?.[0] ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={product.images[0]} alt={product.name} className="w-full h-full object-contain p-2" />
+          ) : (
+            <>
+              <Wind size={52} strokeWidth={0.8} className={highlight ? "text-amber-200" : "text-gray-200"} />
+              <p className="text-[11px] text-gray-300 font-medium">{t("products.cardImageSoon")}</p>
+            </>
+          )}
+        </div>
 
-      <div className="px-5 pt-4 pb-5 flex flex-col flex-1">
-        <Stars n={5} />
-        <h3 className="font-bold text-gray-900 text-base leading-tight mt-2 group-hover:text-primary-700 transition-colors line-clamp-2">
-          {product.name}
-        </h3>
-        <p className="text-gray-500 text-xs mt-0.5">{product.category}</p>
-        {product.manufacturer && <p className="text-gray-400 text-xs">{product.manufacturer}</p>}
+        <div className="px-5 pt-4 pb-3 flex flex-col flex-1">
+          <Stars n={5} />
+          <h3 className="font-bold text-gray-900 text-base leading-tight mt-2 group-hover:text-primary-700 transition-colors line-clamp-2">
+            {product.name}
+          </h3>
+          <p className="text-gray-500 text-xs mt-0.5">{product.category}</p>
+          {product.manufacturer && <p className="text-gray-400 text-xs">{product.manufacturer}</p>}
 
-        <div className="mt-auto pt-4">
-          <div className="flex items-baseline gap-2 flex-wrap">
-            <span className="text-2xl font-bold" style={{ color: "#d97706" }}>{fmt(displayPrice)} €</span>
-            {hasDiscount && (
-              <span className="text-gray-400 line-through text-sm">{fmt(product.price)} €</span>
-            )}
+          <div className="mt-auto pt-4">
+            <div className="flex items-baseline gap-2 flex-wrap">
+              <span className="text-2xl font-bold" style={{ color: "#d97706" }}>{fmt(displayPrice)} €</span>
+              {hasDiscount && (
+                <span className="text-gray-400 line-through text-sm">{fmt(product.price)} €</span>
+              )}
+            </div>
+            <p className="text-primary-600 text-xs font-semibold mt-1 flex items-center gap-1">
+              <CheckCircle2 size={11} /> {t("products.feat1")}
+            </p>
           </div>
-          <p className="text-primary-600 text-xs font-semibold mt-1 flex items-center gap-1">
-            <CheckCircle2 size={11} /> {t("products.feat1")}
-          </p>
-        </div>
 
-        <div
-          className="mt-4 w-full py-2.5 rounded-xl text-sm font-bold text-white text-center transition-all group-hover:opacity-90"
-          style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
-        >
-          {t("products.cardDetail")}
+          <div
+            className="mt-3 w-full py-2 rounded-xl text-xs font-semibold text-primary-700 text-center border border-primary-100 bg-primary-50/50 group-hover:bg-primary-100 transition-colors"
+          >
+            {t("products.cardDetail")} →
+          </div>
         </div>
+      </Link>
+      {/* Add to cart — outside the Link so it doesn't navigate */}
+      <div className="px-5 pb-5">
+        <AddToCartInline product={product} />
       </div>
-    </Link>
+    </div>
   );
 }
 

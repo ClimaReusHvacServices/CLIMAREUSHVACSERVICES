@@ -13,7 +13,14 @@ interface OrderRow {
   status: string;
   totalAmount: any;
   createdAt: Date;
-  items: { id: string }[];
+  items: { id: string; product: { name: string } | null }[];
+}
+
+function orderLabel(items: OrderRow["items"]): string {
+  if (items.length === 0) return "Pedido";
+  const first = items[0].product?.name ?? "Producto";
+  if (items.length === 1) return first;
+  return `${first} + ${items.length - 1} más`;
 }
 
 export function ClientOrdersTable({ orders, locale }: { orders: OrderRow[]; locale: string }) {
@@ -57,7 +64,10 @@ export function ClientOrdersTable({ orders, locale }: { orders: OrderRow[]; loca
           className="border-b border-gray-50 hover:bg-primary-50/40 transition-colors cursor-pointer"
           onClick={() => router.push(`/orders/${order.id}` as any)}
         >
-          <td className="py-3 px-4 font-semibold text-primary-700">{order.orderNumber}</td>
+          <td className="py-3 px-4">
+            <p className="font-semibold text-gray-900 leading-tight">{orderLabel(order.items)}</p>
+            <p className="text-xs text-gray-400">{order.orderNumber}</p>
+          </td>
           <td className="py-3 px-4 text-gray-600 hidden sm:table-cell">{order.items.length} {t("items")}</td>
           <td className="py-3 px-4">
             <span className={`inline-block px-2 py-1 rounded-lg text-xs font-semibold ${STATUS_COLORS[order.status] ?? "bg-gray-100 text-gray-600"}`}>

@@ -1,10 +1,11 @@
 "use client";
 import { Link } from "@/i18n/routing";
-import { Phone, Menu, X, LogIn, Globe, ChevronDown, LogOut, User, LayoutDashboard, ShoppingCart, Thermometer, Flame, Info } from "lucide-react";
+import { Phone, Menu, X, LogIn, Globe, ChevronDown, LogOut, User, LayoutDashboard, ShoppingCart } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
+import { CartNavIcon } from "@/components/cart/CartNavIcon";
 
 const LOCALES = [
   { code: "es", label: "ES", name: "Español" },
@@ -243,21 +244,10 @@ export default function Navbar() {
             {mobileLabel}
           </Link>
 
-          {/* Móvil — carrito (solo clientes) */}
-          {isLoggedIn && role === "cliente" && (
-            <Link
-              href="/orders"
-              className="sm:hidden relative flex items-center justify-center w-7 h-7 rounded-full text-primary-700 hover:bg-primary-50 transition-colors shrink-0"
-              aria-label="Mis pedidos"
-            >
-              <ShoppingCart size={15} />
-              {orderCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 min-w-[14px] h-3.5 bg-primary-600 text-white text-[8px] font-bold rounded-full flex items-center justify-center px-0.5 leading-none">
-                  {orderCount > 9 ? "9+" : orderCount}
-                </span>
-              )}
-            </Link>
-          )}
+          {/* Móvil — carrito */}
+          <div className="sm:hidden text-primary-700 shrink-0">
+            <CartNavIcon />
+          </div>
 
           {/* Móvil — selector de idioma inline (3 píldoras, sin desplegable) */}
           <div className="sm:hidden flex items-center gap-0.5 shrink-0">
@@ -387,21 +377,10 @@ export default function Navbar() {
           <LangPicker />
         </div>
 
-        {/* Cart — clients only (desktop) */}
-        {isLoggedIn && role === "cliente" && (
-          <Link
-            href="/orders"
-            className="relative flex items-center justify-center w-9 h-9 rounded-full bg-white/80 backdrop-blur-xl shadow-lg border border-white/40 text-primary-700 hover:bg-primary-50 hover:border-primary-200 transition-all"
-            aria-label="Mis pedidos"
-          >
-            <ShoppingCart size={16} />
-            {orderCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 bg-primary-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-0.5 leading-none">
-                {orderCount > 9 ? "9+" : orderCount}
-              </span>
-            )}
-          </Link>
-        )}
+        {/* Cart icon — visible for all on landing pages (desktop) */}
+        <div className="flex items-center justify-center w-9 h-9 rounded-full bg-white/80 backdrop-blur-xl shadow-lg border border-white/40 text-primary-700 hover:bg-primary-50 hover:border-primary-200 transition-all">
+          <CartNavIcon />
+        </div>
 
         {/* User menu or Login */}
         {isLoggedIn && user ? (

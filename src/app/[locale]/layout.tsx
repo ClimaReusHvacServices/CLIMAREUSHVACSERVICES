@@ -5,6 +5,8 @@ import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth/config";
 import { Toaster } from "@/components/common/Toaster";
 import { routing } from "@/i18n/routing";
+import { CartProvider } from "@/store/cart";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
@@ -38,8 +40,11 @@ export default async function RootLayout({
       <body className="bg-gray-50">
         <SessionProvider session={session}>
           <NextIntlClientProvider locale={locale} messages={messages}>
-            <div className="min-h-screen flex flex-col">{children}</div>
-            <Toaster />
+            <CartProvider>
+              <CartDrawer />
+              <div className="min-h-screen flex flex-col">{children}</div>
+              <Toaster />
+            </CartProvider>
           </NextIntlClientProvider>
         </SessionProvider>
       </body>

@@ -9,7 +9,12 @@ import { ClientOrdersTable } from "@/components/orders/ClientOrdersTable";
 async function getClientOrders(userId: string) {
   return db.order.findMany({
     where: { userId },
-    include: { items: { select: { id: true } } },
+    include: {
+      items: {
+        select: { id: true, product: { select: { name: true } } },
+        take: 3,
+      },
+    },
     orderBy: { createdAt: "desc" },
   });
 }

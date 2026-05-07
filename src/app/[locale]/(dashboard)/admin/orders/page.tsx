@@ -10,7 +10,10 @@ async function getAllOrders() {
   return db.order.findMany({
     include: {
       user: { select: { firstName: true, lastName: true, email: true } },
-      items: { select: { id: true } },
+      items: {
+        select: { id: true, product: { select: { name: true } } },
+        take: 3,
+      },
     },
     orderBy: { createdAt: "desc" },
   });

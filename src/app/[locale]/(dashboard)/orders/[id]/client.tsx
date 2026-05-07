@@ -79,7 +79,7 @@ export function ClientOrderDetailClient({ order, locale }: { order: Order; local
 
   useEffect(() => {
     if (order.status === "completada" || order.status === "cancelada") return;
-    const id = setInterval(() => router.refresh(), 5000);
+    const id = setInterval(() => router.refresh(), 30000);
     return () => clearInterval(id);
   }, [order.status, router]);
 
@@ -94,8 +94,14 @@ export function ClientOrderDetailClient({ order, locale }: { order: Order; local
           <ArrowLeft size={16} className="text-gray-600" />
         </Link>
         <div className="flex-1 min-w-0">
-          <h1 className="text-lg sm:text-xl font-bold text-gray-900">{order.orderNumber}</h1>
-          <p className="text-xs text-gray-400">{new Date(order.createdAt).toLocaleString(locale)}</p>
+          <h1 className="text-lg sm:text-xl font-bold text-gray-900 truncate">
+            {order.items.length > 0
+              ? order.items.length === 1
+                ? order.items[0].product?.name ?? order.orderNumber
+                : `${order.items[0].product?.name ?? "Pedido"} + ${order.items.length - 1} más`
+              : order.orderNumber}
+          </h1>
+          <p className="text-xs text-gray-400">{order.orderNumber} · {new Date(order.createdAt).toLocaleString(locale)}</p>
         </div>
         <div className="flex flex-col items-end gap-1">
           <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${STATUS_COLORS[order.status] ?? "bg-gray-100 text-gray-600"}`}>

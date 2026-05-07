@@ -15,7 +15,7 @@ interface OrderRow {
   totalAmount: any;
   createdAt: Date;
   user: { firstName: string; lastName: string; email: string };
-  items: { id: string }[];
+  items: { id: string; product: { name: string } | null }[];
 }
 
 export function OrdersTableWithFilter({ orders, locale }: { orders: OrderRow[]; locale: string }) {
