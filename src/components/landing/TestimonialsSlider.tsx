@@ -18,11 +18,19 @@ function Stars({ n }: { n: number }) {
   );
 }
 
+function reviewDate(time: number): string | null {
+  if (!time) return null;
+  return new Date(time * 1000).toLocaleDateString("es", { month: "long", year: "numeric" });
+}
+
 export function TestimonialsSlider({ reviews, sourceLabel }: { reviews: GoogleReview[]; sourceLabel: string }) {
   if (reviews.length === 0) return null;
 
-  const LOOP = reviews.length * ITEM;
-  const TRACK = [...reviews, ...reviews, ...reviews];
+  // Sort: 5 stars first, then most recent within each rating group
+  const sorted = [...reviews].sort((a, b) => b.rating - a.rating || b.time - a.time);
+
+  const LOOP = sorted.length * ITEM;
+  const TRACK = [...sorted, ...sorted, ...sorted];
 
   return (
     <div className="relative">
@@ -33,7 +41,7 @@ export function TestimonialsSlider({ reviews, sourceLabel }: { reviews: GoogleRe
 
       <div
         className="flex items-stretch"
-        style={{ animation: `reviews-scroll ${reviews.length * 7}s linear -${Math.floor(reviews.length * 3.5)}s infinite`, width: "max-content" }}
+        style={{ animation: `reviews-scroll ${sorted.length * 7}s linear -${Math.floor(sorted.length * 3.5)}s infinite`, width: "max-content" }}
       >
         {TRACK.map((r, i) => (
           <div
@@ -53,7 +61,11 @@ export function TestimonialsSlider({ reviews, sourceLabel }: { reviews: GoogleRe
               )}
               <div className="min-w-0">
                 <p className="font-bold text-gray-800 text-sm truncate">{r.author_name}</p>
-                <p className="text-xs text-gray-400">{sourceLabel} Google</p>
+                <p className="text-xs text-gray-400">
+                  {reviewDate(r.time)
+                    ? `${reviewDate(r.time)} · ${sourceLabel} Google`
+                    : `${sourceLabel} Google`}
+                </p>
               </div>
             </div>
           </div>
