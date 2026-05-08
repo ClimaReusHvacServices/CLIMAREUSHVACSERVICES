@@ -1,49 +1,12 @@
-"use client";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
+import { getGoogleReviews, GoogleReview } from "@/lib/google-reviews";
+import { TestimonialsSlider } from "./TestimonialsSlider";
 
-const REVIEW_NAMES = [
-  "Carlos Rodríguez", "Laura Sánchez", "Pedro Martínez",
-  "Cristina Guzmán", "Jordi Puig", "María Fernández",
-];
-const REVIEW_RATINGS = [5, 5, 4, 5, 5, 5];
-
-function Stars({ n }: { n: number }) {
-  return (
-    <div className="flex gap-0.5 mb-3">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <svg key={i} width="16" height="16" viewBox="0 0 24 24" fill={i <= n ? "#f59e0b" : "none"} stroke="#f59e0b" strokeWidth="1.5">
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-        </svg>
-      ))}
-    </div>
-  );
-}
-
-const CARD_W = 320;
-const GAP = 24;
-const ITEM = CARD_W + GAP;
-const LOOP = 6 * ITEM;
-
-export default function TestimonialsSection() {
-  const t = useTranslations("landing");
-
-  const REVIEW_TEXTS = [
-    t("testimonials.r1text"),
-    t("testimonials.r2text"),
-    t("testimonials.r3text"),
-    t("testimonials.r4text"),
-    t("testimonials.r5text"),
-    t("testimonials.r6text"),
-  ];
-
-  const REVIEWS = REVIEW_NAMES.map((name, i) => ({
-    name,
-    rating: REVIEW_RATINGS[i],
-    text: REVIEW_TEXTS[i],
-    source: "Google",
-  }));
-
-  const TRACK = [...REVIEWS, ...REVIEWS, ...REVIEWS];
+export default async function TestimonialsSection() {
+  const [t, { reviews, avgRating, totalRatings }] = await Promise.all([
+    getTranslations("landing"),
+    getGoogleReviews(),
+  ]);
 
   return (
     <section className="py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(160deg, #0d3c4d 0%, #083a30 100%)" }}>
@@ -55,40 +18,26 @@ export default function TestimonialsSection() {
         <p className="mt-4 text-white/60 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
           {t("testimonials.subtitle")}
         </p>
-      </div>
-
-      {/* Slider */}
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 w-20 z-10 pointer-events-none"
-          style={{ background: "linear-gradient(to right, #0d3c4d, transparent)" }} />
-        <div className="absolute inset-y-0 right-0 w-20 z-10 pointer-events-none"
-          style={{ background: "linear-gradient(to left, #083a30, transparent)" }} />
-
-        <div
-          className="flex items-stretch"
-          style={{ animation: `reviews-scroll 40s linear -20s infinite`, width: "max-content" }}
-        >
-          {TRACK.map((r, i) => (
-            <div
-              key={i}
-              className="shrink-0 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col"
-              style={{ width: CARD_W, marginRight: GAP }}
-            >
-              <Stars n={r.rating} />
-              <p className="text-gray-600 text-sm leading-relaxed flex-1">{r.text}</p>
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <p className="font-bold text-gray-800 text-sm">{r.name}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{t("testimonials.source")} {r.source}</p>
-              </div>
+        {totalRatings > 0 && (
+          <div className="mt-4 flex items-center justify-center gap-2">
+            <div className="flex gap-0.5">
+              {[1,2,3,4,5].map(i => (
+                <svg key={i} width="18" height="18" viewBox="0 0 24 24" fill={i <= Math.round(avgRating) ? "#f59e0b" : "none"} stroke="#f59e0b" strokeWidth="1.5">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+              ))}
             </div>
-          ))}
-        </div>
+            <span className="text-white/80 text-sm font-semibold">{avgRating.toFixed(1)}</span>
+            <span className="text-white/50 text-sm">({totalRatings} reseñas)</span>
+          </div>
+        )}
       </div>
 
-      {/* CTA */}
+      <TestimonialsSlider reviews={reviews} sourceLabel={t("testimonials.source")} />
+
       <div className="text-center mt-10">
         <a
-          href="https://g.page/r/review"
+          href="https://g.page/r/CfqVjLo1HogdEBM/review"
           target="_blank"
           rel="noreferrer"
           className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold text-white transition-all hover:opacity-90"
@@ -97,16 +46,6 @@ export default function TestimonialsSection() {
           {t("testimonials.cta")}
         </a>
       </div>
-
-      <style jsx>{`
-        @keyframes reviews-scroll {
-          0%   { transform: translateX(0); }
-          100% { transform: translateX(-${LOOP}px); }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          div[style*="reviews-scroll"] { animation: none !important; }
-        }
-      `}</style>
     </section>
   );
 }

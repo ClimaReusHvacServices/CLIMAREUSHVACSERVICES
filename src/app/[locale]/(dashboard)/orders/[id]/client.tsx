@@ -134,15 +134,35 @@ export function ClientOrderDetailClient({ order, locale }: { order: Order; local
         </div>
       )}
       {order.status === "completada" && (
-        <div className="bg-green-50 border border-green-200 rounded-2xl px-5 py-4 flex items-start gap-3">
-          <CheckCircle2 size={16} className="text-green-600 mt-0.5 shrink-0" />
-          <div>
-            <p className="text-sm font-semibold text-green-800">Servicio completado</p>
-            <p className="text-xs text-green-600 mt-0.5">
-              {order.paymentStatus === "pagado" ? "El pago ha sido confirmado. ¡Gracias por confiar en nosotros!" : "Pendiente de confirmación de pago."}
-            </p>
+        <>
+          <div className="bg-green-50 border border-green-200 rounded-2xl px-5 py-4 flex items-start gap-3">
+            <CheckCircle2 size={16} className="text-green-600 mt-0.5 shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-green-800">Servicio completado</p>
+              <p className="text-xs text-green-600 mt-0.5">
+                {order.paymentStatus === "pagado" ? "El pago ha sido confirmado. ¡Gracias por confiar en nosotros!" : "Pendiente de confirmación de pago."}
+              </p>
+            </div>
           </div>
-        </div>
+          <a
+            href="https://g.page/r/CfqVjLo1HogdEBM/review"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center justify-between gap-3 rounded-2xl px-5 py-4 transition-all hover:opacity-90 group"
+            style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">⭐</span>
+              <div>
+                <p className="text-sm font-bold text-white">¿Te ha gustado el servicio?</p>
+                <p className="text-xs text-white/80 mt-0.5">Tu opinión nos ayuda a mejorar. Déjanos una reseña en Google.</p>
+              </div>
+            </div>
+            <svg className="w-5 h-5 text-white/70 group-hover:translate-x-1 transition-transform shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </>
       )}
 
       {/* Items */}

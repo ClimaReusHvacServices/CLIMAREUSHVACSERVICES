@@ -10,6 +10,8 @@ function hashPassword(password: string): string {
 async function main() {
   const admins = [
     { firstName: "Ariel", lastName: "Admin", email: "ariel@climahvacservice.es", username: "ariel.admin" },
+    { firstName: "Wanda", lastName: "Admin", email: "wanda@climahvacservice.es", username: "wanda.admin" },
+    { firstName: "Juan",  lastName: "Admin", email: "juan@climahvacservice.es",  username: "juan.admin"  },
   ];
 
   const tempPassword = "ClimaReus2025!";

@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+Disallow: /*/admin
+Disallow: /*/worker
+Disallow: /*/dashboard
+Disallow: /*/checkout
+Disallow: /*/orders
+Disallow: /*/profile
+
+Sitemap: https://climareushvacservices.es/sitemap.xml
