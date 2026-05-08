@@ -12,19 +12,40 @@ export interface ReviewsResult {
   totalRatings: number;
 }
 
-const CACHE: { data: ReviewsResult | null; fetchedAt: number } = { data: null, fetchedAt: 0 };
+const REVIEWS_CACHE: { data: ReviewsResult | null; fetchedAt: number } = { data: null, fetchedAt: 0 };
+const PLACE_ID_CACHE: { id: string | null } = { id: null };
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
+
+const BUSINESS_QUERY = "Clima Reus HVAC Services Reus Tarragona España";
+
+async function resolvePlaceId(apiKey: string): Promise<string | null> {
+  if (PLACE_ID_CACHE.id) return PLACE_ID_CACHE.id;
+
+  // First try the env var if set
+  const envId = process.env.GOOGLE_PLACE_ID;
+  if (envId) { PLACE_ID_CACHE.id = envId; return envId; }
+
+  // Auto-discover via Text Search
+  const url = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${encodeURIComponent(BUSINESS_QUERY)}&inputtype=textquery&fields=place_id&key=${apiKey}`;
+  const res = await fetch(url, { cache: "force-cache" });
+  if (!res.ok) return null;
+  const json = await res.json();
+  const id = json.candidates?.[0]?.place_id ?? null;
+  if (id) PLACE_ID_CACHE.id = id;
+  return id;
+}
 
 export async function getGoogleReviews(): Promise<ReviewsResult> {
   const now = Date.now();
-  if (CACHE.data && now - CACHE.fetchedAt < CACHE_TTL_MS) return CACHE.data;
+  if (REVIEWS_CACHE.data && now - REVIEWS_CACHE.fetchedAt < CACHE_TTL_MS) return REVIEWS_CACHE.data;
 
   const apiKey = process.env.GOOGLE_PLACES_API_KEY;
-  const placeId = process.env.GOOGLE_PLACE_ID;
-
-  if (!apiKey || !placeId) return fallback();
+  if (!apiKey) return fallback();
 
   try {
+    const placeId = await resolvePlaceId(apiKey);
+    if (!placeId) return fallback();
+
     const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=reviews,rating,user_ratings_total&language=es&key=${apiKey}`;
     const res = await fetch(url, { next: { revalidate: 21600 } });
     if (!res.ok) return fallback();
@@ -43,8 +64,8 @@ export async function getGoogleReviews(): Promise<ReviewsResult> {
       totalRatings: json.result.user_ratings_total ?? 0,
     };
 
-    CACHE.data = result;
-    CACHE.fetchedAt = now;
+    REVIEWS_CACHE.data = result;
+    REVIEWS_CACHE.fetchedAt = now;
     return result;
   } catch {
     return fallback();
