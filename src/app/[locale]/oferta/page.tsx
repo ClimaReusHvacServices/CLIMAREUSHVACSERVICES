@@ -27,14 +27,22 @@ async function getAllProducts() {
   return rows.map(p => ({
     id: p.id,
     name: p.name,
+    shortDescription: p.shortDescription ?? null,
     description: p.description,
     category: p.category,
     manufacturer: p.manufacturer,
+    brand: p.brand ?? null,
+    series: p.series ?? null,
+    productType: p.productType ?? null,
+    stockStatus: p.stockStatus ?? "in_stock",
+    ivaIncluded: p.ivaIncluded ?? true,
+    installationIncluded: p.installationIncluded ?? false,
     price: Number(p.price),
     discountPrice: p.discountPrice ? Number(p.discountPrice) : null,
     warranty: p.warranty,
     stock: p.stock,
     images: p.images,
+    specifications: p.specifications,
   }));
 }
 

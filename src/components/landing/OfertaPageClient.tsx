@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Wind, CheckCircle2, Star, Filter, ChevronDown, Flame, Tag, ShoppingCart, Check } from "lucide-react";
+import { Wind, CheckCircle2, Star, Filter, ChevronDown, Flame, Tag, ShoppingCart, Check, MapPin } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/store/cart";
@@ -9,14 +9,22 @@ import { useCart } from "@/store/cart";
 export interface ProductItem {
   id: string;
   name: string;
+  shortDescription: string | null;
   description: string;
   category: string;
   manufacturer: string | null;
+  brand: string | null;
+  series: string | null;
+  productType: string | null;
+  stockStatus: string | null;
+  ivaIncluded: boolean;
+  installationIncluded: boolean;
   price: number;
   discountPrice: number | null;
   warranty: string | null;
   stock: number;
   images: string[];
+  specifications: unknown;
 }
 
 function fmt(n: number) {
@@ -30,6 +38,40 @@ function Stars({ n = 5 }: { n?: number }) {
         <Star key={i} size={12} fill={i <= n ? "#f59e0b" : "none"} stroke="#f59e0b" strokeWidth={1.5} />
       ))}
     </div>
+  );
+}
+
+function getAreaRange(product: ProductItem): string | null {
+  if (product.productType !== "air_conditioning") return null;
+  try {
+    const s = product.specifications as Record<string, unknown> | null;
+    if (!s) return null;
+    const min = s.recommendedAreaMin as number | undefined;
+    const max = s.recommendedAreaMax as number | undefined;
+    if (min && max) return `${min}–${max} m²`;
+    if (max) return `Hasta ${max} m²`;
+    if (min) return `Desde ${min} m²`;
+  } catch { /* ignore */ }
+  return null;
+}
+
+function StockPill({ status }: { status: string | null }) {
+  if (!status || status === "in_stock") return (
+    <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-wide text-teal-700 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded-full">
+      <span className="w-1.5 h-1.5 rounded-full bg-teal-500 inline-block" />
+      En stock
+    </span>
+  );
+  if (status === "on_request") return (
+    <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-wide text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
+      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" />
+      Bajo pedido
+    </span>
+  );
+  return (
+    <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-wide text-gray-500 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-full">
+      Consultar
+    </span>
   );
 }
 
@@ -105,12 +147,28 @@ function ProductCard({ product, highlight = false, t }: {
         </div>
 
         <div className="px-5 pt-4 pb-3 flex flex-col flex-1">
-          <Stars n={5} />
+          <div className="flex items-center gap-2 flex-wrap">
+            <Stars n={5} />
+            <StockPill status={product.stockStatus} />
+          </div>
           <h3 className="font-bold text-gray-900 text-base leading-tight mt-2 group-hover:text-primary-700 transition-colors line-clamp-2">
             {product.name}
           </h3>
-          <p className="text-gray-500 text-xs mt-0.5">{product.category}</p>
-          {product.manufacturer && <p className="text-gray-400 text-xs">{product.manufacturer}</p>}
+          {product.shortDescription ? (
+            <p className="text-gray-500 text-xs mt-1 line-clamp-2 leading-relaxed">{product.shortDescription}</p>
+          ) : (
+            <p className="text-gray-500 text-xs mt-0.5">{product.category}</p>
+          )}
+          <div className="flex items-center gap-2 mt-1 flex-wrap">
+            {(product.brand || product.manufacturer) && (
+              <span className="text-gray-400 text-[11px]">{product.brand ?? product.manufacturer}</span>
+            )}
+            {(() => { const area = getAreaRange(product); return area ? (
+              <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-primary-600 bg-primary-50 border border-primary-100 px-2 py-0.5 rounded-full">
+                <MapPin size={9} /> {area}
+              </span>
+            ) : null; })()}
+          </div>
 
           <div className="mt-auto pt-4">
             <div className="flex items-baseline gap-2 flex-wrap">
