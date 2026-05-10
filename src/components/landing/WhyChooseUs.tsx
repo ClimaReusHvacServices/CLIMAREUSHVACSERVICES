@@ -13,7 +13,7 @@ export default async function WhyChooseUs() {
   ];
 
   return (
-    <section className="relative overflow-hidden min-h-[580px] flex items-center">
+    <section data-logo="white" className="relative overflow-hidden min-h-[580px] flex items-center">
 
       {/* Barcelona full-section background */}
       <div

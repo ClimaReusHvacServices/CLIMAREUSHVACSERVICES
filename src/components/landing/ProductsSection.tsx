@@ -155,25 +155,32 @@ export function ProductsSection({ products }: { products: ProductItem[] }) {
             <p className="text-white/30 text-sm mt-1">{t("products.emptyDesc")}</p>
           </div>
         ) : (
-          <div
-            ref={trackRef}
-            className="flex gap-5 overflow-x-auto cursor-grab pb-3"
-            style={{ scrollbarWidth: "none", scrollSnapType: "x mandatory" }}
-            onMouseDown={onMouseDown}
-            onMouseMove={onMouseMove}
-            onMouseUp={stopDrag}
-            onMouseLeave={stopDrag}
-            onClickCapture={onClickCapture}
-          >
-            {products.map((p) => (
-              <div
-                key={p.id}
-                className="shrink-0 w-[280px] sm:w-[300px]"
-                style={{ scrollSnapAlign: "start" }}
-              >
-                <ProductCard product={p} t={t as any} />
-              </div>
-            ))}
+          <div className="relative">
+            <div
+              ref={trackRef}
+              className="flex gap-5 overflow-x-auto cursor-grab pb-3"
+              style={{ scrollbarWidth: "none", scrollSnapType: "x mandatory" }}
+              onMouseDown={onMouseDown}
+              onMouseMove={onMouseMove}
+              onMouseUp={stopDrag}
+              onMouseLeave={stopDrag}
+              onClickCapture={onClickCapture}
+            >
+              {products.map((p) => (
+                <div
+                  key={p.id}
+                  className="shrink-0 w-[280px] sm:w-[300px]"
+                  style={{ scrollSnapAlign: "start" }}
+                >
+                  <ProductCard product={p} t={t as any} />
+                </div>
+              ))}
+            </div>
+            {/* Right-edge fade — signals more cards and hides hard cutoff */}
+            <div
+              className="absolute top-0 right-0 h-full w-28 pointer-events-none"
+              style={{ background: "linear-gradient(to right, transparent, #083a57)" }}
+            />
           </div>
         )}
 
