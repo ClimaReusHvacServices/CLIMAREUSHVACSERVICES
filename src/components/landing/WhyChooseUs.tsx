@@ -40,7 +40,7 @@ export default async function WhyChooseUs() {
             alt="Clima HVAC Service"
             width={600}
             height={240}
-            style={{ width: "auto", height: "160px", objectFit: "contain" }}
+            style={{ width: "auto", height: "240px", objectFit: "contain" }}
             priority
           />
           <div className="mt-8 space-y-2.5">
