@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import { useCart } from "@/store/cart";
 import { X, Package, Minus, Plus, Trash2, ShoppingCart, ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { useLocale } from "next-intl";
 
 function fmt(n: number) {
   return n.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -12,7 +11,6 @@ function fmt(n: number) {
 
 export function CartDrawer() {
   const { items, isOpen, totalItems, subtotal, taxAmount, total, removeItem, updateQty, closeCart } = useCart();
-  const locale = useLocale();
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -156,7 +154,7 @@ export function CartDrawer() {
               </div>
             </div>
             <Link
-              href={`/${locale}/checkout`}
+              href="/checkout"
               onClick={closeCart}
               className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-white font-bold text-sm transition-all hover:opacity-90 hover:shadow-md"
               style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
