@@ -430,37 +430,88 @@ export function ProductFormModal({ initial, categories, onClose }: Props) {
 
   function AcTechnicalTab() {
     const ac = form.acSpecs;
+    const isConductos = ac.installationType === "conductos";
+    const INST_TYPES = [
+      { val: "split", label: "Split 1×1" },
+      { val: "conductos", label: "Conductos" },
+      { val: "cassette", label: "Cassette" },
+      { val: "multisplit", label: "Multi-Split" },
+      { val: "suelo_techo", label: "Suelo-Techo" },
+    ] as const;
+
     return (
       <div className="space-y-4">
-        <Section title="Tipo e instalación">
-          <Field label="Tipo de instalación" required>
-            <select className={selectCls} value={ac.installationType} onChange={e => setAc({ installationType: e.target.value as any })}>
-              <option value="split">Split 1x1</option>
-              <option value="conductos">Por conductos</option>
-              <option value="cassette">Cassette</option>
-              <option value="multisplit">Multi-Split</option>
-              <option value="suelo_techo">Suelo-techo</option>
-            </select>
-          </Field>
-          <Field label="Tecnología">
-            <input className={inputCls} value={ac.technology} onChange={e => setAc({ technology: e.target.value })} placeholder="Inverter" />
-          </Field>
-          <Field label="Composición del equipo">
-            <input className={inputCls} value={ac.composition} onChange={e => setAc({ composition: e.target.value })} placeholder="Equipo 1x1" />
-          </Field>
-          <Field label="Refrigerante">
-            <input className={inputCls} value={ac.refrigerant} onChange={e => setAc({ refrigerant: e.target.value })} placeholder="R32" />
-          </Field>
-        </Section>
+        {/* Tipo de instalación — visual selector */}
+        <div className="rounded-xl border border-gray-100 bg-gray-50/60 p-4 space-y-3">
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tipo de instalación *</p>
+          <div className="flex flex-wrap gap-2">
+            {INST_TYPES.map(({ val, label }) => (
+              <button key={val} type="button"
+                onClick={() => setAc({ installationType: val })}
+                className={`px-3 py-2 rounded-xl text-xs font-bold border-2 transition-all ${
+                  ac.installationType === val
+                    ? "border-primary-400 bg-primary-50 text-primary-700"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-primary-200"
+                }`}>
+                {label}
+              </button>
+            ))}
+          </div>
 
-        <Section title="Unidades">
-          <Field label="Unidad interior (ref.)">
-            <input className={inputCls} value={ac.indoorUnit} onChange={e => setAc({ indoorUnit: e.target.value })} placeholder="FDUM100VH" />
-          </Field>
-          <Field label="Unidad exterior (ref.)">
-            <input className={inputCls} value={ac.outdoorUnit} onChange={e => setAc({ outdoorUnit: e.target.value })} placeholder="FDC100VNP-W" />
-          </Field>
-        </Section>
+          {/* Conductos sub-section */}
+          {isConductos && (
+            <div className="mt-2 rounded-xl border border-blue-100 bg-blue-50/50 p-3">
+              <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-2">Conductos — datos específicos</p>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Referencia unidad interior (UI)">
+                  <input className={inputCls} value={ac.indoorUnit} onChange={e => setAc({ indoorUnit: e.target.value })} placeholder="AD71S2SM9FA" />
+                </Field>
+                <Field label="Referencia unidad exterior (UE)">
+                  <input className={inputCls} value={ac.outdoorUnit} onChange={e => setAc({ outdoorUnit: e.target.value })} placeholder="1U71S2SR3FA" />
+                </Field>
+                <Field label="Presión estática disponible">
+                  <input className={inputCls} value={ac.staticPressure ?? ""} onChange={e => setAc({ staticPressure: e.target.value || null })} placeholder="60 Pa estándar / 100 Pa máx." />
+                </Field>
+                <Field label="Mando / Control incluido">
+                  <input className={inputCls} value={ac.includedController ?? ""} onChange={e => setAc({ includedController: e.target.value || null })} placeholder="RC-EX3A" />
+                </Field>
+                <Field label="Dimensiones UI (Al×An×F)">
+                  <input className={inputCls} value={ac.indoorDimensions ?? ""} onChange={e => setAc({ indoorDimensions: e.target.value || null })} placeholder="248×1100×700 mm" />
+                </Field>
+                <Field label="Dimensiones UE (Al×An×F)">
+                  <input className={inputCls} value={ac.outdoorDimensions ?? ""} onChange={e => setAc({ outdoorDimensions: e.target.value || null })} placeholder="705×890×340 mm" />
+                </Field>
+                <Field label="Peso UI / UE" span2>
+                  <input className={inputCls} value={ac.indoorOutdoorWeight ?? ""} onChange={e => setAc({ indoorOutdoorWeight: e.target.value || null })} placeholder="31 kg / 45 kg" />
+                </Field>
+              </div>
+            </div>
+          )}
+
+          {/* Non-conductos units */}
+          {!isConductos && (
+            <div className="grid grid-cols-2 gap-3 pt-1">
+              <Field label="Unidad interior (ref.)">
+                <input className={inputCls} value={ac.indoorUnit} onChange={e => setAc({ indoorUnit: e.target.value })} placeholder="FTXC25C" />
+              </Field>
+              <Field label="Unidad exterior (ref.)">
+                <input className={inputCls} value={ac.outdoorUnit} onChange={e => setAc({ outdoorUnit: e.target.value })} placeholder="RXC25C" />
+              </Field>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-3 pt-1">
+            <Field label="Tecnología">
+              <input className={inputCls} value={ac.technology} onChange={e => setAc({ technology: e.target.value })} placeholder="Inverter" />
+            </Field>
+            <Field label="Composición del equipo">
+              <input className={inputCls} value={ac.composition} onChange={e => setAc({ composition: e.target.value })} placeholder="Equipo 1x1" />
+            </Field>
+            <Field label="Refrigerante">
+              <input className={inputCls} value={ac.refrigerant} onChange={e => setAc({ refrigerant: e.target.value })} placeholder="R32" />
+            </Field>
+          </div>
+        </div>
 
         <Section title="Potencia y superficie">
           <Field label="Potencia frío (kW)" helper="Capacidad en kW, no eficiencia">
@@ -503,25 +554,15 @@ export function ProductFormModal({ initial, categories, onClose }: Props) {
               <option value="not_included">No incluido</option>
             </select>
           </Field>
-          <Field label="Mando / Control incluido">
-            <input className={inputCls} value={ac.includedController ?? ""} onChange={e => setAc({ includedController: e.target.value || null })} placeholder="RC-EX3A" />
-          </Field>
-          <Field label="Presión estática">
-            <input className={inputCls} value={ac.staticPressure ?? ""} onChange={e => setAc({ staticPressure: e.target.value || null })} placeholder="60 Pa estándar / 100 Pa máx." />
-          </Field>
+          {!isConductos && (
+            <>
+              <Field label="Mando / Control incluido">
+                <input className={inputCls} value={ac.includedController ?? ""} onChange={e => setAc({ includedController: e.target.value || null })} placeholder="RC-EX3A" />
+              </Field>
+            </>
+          )}
         </Section>
 
-        <Section title="Dimensiones y pesos (opcional)">
-          <Field label="Dimensiones unidad interior">
-            <input className={inputCls} value={ac.indoorDimensions ?? ""} onChange={e => setAc({ indoorDimensions: e.target.value || null })} placeholder="280 x 1370 x 740 mm" />
-          </Field>
-          <Field label="Dimensiones unidad exterior">
-            <input className={inputCls} value={ac.outdoorDimensions ?? ""} onChange={e => setAc({ outdoorDimensions: e.target.value || null })} placeholder="750 x 880 x 340 mm" />
-          </Field>
-          <Field label="Peso interior / exterior" span2>
-            <input className={inputCls} value={ac.indoorOutdoorWeight ?? ""} onChange={e => setAc({ indoorOutdoorWeight: e.target.value || null })} placeholder="54 / 57 kg" />
-          </Field>
-        </Section>
       </div>
     );
   }
@@ -864,9 +905,9 @@ export function ProductFormModal({ initial, categories, onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-8 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl flex flex-col mb-8">
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl flex flex-col max-h-[92vh]">
 
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
