@@ -14,11 +14,11 @@ export default async function WhyChooseUs() {
 
   return (
     <section className="bg-white py-16 sm:py-24">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-stretch">
 
         {/* Left — brand card */}
         <div
-          className="relative overflow-hidden rounded-3xl shadow-xl min-h-[300px] flex flex-col items-center justify-center text-center"
+          className="relative overflow-hidden rounded-3xl shadow-xl flex flex-col items-center justify-center text-center min-h-[340px]"
           style={{
             backgroundImage: "url('/barcelona.jpeg')",
             backgroundSize: "cover",
@@ -27,20 +27,20 @@ export default async function WhyChooseUs() {
         >
           <div
             className="absolute inset-0"
-            style={{ background: "linear-gradient(145deg, rgba(0,143,101,0.80) 0%, rgba(8,58,87,0.88) 100%)" }}
+            style={{ background: "linear-gradient(145deg, rgba(0,143,101,0.78) 0%, rgba(8,58,87,0.87) 100%)" }}
           />
-          <div className="relative z-10 px-8 py-12 flex flex-col items-center gap-6">
+          <div className="relative z-10 px-8 py-14 flex flex-col items-center gap-8">
             <Image
               src="/logos/logo-blanco-nombre.png"
               alt="Clima HVAC Service"
               width={500}
               height={200}
-              style={{ width: "auto", height: "72px", objectFit: "contain" }}
+              style={{ width: "auto", height: "100px", objectFit: "contain" }}
               priority
             />
-            <div className="space-y-1.5">
-              <p className="text-white/80 text-sm">C/ Balmes, 29 · 43204 - Reus</p>
-              <p className="text-white/80 text-sm">{t("why.mobileLabel")} 607 953 886</p>
+            <div className="space-y-2">
+              <p className="text-white/85 text-sm">C/ Balmes, 29 · 43204 - Reus</p>
+              <p className="text-white/85 text-sm">{t("why.mobileLabel")} 607 953 886</p>
             </div>
           </div>
         </div>

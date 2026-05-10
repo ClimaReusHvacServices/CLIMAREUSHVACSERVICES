@@ -98,10 +98,9 @@ export default function Navbar() {
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // El logo está fijo en top-1 (4px) con h-20 (80px) → su centro queda a 44px del borde superior.
+    // Logo fijo en top-0 con h-36 (144px) → centro a 72px del borde superior.
     // En cada tick de scroll revisamos qué sección [data-logo] contiene esa coordenada Y.
-    // Es determinista y funciona igual en ambas direcciones de scroll.
-    const LOGO_Y = 44;
+    const LOGO_Y = 72;
     let raf = 0;
 
     const update = () => {
@@ -207,11 +206,11 @@ export default function Navbar() {
       {/* ── Logo superior izquierda ────────────────────────────────────── */}
       <div className="hidden sm:block fixed left-24 top-0 z-50">
         <Link href="/" aria-label="Clima HVAC Service — inicio">
-          <div className="relative h-32">
+          <div className="relative h-36">
             <img
               src="/logos/logo-verde-nombre.png"
               alt="Clima HVAC Service"
-              className="h-32 w-auto object-contain"
+              className="h-36 w-auto object-contain"
               style={{ opacity: logoColor === "green" ? 1 : 0, transition: "opacity 0.4s ease" }}
             />
             <img
