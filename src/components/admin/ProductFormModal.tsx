@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { X, Info, DollarSign, Tag, Settings, Image, Search, Eye, Plus, Trash2, Wind, Flame, Droplets, Wifi, Home, Zap, Volume2 } from "lucide-react";
+import { X, Info, DollarSign, Tag, Settings, Image, Search, Eye, Plus, Trash2, Wind, Flame, Droplets } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
 import { createProduct, updateProduct } from "@/app/[locale]/(dashboard)/admin/products/actions";
@@ -32,6 +32,11 @@ interface Props {
   categories: CategoryRow[];
   onClose: () => void;
 }
+
+type SetFn = <K extends keyof ProductFormData>(key: K, val: ProductFormData[K]) => void;
+type SetAcFn = (patch: Partial<AcSpecs>) => void;
+type SetBoilerFn = (patch: Partial<BoilerSpecs>) => void;
+type SetAeroFn = (patch: Partial<AerothermalSpecs>) => void;
 
 // ─── Defaults ─────────────────────────────────────────────────────────────────
 
@@ -133,14 +138,657 @@ function NumInput({ value, onChange, placeholder, min = "0", step = "0.01" }: {
 // ─── Tab definitions ──────────────────────────────────────────────────────────
 
 const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
-  { id: "info",       label: "Principal",  icon: <Info size={12} /> },
-  { id: "pricing",    label: "Precio",     icon: <DollarSign size={12} /> },
-  { id: "commercial", label: "Comercial",  icon: <Tag size={12} /> },
-  { id: "technical",  label: "Técnico",    icon: <Settings size={12} /> },
-  { id: "media",      label: "Imágenes",   icon: <Image size={12} /> },
-  { id: "seo",        label: "SEO",        icon: <Search size={12} /> },
+  { id: "info",       label: "Principal",    icon: <Info size={12} /> },
+  { id: "pricing",    label: "Precio",       icon: <DollarSign size={12} /> },
+  { id: "commercial", label: "Comercial",    icon: <Tag size={12} /> },
+  { id: "technical",  label: "Técnico",      icon: <Settings size={12} /> },
+  { id: "media",      label: "Imágenes",     icon: <Image size={12} /> },
+  { id: "seo",        label: "SEO",          icon: <Search size={12} /> },
   { id: "preview",    label: "Vista Previa", icon: <Eye size={12} /> },
 ];
+
+// ─── Tab components (module-level — never recreated on parent re-render) ──────
+
+function InfoTab({ form, set, categories, onTypeChange, onCategoryChange }: {
+  form: ProductFormData;
+  set: SetFn;
+  categories: CategoryRow[];
+  onTypeChange: (t: ProductType) => void;
+  onCategoryChange: (id: string, slug: string) => void;
+}) {
+  return (
+    <div className="space-y-4">
+      <div>
+        <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Tipo de producto *</p>
+        <div className="grid grid-cols-3 gap-2">
+          {([
+            { val: "air_conditioning" as ProductType, label: "Aire Acondicionado", icon: <Wind size={20} /> },
+            { val: "boiler" as ProductType, label: "Caldera", icon: <Flame size={20} /> },
+            { val: "aerothermal" as ProductType, label: "Aerotermia", icon: <Droplets size={20} /> },
+          ]).map(({ val, label, icon }) => (
+            <button
+              key={val} type="button"
+              onClick={() => onTypeChange(val)}
+              className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 text-xs font-semibold transition-all ${
+                form.productType === val
+                  ? "border-primary-400 bg-primary-50 text-primary-700 shadow-sm"
+                  : "border-gray-200 bg-white text-gray-600 hover:border-primary-200"
+              }`}
+            >
+              <span className={form.productType === val ? "text-primary-600" : "text-gray-400"}>{icon}</span>
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <Section title="Publicación">
+        <Field label="Página donde aparece" required>
+          <select className={selectCls} value={form.pageLocation} onChange={e => set("pageLocation", e.target.value as PageLocation)}>
+            <option value="oferta">Oferta / Catálogo</option>
+            <option value="calderas">Calderas</option>
+            <option value="aerotermia">Aerotermia</option>
+          </select>
+        </Field>
+        <div className="flex flex-col gap-2 pt-1">
+          <Toggle label="Activo (visible en la web)" checked={form.isActive} onChange={v => set("isActive", v)} />
+          <Toggle label="Destacado (aparece primero)" checked={form.isFeatured} onChange={v => set("isFeatured", v)} />
+        </div>
+      </Section>
+
+      <Section title="Identificación del producto">
+        <Field label="Nombre comercial" required span2>
+          <input className={inputCls} value={form.commercialName}
+            onChange={e => set("commercialName", e.target.value)}
+            placeholder="Ej. Mitsubishi Heavy Conductos Smart 100, 10 kW" />
+        </Field>
+        <Field label="Marca" required>
+          <input className={inputCls} value={form.brand} onChange={e => set("brand", e.target.value)} placeholder="Ej. Mitsubishi Heavy Industries" />
+        </Field>
+        <Field label="Modelo / Referencia">
+          <input className={inputCls} value={form.model} onChange={e => set("model", e.target.value)} placeholder="Ej. FDUM100VHNP-W" />
+        </Field>
+        <Field label="SKU interno">
+          <input className={inputCls} value={form.sku} onChange={e => set("sku", e.target.value)} placeholder="Ej. CL39027" />
+        </Field>
+        <Field label="Serie / Gama">
+          <input className={inputCls} value={form.series} onChange={e => set("series", e.target.value)} placeholder="Ej. Smart" />
+        </Field>
+        <Field label="Categoría" required>
+          <select className={selectCls} value={form.categoryId}
+            onChange={e => {
+              const cat = categories.find(c => c.id === e.target.value);
+              onCategoryChange(e.target.value, cat?.slug ?? "");
+            }}
+          >
+            <option value="">Seleccionar categoría</option>
+            {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
+        </Field>
+      </Section>
+    </div>
+  );
+}
+
+function PricingTab({ form, set }: { form: ProductFormData; set: SetFn }) {
+  return (
+    <div className="space-y-4">
+      <Section title="Precios">
+        <Field label="Precio normal (€)" required>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">€</span>
+            <input type="number" min="0" step="0.01" className={`${inputCls} pl-7`} value={form.price}
+              onChange={e => set("price", e.target.value)} placeholder="5400.00" />
+          </div>
+        </Field>
+        <Field label="Precio de oferta (€)" helper="Deja vacío si no hay oferta">
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">€</span>
+            <input type="number" min="0" step="0.01" className={`${inputCls} pl-7`} value={form.discountPrice}
+              onChange={e => set("discountPrice", e.target.value)} placeholder="5000.00" />
+          </div>
+        </Field>
+        <div className="flex flex-col gap-2 col-span-2 pt-1">
+          <Toggle label="IVA incluido en el precio" checked={form.ivaIncluded} onChange={v => set("ivaIncluded", v)} />
+          <Toggle label="Instalación incluida en el precio" checked={form.installationIncluded} onChange={v => set("installationIncluded", v)} />
+        </div>
+      </Section>
+
+      <Section title="Stock y disponibilidad">
+        <Field label="Estado de stock" required>
+          <select className={selectCls} value={form.stockStatus} onChange={e => set("stockStatus", e.target.value as StockStatus)}>
+            <option value="in_stock">En stock</option>
+            <option value="on_request">Bajo pedido</option>
+            <option value="consult">Consultar disponibilidad</option>
+          </select>
+        </Field>
+        {form.stockStatus === "in_stock" && (
+          <Field label="Unidades en stock">
+            <NumInput value={form.stockQuantity} onChange={v => set("stockQuantity", v)} step="1" placeholder="10" />
+          </Field>
+        )}
+        <Field label="Garantía" span2>
+          <input className={inputCls} value={form.warranty} onChange={e => set("warranty", e.target.value)} placeholder="Ej. 3 años oficial fabricante" />
+        </Field>
+      </Section>
+    </div>
+  );
+}
+
+function CommercialTab({ form, set, tagInput, setTagInput, addTag }: {
+  form: ProductFormData;
+  set: SetFn;
+  tagInput: string;
+  setTagInput: (v: string) => void;
+  addTag: (raw: string) => void;
+}) {
+  return (
+    <div className="space-y-4">
+      <Section title="Descripciones para el cliente">
+        <Field label="Descripción corta" required span2
+          helper="Máx. 200 caracteres. Se muestra en la tarjeta del producto.">
+          <textarea rows={2} className={`${inputCls} resize-none`} value={form.shortDescription} maxLength={200}
+            onChange={e => set("shortDescription", e.target.value)}
+            placeholder="Ej. Aire acondicionado por conductos Inverter de 10 kW con bomba de calor." />
+          <p className="text-[11px] text-gray-400 text-right">{form.shortDescription.length}/200</p>
+        </Field>
+        <Field label="Descripción completa" span2>
+          <textarea rows={5} className={`${inputCls} resize-y`} value={form.longDescription}
+            onChange={e => set("longDescription", e.target.value)}
+            placeholder="Descripción detallada para la página del producto..." />
+        </Field>
+      </Section>
+
+      <Section title="Etiquetas comerciales">
+        <div className="col-span-2">
+          <div className="flex flex-wrap gap-1.5 mb-2 min-h-[32px]">
+            {form.commercialTags.map(tag => (
+              <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary-50 text-primary-700 text-xs font-medium rounded-lg">
+                {tag}
+                <button type="button" onClick={() => set("commercialTags", form.commercialTags.filter(t => t !== tag))}
+                  className="text-primary-400 hover:text-primary-700">
+                  <X size={10} />
+                </button>
+              </span>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <input className={inputCls} value={tagInput} onChange={e => setTagInput(e.target.value)}
+              onKeyDown={e => { if (e.key === "Enter" || e.key === ",") { e.preventDefault(); addTag(tagInput); } }}
+              placeholder="Ej. Inverter (Enter para añadir)" />
+            <button type="button" onClick={() => addTag(tagInput)}
+              className="px-3 py-2 rounded-xl bg-primary-50 text-primary-600 hover:bg-primary-100 transition-colors">
+              <Plus size={16} />
+            </button>
+          </div>
+        </div>
+      </Section>
+    </div>
+  );
+}
+
+const INST_TYPES = [
+  { val: "split",       label: "Split 1×1" },
+  { val: "conductos",   label: "Conductos" },
+  { val: "cassette",    label: "Cassette" },
+  { val: "multisplit",  label: "Multi-Split" },
+  { val: "suelo_techo", label: "Suelo-Techo" },
+] as const;
+
+function AcTechnicalTab({ form, setAc }: { form: ProductFormData; setAc: SetAcFn }) {
+  const ac = form.acSpecs;
+  const isConductos = ac.installationType === "conductos";
+
+  return (
+    <div className="space-y-4">
+      <div className="rounded-xl border border-gray-100 bg-gray-50/60 p-4 space-y-3">
+        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tipo de instalación *</p>
+        <div className="flex flex-wrap gap-2">
+          {INST_TYPES.map(({ val, label }) => (
+            <button key={val} type="button"
+              onClick={() => setAc({ installationType: val })}
+              className={`px-3 py-2 rounded-xl text-xs font-bold border-2 transition-all ${
+                ac.installationType === val
+                  ? "border-primary-400 bg-primary-50 text-primary-700"
+                  : "border-gray-200 bg-white text-gray-600 hover:border-primary-200"
+              }`}>
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {isConductos && (
+          <div className="mt-2 rounded-xl border border-blue-100 bg-blue-50/50 p-3">
+            <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-2">Conductos — datos específicos</p>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Referencia unidad interior (UI)">
+                <input className={inputCls} value={ac.indoorUnit} onChange={e => setAc({ indoorUnit: e.target.value })} placeholder="AD71S2SM9FA" />
+              </Field>
+              <Field label="Referencia unidad exterior (UE)">
+                <input className={inputCls} value={ac.outdoorUnit} onChange={e => setAc({ outdoorUnit: e.target.value })} placeholder="1U71S2SR3FA" />
+              </Field>
+              <Field label="Presión estática disponible">
+                <input className={inputCls} value={ac.staticPressure ?? ""} onChange={e => setAc({ staticPressure: e.target.value || null })} placeholder="60 Pa estándar / 100 Pa máx." />
+              </Field>
+              <Field label="Mando / Control incluido">
+                <input className={inputCls} value={ac.includedController ?? ""} onChange={e => setAc({ includedController: e.target.value || null })} placeholder="RC-EX3A" />
+              </Field>
+              <Field label="Dimensiones UI (Al×An×F)">
+                <input className={inputCls} value={ac.indoorDimensions ?? ""} onChange={e => setAc({ indoorDimensions: e.target.value || null })} placeholder="248×1100×700 mm" />
+              </Field>
+              <Field label="Dimensiones UE (Al×An×F)">
+                <input className={inputCls} value={ac.outdoorDimensions ?? ""} onChange={e => setAc({ outdoorDimensions: e.target.value || null })} placeholder="705×890×340 mm" />
+              </Field>
+              <Field label="Peso UI / UE" span2>
+                <input className={inputCls} value={ac.indoorOutdoorWeight ?? ""} onChange={e => setAc({ indoorOutdoorWeight: e.target.value || null })} placeholder="31 kg / 45 kg" />
+              </Field>
+            </div>
+          </div>
+        )}
+
+        {!isConductos && (
+          <div className="grid grid-cols-2 gap-3 pt-1">
+            <Field label="Unidad interior (ref.)">
+              <input className={inputCls} value={ac.indoorUnit} onChange={e => setAc({ indoorUnit: e.target.value })} placeholder="FTXC25C" />
+            </Field>
+            <Field label="Unidad exterior (ref.)">
+              <input className={inputCls} value={ac.outdoorUnit} onChange={e => setAc({ outdoorUnit: e.target.value })} placeholder="RXC25C" />
+            </Field>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-3 pt-1">
+          <Field label="Tecnología">
+            <input className={inputCls} value={ac.technology} onChange={e => setAc({ technology: e.target.value })} placeholder="Inverter" />
+          </Field>
+          <Field label="Composición del equipo">
+            <input className={inputCls} value={ac.composition} onChange={e => setAc({ composition: e.target.value })} placeholder="Equipo 1x1" />
+          </Field>
+          <Field label="Refrigerante">
+            <input className={inputCls} value={ac.refrigerant} onChange={e => setAc({ refrigerant: e.target.value })} placeholder="R32" />
+          </Field>
+        </div>
+      </div>
+
+      <Section title="Potencia y superficie">
+        <Field label="Potencia frío (kW)" helper="Capacidad en kW, no eficiencia">
+          <NumInput value={String(ac.coolingCapacityKw ?? "")} onChange={v => setAc({ coolingCapacityKw: parseFloat(v) || 0 })} placeholder="10.0" />
+        </Field>
+        <Field label="Potencia calor (kW)">
+          <NumInput value={String(ac.heatingCapacityKw ?? "")} onChange={v => setAc({ heatingCapacityKw: parseFloat(v) || 0 })} placeholder="10.0" />
+        </Field>
+        <Field label="Superficie mín. recomendada (m²)" helper="Orientativo según aislamiento">
+          <NumInput value={String(ac.recommendedAreaMin ?? "")} onChange={v => setAc({ recommendedAreaMin: parseFloat(v) || null })} step="1" placeholder="100" />
+        </Field>
+        <Field label="Superficie máx. recomendada (m²)">
+          <NumInput value={String(ac.recommendedAreaMax ?? "")} onChange={v => setAc({ recommendedAreaMax: parseFloat(v) || null })} step="1" placeholder="140" />
+        </Field>
+      </Section>
+
+      <Section title="Eficiencia energética">
+        <Field label="Etiqueta energética frío" helper="Ej. A++, A+">
+          <input className={inputCls} value={ac.energyLabelCooling} onChange={e => setAc({ energyLabelCooling: e.target.value })} placeholder="A++" />
+        </Field>
+        <Field label="Etiqueta energética calor">
+          <input className={inputCls} value={ac.energyLabelHeating} onChange={e => setAc({ energyLabelHeating: e.target.value })} placeholder="A+" />
+        </Field>
+        <Field label="SEER (eficiencia estacional frío)">
+          <NumInput value={String(ac.seer ?? "")} onChange={v => setAc({ seer: parseFloat(v) || null })} placeholder="6.11" />
+        </Field>
+        <Field label="SCOP (eficiencia estacional calor)">
+          <NumInput value={String(ac.scop ?? "")} onChange={v => setAc({ scop: parseFloat(v) || null })} placeholder="4.13" />
+        </Field>
+      </Section>
+
+      <Section title="Confort y conectividad">
+        <Field label="Ruido mínimo interior (dB)" helper="Nivel en funcionamiento mínimo">
+          <NumInput value={String(ac.minNoiseDb ?? "")} onChange={v => setAc({ minNoiseDb: parseFloat(v) || null })} step="1" placeholder="30" />
+        </Field>
+        <Field label="WiFi">
+          <select className={selectCls} value={ac.wifiStatus} onChange={e => setAc({ wifiStatus: e.target.value as any })}>
+            <option value="included">Incluido</option>
+            <option value="optional">Opcional (accesorio adicional)</option>
+            <option value="not_included">No incluido</option>
+          </select>
+        </Field>
+        {!isConductos && (
+          <Field label="Mando / Control incluido">
+            <input className={inputCls} value={ac.includedController ?? ""} onChange={e => setAc({ includedController: e.target.value || null })} placeholder="RC-EX3A" />
+          </Field>
+        )}
+      </Section>
+    </div>
+  );
+}
+
+function BoilerTechnicalTab({ form, setBoiler }: { form: ProductFormData; setBoiler: SetBoilerFn }) {
+  const b = form.boilerSpecs;
+  function toggleUseType(val: string) {
+    const arr = b.useType.includes(val) ? b.useType.filter(x => x !== val) : [...b.useType, val];
+    setBoiler({ useType: arr });
+  }
+  return (
+    <div className="space-y-4">
+      <Section title="Tipo de caldera">
+        <Field label="Tipo de caldera" required>
+          <select className={selectCls} value={b.boilerType} onChange={e => setBoiler({ boilerType: e.target.value as any })}>
+            <option value="condensacion">Condensación</option>
+            <option value="bajo_nox">Bajo NOx</option>
+            <option value="estanca">Estanca</option>
+            <option value="gasoil">Gasoil</option>
+            <option value="otra">Otra</option>
+          </select>
+        </Field>
+        <Field label="Combustible" required>
+          <select className={selectCls} value={b.fuelType} onChange={e => setBoiler({ fuelType: e.target.value as any })}>
+            <option value="gas_natural">Gas natural</option>
+            <option value="propano">Propano</option>
+            <option value="gasoil">Gasóleo</option>
+            <option value="electrica">Eléctrica</option>
+          </select>
+        </Field>
+        <Field label="Instalación">
+          <select className={selectCls} value={b.installationType} onChange={e => setBoiler({ installationType: e.target.value as any })}>
+            <option value="mural">Mural (pared)</option>
+            <option value="suelo">Suelo</option>
+          </select>
+        </Field>
+        <div className="flex flex-col gap-1.5">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Uso</p>
+          {["calefaccion", "acs"].map(v => (
+            <label key={v} className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={b.useType.includes(v)} onChange={() => toggleUseType(v)}
+                className="w-4 h-4 rounded border-gray-300 text-primary-600 accent-primary-600" />
+              <span className="text-sm text-gray-700">{v === "calefaccion" ? "Calefacción" : "ACS (agua caliente)"}</span>
+            </label>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="Potencias">
+        <Field label="Potencia calefacción (kW)" required>
+          <NumInput value={String(b.heatingPowerKw ?? "")} onChange={v => setBoiler({ heatingPowerKw: parseFloat(v) || 0 })} placeholder="24" />
+        </Field>
+        <Field label="Potencia ACS (kW)">
+          <NumInput value={String(b.dhwPowerKw ?? "")} onChange={v => setBoiler({ dhwPowerKw: parseFloat(v) || null })} placeholder="28" />
+        </Field>
+        <Field label="Caudal ACS (l/min)">
+          <input className={inputCls} value={b.dhwFlowRate ?? ""} onChange={e => setBoiler({ dhwFlowRate: e.target.value || null })} placeholder="14 l/min" />
+        </Field>
+        <Field label="Perfil ACS">
+          <input className={inputCls} value={b.dhwProfile ?? ""} onChange={e => setBoiler({ dhwProfile: e.target.value || null })} placeholder="XL" />
+        </Field>
+      </Section>
+
+      <Section title="Eficiencia y etiquetas">
+        <Field label="Etiqueta energética calefacción">
+          <input className={inputCls} value={b.energyLabelHeating ?? ""} onChange={e => setBoiler({ energyLabelHeating: e.target.value || null })} placeholder="A" />
+        </Field>
+        <Field label="Etiqueta energética ACS">
+          <input className={inputCls} value={b.energyLabelDhw ?? ""} onChange={e => setBoiler({ energyLabelDhw: e.target.value || null })} placeholder="A" />
+        </Field>
+        <Field label="Eficiencia (%)">
+          <input className={inputCls} value={b.efficiency ?? ""} onChange={e => setBoiler({ efficiency: e.target.value || null })} placeholder="109%" />
+        </Field>
+        <Field label="Clase NOx">
+          <input className={inputCls} value={b.noxClass ?? ""} onChange={e => setBoiler({ noxClass: e.target.value || null })} placeholder="6" />
+        </Field>
+      </Section>
+
+      <Section title="Accesorios y dimensiones">
+        <Field label="Termostato">
+          <select className={selectCls} value={b.thermostatCompatibility} onChange={e => setBoiler({ thermostatCompatibility: e.target.value as any })}>
+            <option value="included">Incluido</option>
+            <option value="optional">Compatible (opcional)</option>
+            <option value="not_included">No compatible</option>
+          </select>
+        </Field>
+        <div className="flex flex-col gap-2 pt-1">
+          <Toggle label="Kit de evacuación incluido" checked={b.flueKitIncluded} onChange={v => setBoiler({ flueKitIncluded: v })} />
+        </div>
+        <Field label="Dimensiones" span2>
+          <input className={inputCls} value={b.dimensions ?? ""} onChange={e => setBoiler({ dimensions: e.target.value || null })} placeholder="400 x 700 x 350 mm" />
+        </Field>
+      </Section>
+    </div>
+  );
+}
+
+function AeroTechnicalTab({ form, setAero }: { form: ProductFormData; setAero: SetAeroFn }) {
+  const a = form.aerothermalSpecs;
+  function toggleFn(val: string) {
+    const arr = a.functions.includes(val) ? a.functions.filter(x => x !== val) : [...a.functions, val];
+    setAero({ functions: arr });
+  }
+  return (
+    <div className="space-y-4">
+      <Section title="Sistema y funciones">
+        <Field label="Tipo de sistema" required>
+          <select className={selectCls} value={a.systemType} onChange={e => setAero({ systemType: e.target.value as any })}>
+            <option value="monobloc">Monobloc (todo exterior)</option>
+            <option value="bibloc">Bíbloc (interior + exterior)</option>
+            <option value="todo_en_uno">Todo en uno</option>
+          </select>
+        </Field>
+        <Field label="Alimentación eléctrica">
+          <select className={selectCls} value={a.powerSupply} onChange={e => setAero({ powerSupply: e.target.value as any })}>
+            <option value="monofasica">Monofásica 230V</option>
+            <option value="trifasica">Trifásica 400V</option>
+            <option value="no_especificado">No especificado</option>
+          </select>
+        </Field>
+        <div className="col-span-2 flex gap-4">
+          {["calefaccion", "refrigeracion", "acs"].map(v => (
+            <label key={v} className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={a.functions.includes(v)} onChange={() => toggleFn(v)}
+                className="w-4 h-4 rounded border-gray-300 text-primary-600 accent-primary-600" />
+              <span className="text-sm text-gray-700">{v === "calefaccion" ? "Calefacción" : v === "refrigeracion" ? "Refrigeración" : "ACS"}</span>
+            </label>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="Potencias y capacidades">
+        <Field label="Potencia calefacción (kW)" required>
+          <NumInput value={String(a.heatingCapacityKw ?? "")} onChange={v => setAero({ heatingCapacityKw: parseFloat(v) || 0 })} placeholder="12" />
+        </Field>
+        <Field label="Potencia refrigeración (kW)">
+          <NumInput value={String(a.coolingCapacityKw ?? "")} onChange={v => setAero({ coolingCapacityKw: parseFloat(v) || null })} placeholder="10" />
+        </Field>
+        <Field label="Depósito ACS integrado (litros)">
+          <NumInput value={String(a.tankLiters ?? "")} onChange={v => setAero({ tankLiters: parseFloat(v) || null })} step="1" placeholder="180" />
+        </Field>
+        <Field label="Temperatura máx. impulsión">
+          <input className={inputCls} value={a.maxFlowTemperature ?? ""} onChange={e => setAero({ maxFlowTemperature: e.target.value || null })} placeholder="60°C" />
+        </Field>
+        <Field label="Superficie mín. recomendada (m²)">
+          <NumInput value={String(a.recommendedAreaMin ?? "")} onChange={v => setAero({ recommendedAreaMin: parseFloat(v) || null })} step="1" placeholder="100" />
+        </Field>
+        <Field label="Superficie máx. recomendada (m²)">
+          <NumInput value={String(a.recommendedAreaMax ?? "")} onChange={v => setAero({ recommendedAreaMax: parseFloat(v) || null })} step="1" placeholder="200" />
+        </Field>
+      </Section>
+
+      <Section title="Eficiencia y nivel sonoro">
+        <Field label="COP (rendimiento agua caliente)">
+          <NumInput value={String(a.cop ?? "")} onChange={v => setAero({ cop: parseFloat(v) || null })} placeholder="4.5" />
+        </Field>
+        <Field label="SCOP (estacional calefacción)">
+          <NumInput value={String(a.scop ?? "")} onChange={v => setAero({ scop: parseFloat(v) || null })} placeholder="4.0" />
+        </Field>
+        <Field label="Etiqueta energética">
+          <input className={inputCls} value={a.energyLabel ?? ""} onChange={e => setAero({ energyLabel: e.target.value || null })} placeholder="A+++" />
+        </Field>
+        <Field label="Refrigerante">
+          <input className={inputCls} value={a.refrigerant ?? ""} onChange={e => setAero({ refrigerant: e.target.value || null })} placeholder="R32" />
+        </Field>
+        <Field label="Ruido mínimo (dB)">
+          <NumInput value={String(a.minNoiseDb ?? "")} onChange={v => setAero({ minNoiseDb: parseFloat(v) || null })} step="1" placeholder="38" />
+        </Field>
+      </Section>
+
+      <Section title="Compatibilidad de emisores">
+        <Field label="Suelo radiante">
+          <div className="pt-1"><Toggle label="Compatible" checked={a.compatibleUnderfloorHeating} onChange={v => setAero({ compatibleUnderfloorHeating: v })} /></div>
+        </Field>
+        <Field label="Radiadores">
+          <select className={selectCls} value={a.compatibleRadiators} onChange={e => setAero({ compatibleRadiators: e.target.value as any })}>
+            <option value="yes">Sí, directamente</option>
+            <option value="depends">Depende del tipo</option>
+            <option value="no">No compatible</option>
+          </select>
+        </Field>
+        <Field label="Fan-coils">
+          <div className="pt-1"><Toggle label="Compatible" checked={a.compatibleFanCoils} onChange={v => setAero({ compatibleFanCoils: v })} /></div>
+        </Field>
+      </Section>
+    </div>
+  );
+}
+
+function MediaTab({ form, set }: { form: ProductFormData; set: SetFn }) {
+  return (
+    <div className="space-y-4">
+      <Section title="Imagen principal">
+        <div className="col-span-2 flex gap-3 items-start">
+          <div className="w-24 h-24 rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center shrink-0 overflow-hidden">
+            {form.mainImage
+              ? <img src={form.mainImage} alt="" className="w-full h-full object-contain" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+              : <Wind size={28} className="text-gray-200" />}
+          </div>
+          <div className="flex-1">
+            <input className={inputCls} value={form.mainImage} onChange={e => set("mainImage", e.target.value)}
+              placeholder="https://... URL de imagen principal" />
+            <p className="text-[11px] text-gray-400 mt-1">Pega la URL directa de la imagen (JPG, PNG, WebP).</p>
+          </div>
+        </div>
+      </Section>
+
+      <div className="rounded-xl border border-gray-100 bg-gray-50/60 p-4 space-y-3">
+        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Galería de imágenes adicionales</p>
+        {form.galleryImages.map((url, i) => (
+          <div key={i} className="flex gap-2">
+            <input className={inputCls} value={url} onChange={e => {
+              const arr = [...form.galleryImages]; arr[i] = e.target.value; set("galleryImages", arr);
+            }} placeholder={`Imagen ${i + 2}: https://...`} />
+            <button type="button" onClick={() => set("galleryImages", form.galleryImages.filter((_, j) => j !== i))}
+              className="p-2.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors shrink-0">
+              <Trash2 size={15} />
+            </button>
+          </div>
+        ))}
+        <button type="button"
+          onClick={() => set("galleryImages", [...form.galleryImages, ""])}
+          className="flex items-center gap-2 text-sm text-primary-600 hover:text-primary-700 font-medium px-1">
+          <Plus size={14} /> Añadir imagen
+        </button>
+      </div>
+
+      <Section title="Documentos">
+        <Field label="PDF ficha técnica (URL)" span2>
+          <input className={inputCls} value={form.technicalPdf} onChange={e => set("technicalPdf", e.target.value)}
+            placeholder="https://... URL del PDF" />
+        </Field>
+      </Section>
+    </div>
+  );
+}
+
+function SeoTab({ form, set }: { form: ProductFormData; set: SetFn }) {
+  const autoTitle = form.commercialName ? `${form.commercialName} | Clima HVAC Service` : "";
+  const autoDesc = form.shortDescription || "";
+  return (
+    <div className="space-y-4">
+      <Section title="SEO para buscadores">
+        <Field label="Título SEO" span2 helper="Aparece en Google como título del resultado. Máx. 60 caracteres.">
+          <input className={inputCls} value={form.seoTitle} onChange={e => set("seoTitle", e.target.value)}
+            placeholder={autoTitle} maxLength={70} />
+          {!form.seoTitle && autoTitle && (
+            <button type="button" className="text-[11px] text-primary-500 hover:text-primary-700 mt-1"
+              onClick={() => set("seoTitle", autoTitle)}>
+              Usar automático: &ldquo;{autoTitle.slice(0, 60)}...&rdquo;
+            </button>
+          )}
+        </Field>
+        <Field label="Meta descripción" span2 helper="Aparece bajo el título en Google. Máx. 155 caracteres.">
+          <textarea rows={3} className={`${inputCls} resize-none`} value={form.seoDescription}
+            onChange={e => set("seoDescription", e.target.value)} placeholder={autoDesc} maxLength={160} />
+          <p className="text-[11px] text-gray-400 text-right">{form.seoDescription.length}/155</p>
+          {!form.seoDescription && autoDesc && (
+            <button type="button" className="text-[11px] text-primary-500 hover:text-primary-700"
+              onClick={() => set("seoDescription", autoDesc)}>
+              Usar descripción corta
+            </button>
+          )}
+        </Field>
+      </Section>
+    </div>
+  );
+}
+
+function PreviewTab({ form }: { form: ProductFormData }) {
+  const price = parseFloat(form.price) || 0;
+  const discount = parseFloat(form.discountPrice) || null;
+  const displayPrice = discount && discount < price ? discount : price;
+  const ac = form.acSpecs;
+  const boiler = form.boilerSpecs;
+  const aero = form.aerothermalSpecs;
+
+  const badges: string[] = [];
+  if (form.productType === "air_conditioning") {
+    if (ac.coolingCapacityKw) badges.push(`${ac.coolingCapacityKw} kW`);
+    if (ac.recommendedAreaMin && ac.recommendedAreaMax) badges.push(`${ac.recommendedAreaMin}–${ac.recommendedAreaMax} m²`);
+    if (ac.energyLabelCooling) badges.push(ac.energyLabelHeating ? `${ac.energyLabelCooling} / ${ac.energyLabelHeating}` : ac.energyLabelCooling);
+    if (ac.minNoiseDb) badges.push(`Desde ${ac.minNoiseDb} dB`);
+    if (ac.wifiStatus !== "not_included") badges.push(ac.wifiStatus === "included" ? "WiFi incluido" : "WiFi opcional");
+  } else if (form.productType === "boiler") {
+    if (boiler.heatingPowerKw) badges.push(`${boiler.heatingPowerKw} kW`);
+    const fuel: Record<string, string> = { gas_natural: "Gas natural", propano: "Propano", gasoil: "Gasóleo", electrica: "Eléctrica" };
+    if (fuel[boiler.fuelType]) badges.push(fuel[boiler.fuelType]);
+    if (boiler.energyLabelHeating) badges.push(`Clase ${boiler.energyLabelHeating}`);
+  } else {
+    if (aero.heatingCapacityKw) badges.push(`${aero.heatingCapacityKw} kW`);
+    if (aero.functions.includes("refrigeracion")) badges.push("Frío + Calor");
+    if (aero.tankLiters) badges.push(`Depósito ${aero.tankLiters} L`);
+    if (aero.scop) badges.push(`SCOP ${aero.scop}`);
+    if (aero.energyLabel) badges.push(aero.energyLabel);
+  }
+
+  return (
+    <div className="space-y-4">
+      <p className="text-xs text-gray-400 text-center">Así se verá la tarjeta del producto en la web</p>
+      <div className="max-w-xs mx-auto bg-white rounded-2xl border border-gray-100 shadow-lg overflow-hidden">
+        <div className="bg-gray-50 h-40 flex items-center justify-center border-b border-gray-100">
+          {form.mainImage
+            ? <img src={form.mainImage} alt="" className="h-32 object-contain" />
+            : <Wind size={48} className="text-gray-200" />}
+        </div>
+        <div className="p-4">
+          {form.brand && <p className="text-xs text-gray-400 font-medium mb-0.5">{form.brand}</p>}
+          <h3 className="font-bold text-gray-900 text-sm leading-tight line-clamp-2 mb-2">
+            {form.commercialName || "Nombre del producto"}
+          </h3>
+          {form.shortDescription && <p className="text-xs text-gray-500 mb-3 line-clamp-2">{form.shortDescription}</p>}
+          {badges.length > 0 && (
+            <div className="flex flex-wrap gap-1 mb-3">
+              {badges.map(b => (
+                <span key={b} className="px-2 py-0.5 bg-primary-50 text-primary-700 text-[10px] font-semibold rounded-lg">{b}</span>
+              ))}
+            </div>
+          )}
+          <div className="flex items-baseline gap-2 mb-3">
+            <span className="text-xl font-bold text-amber-500">€{displayPrice.toLocaleString("es")}</span>
+            {discount && discount < price && <span className="text-sm text-gray-400 line-through">€{price.toLocaleString("es")}</span>}
+          </div>
+          <button className="w-full py-2.5 rounded-xl text-white text-xs font-bold"
+            style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}>
+            Pedir presupuesto
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
@@ -175,17 +823,24 @@ export function ProductFormModal({ initial, categories, onClose }: Props) {
     setForm(f => ({ ...f, aerothermalSpecs: { ...f.aerothermalSpecs, ...patch } }));
   }, []);
 
-  function onTypeChange(t: ProductType) {
+  const onTypeChange = useCallback((t: ProductType) => {
     setForm(f => ({ ...f, productType: t, pageLocation: PAGE_LOCATION_DEFAULT[t] }));
-  }
+  }, []);
 
-  function addTag(raw: string) {
+  const onCategoryChange = useCallback((id: string, slug: string) => {
+    setForm(f => ({ ...f, categoryId: id, category: slug }));
+  }, []);
+
+  const addTag = useCallback((raw: string) => {
     const tag = raw.trim();
-    if (tag && !form.commercialTags.includes(tag)) {
-      set("commercialTags", [...form.commercialTags, tag]);
-    }
+    setForm(f => {
+      if (tag && !f.commercialTags.includes(tag)) {
+        return { ...f, commercialTags: [...f.commercialTags, tag] };
+      }
+      return f;
+    });
     setTagInput("");
-  }
+  }, []);
 
   function validate(): string[] {
     const e: string[] = [];
@@ -253,651 +908,6 @@ export function ProductFormModal({ initial, categories, onClose }: Props) {
     } finally { setLoading(false); }
   }
 
-  // ─── Tab renders ─────────────────────────────────────────────────────────────
-
-  function InfoTab() {
-    return (
-      <div className="space-y-4">
-        {/* Product type */}
-        <div>
-          <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Tipo de producto *</p>
-          <div className="grid grid-cols-3 gap-2">
-            {([
-              { val: "air_conditioning" as ProductType, label: "Aire Acondicionado", icon: <Wind size={20} /> },
-              { val: "boiler" as ProductType, label: "Caldera", icon: <Flame size={20} /> },
-              { val: "aerothermal" as ProductType, label: "Aerotermia", icon: <Droplets size={20} /> },
-            ]).map(({ val, label, icon }) => (
-              <button
-                key={val} type="button"
-                onClick={() => onTypeChange(val)}
-                className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 text-xs font-semibold transition-all ${
-                  form.productType === val
-                    ? "border-primary-400 bg-primary-50 text-primary-700 shadow-sm"
-                    : "border-gray-200 bg-white text-gray-600 hover:border-primary-200"
-                }`}
-              >
-                <span className={form.productType === val ? "text-primary-600" : "text-gray-400"}>{icon}</span>
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <Section title="Publicación">
-          <Field label="Página donde aparece" required>
-            <select className={selectCls} value={form.pageLocation} onChange={e => set("pageLocation", e.target.value as PageLocation)}>
-              <option value="oferta">Oferta / Catálogo</option>
-              <option value="calderas">Calderas</option>
-              <option value="aerotermia">Aerotermia</option>
-            </select>
-          </Field>
-          <div className="flex flex-col gap-2 pt-1">
-            <Toggle label="Activo (visible en la web)" checked={form.isActive} onChange={v => set("isActive", v)} />
-            <Toggle label="Destacado (aparece primero)" checked={form.isFeatured} onChange={v => set("isFeatured", v)} />
-          </div>
-        </Section>
-
-        <Section title="Identificación del producto">
-          <Field label="Nombre comercial" required span2>
-            <input className={inputCls} value={form.commercialName}
-              onChange={e => set("commercialName", e.target.value)}
-              placeholder="Ej. Mitsubishi Heavy Conductos Smart 100, 10 kW" />
-          </Field>
-          <Field label="Marca" required>
-            <input className={inputCls} value={form.brand} onChange={e => set("brand", e.target.value)} placeholder="Ej. Mitsubishi Heavy Industries" />
-          </Field>
-          <Field label="Modelo / Referencia">
-            <input className={inputCls} value={form.model} onChange={e => set("model", e.target.value)} placeholder="Ej. FDUM100VHNP-W" />
-          </Field>
-          <Field label="SKU interno">
-            <input className={inputCls} value={form.sku} onChange={e => set("sku", e.target.value)} placeholder="Ej. CL39027" />
-          </Field>
-          <Field label="Serie / Gama">
-            <input className={inputCls} value={form.series} onChange={e => set("series", e.target.value)} placeholder="Ej. Smart" />
-          </Field>
-          <Field label="Categoría" required>
-            <select className={selectCls} value={form.categoryId}
-              onChange={e => {
-                const cat = categories.find(c => c.id === e.target.value);
-                setForm(f => ({ ...f, categoryId: e.target.value, category: cat?.slug ?? "" }));
-              }}
-            >
-              <option value="">Seleccionar categoría</option>
-              {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
-          </Field>
-        </Section>
-      </div>
-    );
-  }
-
-  function PricingTab() {
-    return (
-      <div className="space-y-4">
-        <Section title="Precios">
-          <Field label="Precio normal (€)" required>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">€</span>
-              <input type="number" min="0" step="0.01" className={`${inputCls} pl-7`} value={form.price}
-                onChange={e => set("price", e.target.value)} placeholder="5400.00" />
-            </div>
-          </Field>
-          <Field label="Precio de oferta (€)" helper="Deja vacío si no hay oferta">
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">€</span>
-              <input type="number" min="0" step="0.01" className={`${inputCls} pl-7`} value={form.discountPrice}
-                onChange={e => set("discountPrice", e.target.value)} placeholder="5000.00" />
-            </div>
-          </Field>
-          <div className="flex flex-col gap-2 col-span-2 pt-1">
-            <Toggle label="IVA incluido en el precio" checked={form.ivaIncluded} onChange={v => set("ivaIncluded", v)} />
-            <Toggle label="Instalación incluida en el precio" checked={form.installationIncluded} onChange={v => set("installationIncluded", v)} />
-          </div>
-        </Section>
-
-        <Section title="Stock y disponibilidad">
-          <Field label="Estado de stock" required>
-            <select className={selectCls} value={form.stockStatus} onChange={e => set("stockStatus", e.target.value as StockStatus)}>
-              <option value="in_stock">En stock</option>
-              <option value="on_request">Bajo pedido</option>
-              <option value="consult">Consultar disponibilidad</option>
-            </select>
-          </Field>
-          {form.stockStatus === "in_stock" && (
-            <Field label="Unidades en stock">
-              <NumInput value={form.stockQuantity} onChange={v => set("stockQuantity", v)} step="1" placeholder="10" />
-            </Field>
-          )}
-          <Field label="Garantía" span2>
-            <input className={inputCls} value={form.warranty} onChange={e => set("warranty", e.target.value)} placeholder="Ej. 3 años oficial fabricante" />
-          </Field>
-        </Section>
-      </div>
-    );
-  }
-
-  function CommercialTab() {
-    return (
-      <div className="space-y-4">
-        <Section title="Descripciones para el cliente">
-          <Field label="Descripción corta" required span2
-            helper="Máx. 200 caracteres. Se muestra en la tarjeta del producto.">
-            <textarea rows={2} className={`${inputCls} resize-none`} value={form.shortDescription} maxLength={200}
-              onChange={e => set("shortDescription", e.target.value)}
-              placeholder="Ej. Aire acondicionado por conductos Inverter de 10 kW con bomba de calor." />
-            <p className="text-[11px] text-gray-400 text-right">{form.shortDescription.length}/200</p>
-          </Field>
-          <Field label="Descripción completa" span2>
-            <textarea rows={5} className={`${inputCls} resize-y`} value={form.longDescription}
-              onChange={e => set("longDescription", e.target.value)}
-              placeholder="Descripción detallada para la página del producto..." />
-          </Field>
-        </Section>
-
-        <Section title="Etiquetas comerciales">
-          <div className="col-span-2">
-            <div className="flex flex-wrap gap-1.5 mb-2 min-h-[32px]">
-              {form.commercialTags.map(tag => (
-                <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary-50 text-primary-700 text-xs font-medium rounded-lg">
-                  {tag}
-                  <button type="button" onClick={() => set("commercialTags", form.commercialTags.filter(t => t !== tag))}
-                    className="text-primary-400 hover:text-primary-700">
-                    <X size={10} />
-                  </button>
-                </span>
-              ))}
-            </div>
-            <div className="flex gap-2">
-              <input className={inputCls} value={tagInput} onChange={e => setTagInput(e.target.value)}
-                onKeyDown={e => { if (e.key === "Enter" || e.key === ",") { e.preventDefault(); addTag(tagInput); } }}
-                placeholder="Ej. Inverter (Enter para añadir)" />
-              <button type="button" onClick={() => addTag(tagInput)}
-                className="px-3 py-2 rounded-xl bg-primary-50 text-primary-600 hover:bg-primary-100 transition-colors">
-                <Plus size={16} />
-              </button>
-            </div>
-          </div>
-        </Section>
-      </div>
-    );
-  }
-
-  function TechnicalTab() {
-    if (form.productType === "air_conditioning") return <AcTechnicalTab />;
-    if (form.productType === "boiler") return <BoilerTechnicalTab />;
-    return <AeroTechnicalTab />;
-  }
-
-  function AcTechnicalTab() {
-    const ac = form.acSpecs;
-    const isConductos = ac.installationType === "conductos";
-    const INST_TYPES = [
-      { val: "split", label: "Split 1×1" },
-      { val: "conductos", label: "Conductos" },
-      { val: "cassette", label: "Cassette" },
-      { val: "multisplit", label: "Multi-Split" },
-      { val: "suelo_techo", label: "Suelo-Techo" },
-    ] as const;
-
-    return (
-      <div className="space-y-4">
-        {/* Tipo de instalación — visual selector */}
-        <div className="rounded-xl border border-gray-100 bg-gray-50/60 p-4 space-y-3">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tipo de instalación *</p>
-          <div className="flex flex-wrap gap-2">
-            {INST_TYPES.map(({ val, label }) => (
-              <button key={val} type="button"
-                onClick={() => setAc({ installationType: val })}
-                className={`px-3 py-2 rounded-xl text-xs font-bold border-2 transition-all ${
-                  ac.installationType === val
-                    ? "border-primary-400 bg-primary-50 text-primary-700"
-                    : "border-gray-200 bg-white text-gray-600 hover:border-primary-200"
-                }`}>
-                {label}
-              </button>
-            ))}
-          </div>
-
-          {/* Conductos sub-section */}
-          {isConductos && (
-            <div className="mt-2 rounded-xl border border-blue-100 bg-blue-50/50 p-3">
-              <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-2">Conductos — datos específicos</p>
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Referencia unidad interior (UI)">
-                  <input className={inputCls} value={ac.indoorUnit} onChange={e => setAc({ indoorUnit: e.target.value })} placeholder="AD71S2SM9FA" />
-                </Field>
-                <Field label="Referencia unidad exterior (UE)">
-                  <input className={inputCls} value={ac.outdoorUnit} onChange={e => setAc({ outdoorUnit: e.target.value })} placeholder="1U71S2SR3FA" />
-                </Field>
-                <Field label="Presión estática disponible">
-                  <input className={inputCls} value={ac.staticPressure ?? ""} onChange={e => setAc({ staticPressure: e.target.value || null })} placeholder="60 Pa estándar / 100 Pa máx." />
-                </Field>
-                <Field label="Mando / Control incluido">
-                  <input className={inputCls} value={ac.includedController ?? ""} onChange={e => setAc({ includedController: e.target.value || null })} placeholder="RC-EX3A" />
-                </Field>
-                <Field label="Dimensiones UI (Al×An×F)">
-                  <input className={inputCls} value={ac.indoorDimensions ?? ""} onChange={e => setAc({ indoorDimensions: e.target.value || null })} placeholder="248×1100×700 mm" />
-                </Field>
-                <Field label="Dimensiones UE (Al×An×F)">
-                  <input className={inputCls} value={ac.outdoorDimensions ?? ""} onChange={e => setAc({ outdoorDimensions: e.target.value || null })} placeholder="705×890×340 mm" />
-                </Field>
-                <Field label="Peso UI / UE" span2>
-                  <input className={inputCls} value={ac.indoorOutdoorWeight ?? ""} onChange={e => setAc({ indoorOutdoorWeight: e.target.value || null })} placeholder="31 kg / 45 kg" />
-                </Field>
-              </div>
-            </div>
-          )}
-
-          {/* Non-conductos units */}
-          {!isConductos && (
-            <div className="grid grid-cols-2 gap-3 pt-1">
-              <Field label="Unidad interior (ref.)">
-                <input className={inputCls} value={ac.indoorUnit} onChange={e => setAc({ indoorUnit: e.target.value })} placeholder="FTXC25C" />
-              </Field>
-              <Field label="Unidad exterior (ref.)">
-                <input className={inputCls} value={ac.outdoorUnit} onChange={e => setAc({ outdoorUnit: e.target.value })} placeholder="RXC25C" />
-              </Field>
-            </div>
-          )}
-
-          <div className="grid grid-cols-2 gap-3 pt-1">
-            <Field label="Tecnología">
-              <input className={inputCls} value={ac.technology} onChange={e => setAc({ technology: e.target.value })} placeholder="Inverter" />
-            </Field>
-            <Field label="Composición del equipo">
-              <input className={inputCls} value={ac.composition} onChange={e => setAc({ composition: e.target.value })} placeholder="Equipo 1x1" />
-            </Field>
-            <Field label="Refrigerante">
-              <input className={inputCls} value={ac.refrigerant} onChange={e => setAc({ refrigerant: e.target.value })} placeholder="R32" />
-            </Field>
-          </div>
-        </div>
-
-        <Section title="Potencia y superficie">
-          <Field label="Potencia frío (kW)" helper="Capacidad en kW, no eficiencia">
-            <NumInput value={String(ac.coolingCapacityKw ?? "")} onChange={v => setAc({ coolingCapacityKw: parseFloat(v) || 0 })} placeholder="10.0" />
-          </Field>
-          <Field label="Potencia calor (kW)">
-            <NumInput value={String(ac.heatingCapacityKw ?? "")} onChange={v => setAc({ heatingCapacityKw: parseFloat(v) || 0 })} placeholder="10.0" />
-          </Field>
-          <Field label="Superficie mín. recomendada (m²)" helper="Orientativo según aislamiento">
-            <NumInput value={String(ac.recommendedAreaMin ?? "")} onChange={v => setAc({ recommendedAreaMin: parseFloat(v) || null })} step="1" placeholder="100" />
-          </Field>
-          <Field label="Superficie máx. recomendada (m²)">
-            <NumInput value={String(ac.recommendedAreaMax ?? "")} onChange={v => setAc({ recommendedAreaMax: parseFloat(v) || null })} step="1" placeholder="140" />
-          </Field>
-        </Section>
-
-        <Section title="Eficiencia energética">
-          <Field label="Etiqueta energética frío" helper="Ej. A++, A+">
-            <input className={inputCls} value={ac.energyLabelCooling} onChange={e => setAc({ energyLabelCooling: e.target.value })} placeholder="A++" />
-          </Field>
-          <Field label="Etiqueta energética calor">
-            <input className={inputCls} value={ac.energyLabelHeating} onChange={e => setAc({ energyLabelHeating: e.target.value })} placeholder="A+" />
-          </Field>
-          <Field label="SEER (eficiencia estacional frío)">
-            <NumInput value={String(ac.seer ?? "")} onChange={v => setAc({ seer: parseFloat(v) || null })} placeholder="6.11" />
-          </Field>
-          <Field label="SCOP (eficiencia estacional calor)">
-            <NumInput value={String(ac.scop ?? "")} onChange={v => setAc({ scop: parseFloat(v) || null })} placeholder="4.13" />
-          </Field>
-        </Section>
-
-        <Section title="Confort y conectividad">
-          <Field label="Ruido mínimo interior (dB)" helper="Nivel en funcionamiento mínimo">
-            <NumInput value={String(ac.minNoiseDb ?? "")} onChange={v => setAc({ minNoiseDb: parseFloat(v) || null })} step="1" placeholder="30" />
-          </Field>
-          <Field label="WiFi">
-            <select className={selectCls} value={ac.wifiStatus} onChange={e => setAc({ wifiStatus: e.target.value as any })}>
-              <option value="included">Incluido</option>
-              <option value="optional">Opcional (accesorio adicional)</option>
-              <option value="not_included">No incluido</option>
-            </select>
-          </Field>
-          {!isConductos && (
-            <>
-              <Field label="Mando / Control incluido">
-                <input className={inputCls} value={ac.includedController ?? ""} onChange={e => setAc({ includedController: e.target.value || null })} placeholder="RC-EX3A" />
-              </Field>
-            </>
-          )}
-        </Section>
-
-      </div>
-    );
-  }
-
-  function BoilerTechnicalTab() {
-    const b = form.boilerSpecs;
-    const toggleUseType = (val: string) => {
-      const arr = b.useType.includes(val) ? b.useType.filter(x => x !== val) : [...b.useType, val];
-      setBoiler({ useType: arr });
-    };
-    return (
-      <div className="space-y-4">
-        <Section title="Tipo de caldera">
-          <Field label="Tipo de caldera" required>
-            <select className={selectCls} value={b.boilerType} onChange={e => setBoiler({ boilerType: e.target.value as any })}>
-              <option value="condensacion">Condensación</option>
-              <option value="bajo_nox">Bajo NOx</option>
-              <option value="estanca">Estanca</option>
-              <option value="gasoil">Gasoil</option>
-              <option value="otra">Otra</option>
-            </select>
-          </Field>
-          <Field label="Combustible" required>
-            <select className={selectCls} value={b.fuelType} onChange={e => setBoiler({ fuelType: e.target.value as any })}>
-              <option value="gas_natural">Gas natural</option>
-              <option value="propano">Propano</option>
-              <option value="gasoil">Gasóleo</option>
-              <option value="electrica">Eléctrica</option>
-            </select>
-          </Field>
-          <Field label="Instalación">
-            <select className={selectCls} value={b.installationType} onChange={e => setBoiler({ installationType: e.target.value as any })}>
-              <option value="mural">Mural (pared)</option>
-              <option value="suelo">Suelo</option>
-            </select>
-          </Field>
-          <div className="flex flex-col gap-1.5">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Uso</p>
-            {["calefaccion", "acs"].map(v => (
-              <label key={v} className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={b.useType.includes(v)} onChange={() => toggleUseType(v)}
-                  className="w-4 h-4 rounded border-gray-300 text-primary-600 accent-primary-600" />
-                <span className="text-sm text-gray-700">{v === "calefaccion" ? "Calefacción" : "ACS (agua caliente)"}</span>
-              </label>
-            ))}
-          </div>
-        </Section>
-
-        <Section title="Potencias">
-          <Field label="Potencia calefacción (kW)" required>
-            <NumInput value={String(b.heatingPowerKw ?? "")} onChange={v => setBoiler({ heatingPowerKw: parseFloat(v) || 0 })} placeholder="24" />
-          </Field>
-          <Field label="Potencia ACS (kW)">
-            <NumInput value={String(b.dhwPowerKw ?? "")} onChange={v => setBoiler({ dhwPowerKw: parseFloat(v) || null })} placeholder="28" />
-          </Field>
-          <Field label="Caudal ACS (l/min)">
-            <input className={inputCls} value={b.dhwFlowRate ?? ""} onChange={e => setBoiler({ dhwFlowRate: e.target.value || null })} placeholder="14 l/min" />
-          </Field>
-          <Field label="Perfil ACS">
-            <input className={inputCls} value={b.dhwProfile ?? ""} onChange={e => setBoiler({ dhwProfile: e.target.value || null })} placeholder="XL" />
-          </Field>
-        </Section>
-
-        <Section title="Eficiencia y etiquetas">
-          <Field label="Etiqueta energética calefacción">
-            <input className={inputCls} value={b.energyLabelHeating ?? ""} onChange={e => setBoiler({ energyLabelHeating: e.target.value || null })} placeholder="A" />
-          </Field>
-          <Field label="Etiqueta energética ACS">
-            <input className={inputCls} value={b.energyLabelDhw ?? ""} onChange={e => setBoiler({ energyLabelDhw: e.target.value || null })} placeholder="A" />
-          </Field>
-          <Field label="Eficiencia (%)">
-            <input className={inputCls} value={b.efficiency ?? ""} onChange={e => setBoiler({ efficiency: e.target.value || null })} placeholder="109%" />
-          </Field>
-          <Field label="Clase NOx">
-            <input className={inputCls} value={b.noxClass ?? ""} onChange={e => setBoiler({ noxClass: e.target.value || null })} placeholder="6" />
-          </Field>
-        </Section>
-
-        <Section title="Accesorios y dimensiones">
-          <Field label="Termostato">
-            <select className={selectCls} value={b.thermostatCompatibility} onChange={e => setBoiler({ thermostatCompatibility: e.target.value as any })}>
-              <option value="included">Incluido</option>
-              <option value="optional">Compatible (opcional)</option>
-              <option value="not_included">No compatible</option>
-            </select>
-          </Field>
-          <div className="flex flex-col gap-2 pt-1">
-            <Toggle label="Kit de evacuación incluido" checked={b.flueKitIncluded} onChange={v => setBoiler({ flueKitIncluded: v })} />
-          </div>
-          <Field label="Dimensiones" span2>
-            <input className={inputCls} value={b.dimensions ?? ""} onChange={e => setBoiler({ dimensions: e.target.value || null })} placeholder="400 x 700 x 350 mm" />
-          </Field>
-        </Section>
-      </div>
-    );
-  }
-
-  function AeroTechnicalTab() {
-    const a = form.aerothermalSpecs;
-    const toggleFn = (val: string) => {
-      const arr = a.functions.includes(val) ? a.functions.filter(x => x !== val) : [...a.functions, val];
-      setAero({ functions: arr });
-    };
-    return (
-      <div className="space-y-4">
-        <Section title="Sistema y funciones">
-          <Field label="Tipo de sistema" required>
-            <select className={selectCls} value={a.systemType} onChange={e => setAero({ systemType: e.target.value as any })}>
-              <option value="monobloc">Monobloc (todo exterior)</option>
-              <option value="bibloc">Bíbloc (interior + exterior)</option>
-              <option value="todo_en_uno">Todo en uno</option>
-            </select>
-          </Field>
-          <Field label="Alimentación eléctrica">
-            <select className={selectCls} value={a.powerSupply} onChange={e => setAero({ powerSupply: e.target.value as any })}>
-              <option value="monofasica">Monofásica 230V</option>
-              <option value="trifasica">Trifásica 400V</option>
-              <option value="no_especificado">No especificado</option>
-            </select>
-          </Field>
-          <div className="col-span-2 flex gap-4">
-            {["calefaccion", "refrigeracion", "acs"].map(v => (
-              <label key={v} className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={a.functions.includes(v)} onChange={() => toggleFn(v)}
-                  className="w-4 h-4 rounded border-gray-300 text-primary-600 accent-primary-600" />
-                <span className="text-sm text-gray-700">{v === "calefaccion" ? "Calefacción" : v === "refrigeracion" ? "Refrigeración" : "ACS"}</span>
-              </label>
-            ))}
-          </div>
-        </Section>
-
-        <Section title="Potencias y capacidades">
-          <Field label="Potencia calefacción (kW)" required>
-            <NumInput value={String(a.heatingCapacityKw ?? "")} onChange={v => setAero({ heatingCapacityKw: parseFloat(v) || 0 })} placeholder="12" />
-          </Field>
-          <Field label="Potencia refrigeración (kW)">
-            <NumInput value={String(a.coolingCapacityKw ?? "")} onChange={v => setAero({ coolingCapacityKw: parseFloat(v) || null })} placeholder="10" />
-          </Field>
-          <Field label="Depósito ACS integrado (litros)">
-            <NumInput value={String(a.tankLiters ?? "")} onChange={v => setAero({ tankLiters: parseFloat(v) || null })} step="1" placeholder="180" />
-          </Field>
-          <Field label="Temperatura máx. impulsión">
-            <input className={inputCls} value={a.maxFlowTemperature ?? ""} onChange={e => setAero({ maxFlowTemperature: e.target.value || null })} placeholder="60°C" />
-          </Field>
-          <Field label="Superficie mín. recomendada (m²)">
-            <NumInput value={String(a.recommendedAreaMin ?? "")} onChange={v => setAero({ recommendedAreaMin: parseFloat(v) || null })} step="1" placeholder="100" />
-          </Field>
-          <Field label="Superficie máx. recomendada (m²)">
-            <NumInput value={String(a.recommendedAreaMax ?? "")} onChange={v => setAero({ recommendedAreaMax: parseFloat(v) || null })} step="1" placeholder="200" />
-          </Field>
-        </Section>
-
-        <Section title="Eficiencia y nivel sonoro">
-          <Field label="COP (rendimiento agua caliente)">
-            <NumInput value={String(a.cop ?? "")} onChange={v => setAero({ cop: parseFloat(v) || null })} placeholder="4.5" />
-          </Field>
-          <Field label="SCOP (estacional calefacción)">
-            <NumInput value={String(a.scop ?? "")} onChange={v => setAero({ scop: parseFloat(v) || null })} placeholder="4.0" />
-          </Field>
-          <Field label="Etiqueta energética">
-            <input className={inputCls} value={a.energyLabel ?? ""} onChange={e => setAero({ energyLabel: e.target.value || null })} placeholder="A+++" />
-          </Field>
-          <Field label="Refrigerante">
-            <input className={inputCls} value={a.refrigerant ?? ""} onChange={e => setAero({ refrigerant: e.target.value || null })} placeholder="R32" />
-          </Field>
-          <Field label="Ruido mínimo (dB)">
-            <NumInput value={String(a.minNoiseDb ?? "")} onChange={v => setAero({ minNoiseDb: parseFloat(v) || null })} step="1" placeholder="38" />
-          </Field>
-        </Section>
-
-        <Section title="Compatibilidad de emisores">
-          <Field label="Suelo radiante">
-            <div className="pt-1"><Toggle label="Compatible" checked={a.compatibleUnderfloorHeating} onChange={v => setAero({ compatibleUnderfloorHeating: v })} /></div>
-          </Field>
-          <Field label="Radiadores">
-            <select className={selectCls} value={a.compatibleRadiators} onChange={e => setAero({ compatibleRadiators: e.target.value as any })}>
-              <option value="yes">Sí, directamente</option>
-              <option value="depends">Depende del tipo</option>
-              <option value="no">No compatible</option>
-            </select>
-          </Field>
-          <Field label="Fan-coils">
-            <div className="pt-1"><Toggle label="Compatible" checked={a.compatibleFanCoils} onChange={v => setAero({ compatibleFanCoils: v })} /></div>
-          </Field>
-        </Section>
-      </div>
-    );
-  }
-
-  function MediaTab() {
-    return (
-      <div className="space-y-4">
-        <Section title="Imagen principal">
-          <div className="col-span-2 flex gap-3 items-start">
-            <div className="w-24 h-24 rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center shrink-0 overflow-hidden">
-              {form.mainImage
-                ? <img src={form.mainImage} alt="" className="w-full h-full object-contain" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                : <Wind size={28} className="text-gray-200" />}
-            </div>
-            <div className="flex-1">
-              <input className={inputCls} value={form.mainImage} onChange={e => set("mainImage", e.target.value)}
-                placeholder="https://... URL de imagen principal" />
-              <p className="text-[11px] text-gray-400 mt-1">Pega la URL directa de la imagen (JPG, PNG, WebP).</p>
-            </div>
-          </div>
-        </Section>
-
-        <div className="rounded-xl border border-gray-100 bg-gray-50/60 p-4 space-y-3">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Galería de imágenes adicionales</p>
-          {form.galleryImages.map((url, i) => (
-            <div key={i} className="flex gap-2">
-              <input className={inputCls} value={url} onChange={e => {
-                const arr = [...form.galleryImages]; arr[i] = e.target.value; set("galleryImages", arr);
-              }} placeholder={`Imagen ${i + 2}: https://...`} />
-              <button type="button" onClick={() => set("galleryImages", form.galleryImages.filter((_, j) => j !== i))}
-                className="p-2.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors shrink-0">
-                <Trash2 size={15} />
-              </button>
-            </div>
-          ))}
-          <button type="button"
-            onClick={() => set("galleryImages", [...form.galleryImages, ""])}
-            className="flex items-center gap-2 text-sm text-primary-600 hover:text-primary-700 font-medium px-1">
-            <Plus size={14} /> Añadir imagen
-          </button>
-        </div>
-
-        <Section title="Documentos">
-          <Field label="PDF ficha técnica (URL)" span2>
-            <input className={inputCls} value={form.technicalPdf} onChange={e => set("technicalPdf", e.target.value)}
-              placeholder="https://... URL del PDF" />
-          </Field>
-        </Section>
-      </div>
-    );
-  }
-
-  function SeoTab() {
-    const autoTitle = form.commercialName ? `${form.commercialName} | Clima HVAC Service` : "";
-    const autoDesc = form.shortDescription || "";
-    return (
-      <div className="space-y-4">
-        <Section title="SEO para buscadores">
-          <Field label="Título SEO" span2 helper="Aparece en Google como título del resultado. Máx. 60 caracteres.">
-            <input className={inputCls} value={form.seoTitle} onChange={e => set("seoTitle", e.target.value)}
-              placeholder={autoTitle} maxLength={70} />
-            {!form.seoTitle && autoTitle && (
-              <button type="button" className="text-[11px] text-primary-500 hover:text-primary-700 mt-1"
-                onClick={() => set("seoTitle", autoTitle)}>
-                Usar automático: &ldquo;{autoTitle.slice(0, 60)}...&rdquo;
-              </button>
-            )}
-          </Field>
-          <Field label="Meta descripción" span2 helper="Aparece bajo el título en Google. Máx. 155 caracteres.">
-            <textarea rows={3} className={`${inputCls} resize-none`} value={form.seoDescription}
-              onChange={e => set("seoDescription", e.target.value)} placeholder={autoDesc} maxLength={160} />
-            <p className="text-[11px] text-gray-400 text-right">{form.seoDescription.length}/155</p>
-            {!form.seoDescription && autoDesc && (
-              <button type="button" className="text-[11px] text-primary-500 hover:text-primary-700"
-                onClick={() => set("seoDescription", autoDesc)}>
-                Usar descripción corta
-              </button>
-            )}
-          </Field>
-        </Section>
-      </div>
-    );
-  }
-
-  function PreviewTab() {
-    const price = parseFloat(form.price) || 0;
-    const discount = parseFloat(form.discountPrice) || null;
-    const displayPrice = discount && discount < price ? discount : price;
-    const ac = form.acSpecs;
-    const boiler = form.boilerSpecs;
-    const aero = form.aerothermalSpecs;
-
-    const badges: string[] = [];
-    if (form.productType === "air_conditioning") {
-      if (ac.coolingCapacityKw) badges.push(`${ac.coolingCapacityKw} kW`);
-      if (ac.recommendedAreaMin && ac.recommendedAreaMax) badges.push(`${ac.recommendedAreaMin}–${ac.recommendedAreaMax} m²`);
-      if (ac.energyLabelCooling) badges.push(ac.energyLabelHeating ? `${ac.energyLabelCooling} / ${ac.energyLabelHeating}` : ac.energyLabelCooling);
-      if (ac.minNoiseDb) badges.push(`Desde ${ac.minNoiseDb} dB`);
-      if (ac.wifiStatus !== "not_included") badges.push(ac.wifiStatus === "included" ? "WiFi incluido" : "WiFi opcional");
-    } else if (form.productType === "boiler") {
-      if (boiler.heatingPowerKw) badges.push(`${boiler.heatingPowerKw} kW`);
-      const fuel: Record<string, string> = { gas_natural: "Gas natural", propano: "Propano", gasoil: "Gasóleo", electrica: "Eléctrica" };
-      if (fuel[boiler.fuelType]) badges.push(fuel[boiler.fuelType]);
-      if (boiler.energyLabelHeating) badges.push(`Clase ${boiler.energyLabelHeating}`);
-    } else {
-      if (aero.heatingCapacityKw) badges.push(`${aero.heatingCapacityKw} kW`);
-      if (aero.functions.includes("refrigeracion")) badges.push("Frío + Calor");
-      if (aero.tankLiters) badges.push(`Depósito ${aero.tankLiters} L`);
-      if (aero.scop) badges.push(`SCOP ${aero.scop}`);
-      if (aero.energyLabel) badges.push(aero.energyLabel);
-    }
-
-    return (
-      <div className="space-y-4">
-        <p className="text-xs text-gray-400 text-center">Así se verá la tarjeta del producto en la web</p>
-        <div className="max-w-xs mx-auto bg-white rounded-2xl border border-gray-100 shadow-lg overflow-hidden">
-          <div className="bg-gray-50 h-40 flex items-center justify-center border-b border-gray-100">
-            {form.mainImage
-              ? <img src={form.mainImage} alt="" className="h-32 object-contain" />
-              : <Wind size={48} className="text-gray-200" />}
-          </div>
-          <div className="p-4">
-            {form.brand && <p className="text-xs text-gray-400 font-medium mb-0.5">{form.brand}</p>}
-            <h3 className="font-bold text-gray-900 text-sm leading-tight line-clamp-2 mb-2">
-              {form.commercialName || "Nombre del producto"}
-            </h3>
-            {form.shortDescription && <p className="text-xs text-gray-500 mb-3 line-clamp-2">{form.shortDescription}</p>}
-            {badges.length > 0 && (
-              <div className="flex flex-wrap gap-1 mb-3">
-                {badges.map(b => (
-                  <span key={b} className="px-2 py-0.5 bg-primary-50 text-primary-700 text-[10px] font-semibold rounded-lg">{b}</span>
-                ))}
-              </div>
-            )}
-            <div className="flex items-baseline gap-2 mb-3">
-              <span className="text-xl font-bold text-amber-500">€{displayPrice.toLocaleString("es")}</span>
-              {discount && discount < price && <span className="text-sm text-gray-400 line-through">€{price.toLocaleString("es")}</span>}
-            </div>
-            <button className="w-full py-2.5 rounded-xl text-white text-xs font-bold"
-              style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}>
-              Pedir presupuesto
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ─── Render ──────────────────────────────────────────────────────────────────
-
   const typeLabel: Record<ProductType, string> = {
     air_conditioning: "Aire Acondicionado",
     boiler: "Caldera",
@@ -941,20 +951,22 @@ export function ProductFormModal({ initial, categories, onClose }: Props) {
 
         {/* Errors */}
         {errors.length > 0 && (
-          <div className="mx-6 mt-4 p-3 bg-red-50 border border-red-100 rounded-xl">
+          <div className="mx-6 mt-4 p-3 bg-red-50 border border-red-100 rounded-xl shrink-0">
             {errors.map(e => <p key={e} className="text-xs text-red-600 font-medium">{e}</p>)}
           </div>
         )}
 
         {/* Tab content */}
         <div className="flex-1 overflow-y-auto px-6 py-5">
-          {activeTab === "info"       && <InfoTab />}
-          {activeTab === "pricing"    && <PricingTab />}
-          {activeTab === "commercial" && <CommercialTab />}
-          {activeTab === "technical"  && <TechnicalTab />}
-          {activeTab === "media"      && <MediaTab />}
-          {activeTab === "seo"        && <SeoTab />}
-          {activeTab === "preview"    && <PreviewTab />}
+          {activeTab === "info"       && <InfoTab form={form} set={set} categories={categories} onTypeChange={onTypeChange} onCategoryChange={onCategoryChange} />}
+          {activeTab === "pricing"    && <PricingTab form={form} set={set} />}
+          {activeTab === "commercial" && <CommercialTab form={form} set={set} tagInput={tagInput} setTagInput={setTagInput} addTag={addTag} />}
+          {activeTab === "technical"  && form.productType === "air_conditioning" && <AcTechnicalTab form={form} setAc={setAc} />}
+          {activeTab === "technical"  && form.productType === "boiler"           && <BoilerTechnicalTab form={form} setBoiler={setBoiler} />}
+          {activeTab === "technical"  && form.productType === "aerothermal"      && <AeroTechnicalTab form={form} setAero={setAero} />}
+          {activeTab === "media"      && <MediaTab form={form} set={set} />}
+          {activeTab === "seo"        && <SeoTab form={form} set={set} />}
+          {activeTab === "preview"    && <PreviewTab form={form} />}
         </div>
 
         {/* Footer */}
