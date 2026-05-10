@@ -650,8 +650,10 @@ async function uploadImageFile(file: File): Promise<string> {
   const fd = new FormData();
   fd.append("file", file);
   const res = await fetch("/api/upload", { method: "POST", body: fd });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error ?? "Error al subir la imagen");
+  let json: any = {};
+  try { json = await res.json(); } catch { /* respuesta no-JSON, p.ej. error 500 HTML */ }
+  if (!res.ok) throw new Error(json.error ?? `Error del servidor (${res.status})`);
+  if (!json.url) throw new Error("El servidor no devolvió la URL de la imagen");
   return json.url as string;
 }
 
