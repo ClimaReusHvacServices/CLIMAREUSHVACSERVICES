@@ -98,9 +98,8 @@ export default function Navbar() {
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Logo fijo en top-0 con h-36 (144px) → centro a 72px del borde superior.
-    // En cada tick de scroll revisamos qué sección [data-logo] contiene esa coordenada Y.
-    const LOGO_Y = 72;
+    // Logo alineado con la píldora (top-5 = 20px) + h-36/2 = 72px → centro a 92px.
+    const LOGO_Y = 92;
     let raf = 0;
 
     const update = () => {
@@ -204,7 +203,7 @@ export default function Navbar() {
   return (
     <>
       {/* ── Logo superior izquierda ────────────────────────────────────── */}
-      <div className="hidden sm:block fixed left-24 top-0 z-50">
+      <div className="hidden sm:block fixed left-24 top-4 sm:top-5 z-50">
         <Link href="/" aria-label="Clima HVAC Service — inicio">
           <div className="relative h-36">
             <img
