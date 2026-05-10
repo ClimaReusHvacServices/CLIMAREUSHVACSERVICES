@@ -26,11 +26,13 @@ async function getCalderasProducts() {
     where: {
       isActive: true,
       OR: [
-        { category: { contains: "caldera", mode: "insensitive" } },
-        { productCategory: { slug: "calderas" } },
+        { pageLocation: "calderas" },
+        { pageLocation: null, productType: "boiler" },
+        { pageLocation: null, productType: null, category: { contains: "caldera", mode: "insensitive" } },
+        { pageLocation: null, productType: null, productCategory: { slug: "calderas" } },
       ],
     },
-    orderBy: { price: "asc" },
+    orderBy: [{ isFeatured: "desc" }, { price: "asc" }],
   });
 }
 

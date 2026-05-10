@@ -34,11 +34,13 @@ async function getAerotermiaProducts() {
     where: {
       isActive: true,
       OR: [
-        { category: { contains: "aerotermia", mode: "insensitive" } },
-        { productCategory: { slug: "aerotermia" } },
+        { pageLocation: "aerotermia" },
+        { pageLocation: null, productType: "aerothermal" },
+        { pageLocation: null, productType: null, category: { contains: "aerotermia", mode: "insensitive" } },
+        { pageLocation: null, productType: null, productCategory: { slug: "aerotermia" } },
       ],
     },
-    orderBy: { price: "asc" },
+    orderBy: [{ isFeatured: "desc" }, { price: "asc" }],
   });
 }
 

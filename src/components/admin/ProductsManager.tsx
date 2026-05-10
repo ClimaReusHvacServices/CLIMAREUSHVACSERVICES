@@ -4,23 +4,30 @@ import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Search, Package, Wrench, Box, X, Wind, Upload, Tag, FolderOpen, CheckCircle2, XCircle } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Package, Wrench, Box, X, Tag, FolderOpen, CheckCircle2, XCircle, Wind } from "lucide-react";
 import { Pagination } from "@/components/common/Pagination";
 import {
-  createProduct, updateProduct, deleteProduct,
+  deleteProduct,
   createService, updateService, deleteService,
   createPackage, updatePackage, deletePackage,
   setProductDiscount,
   createCategory, updateCategory, deleteCategory,
 } from "@/app/[locale]/(dashboard)/admin/products/actions";
+import { ProductFormModal } from "@/components/admin/ProductFormModal";
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
 interface ProductRow {
-  id: string; name: string; description: string; category: string; categoryId: string | null;
-  manufacturer: string | null; price: any; discountPrice: any;
-  stock: number; warranty: string | null; isActive: boolean; images: string[];
-  specifications: string | null;
+  id: string; name: string; description: string; shortDescription: string | null;
+  category: string; categoryId: string | null;
+  manufacturer: string | null; brand: string | null; modelNumber: string | null; series: string | null;
+  price: any; discountPrice: any; stock: number; stockStatus: string | null;
+  warranty: string | null; isActive: boolean; isFeatured: boolean;
+  images: string[]; specifications: string | null; sku: string;
+  productType: string | null; pageLocation: string | null;
+  ivaIncluded: boolean; installationIncluded: boolean;
+  commercialTags: string[]; technicalPdf: string | null;
+  seoTitle: string | null; seoDescription: string | null;
 }
 interface ServiceRow {
   id: string; name: string; description: string; type: string;
@@ -36,13 +43,7 @@ interface PackageRow {
 type Tab = "products" | "services" | "packages" | "categories";
 const PAGE_SIZE = 10;
 
-const defaultProductForm = {
-  name: "", description: "", category: "", categoryId: "", manufacturer: "", price: "", discountPrice: "",
-  stock: "1", warranty: "", isActive: true, imageUrl: "",
-  specEnergyLabel: "", specEfficiency: "", specNoiseLevel: "", specQuality: "",
-  specWifi: false, specCoverage: "",
-};
-const defaultServiceForm = { name: "", description: "", type: "instalacion", basePrice: "", estimatedDuration: "60", difficulty: "media", isActive: true };
+const defaultServiceForm ={ name: "", description: "", type: "instalacion", basePrice: "", estimatedDuration: "60", difficulty: "media", isActive: true };
 const defaultPackageForm = { name: "", description: "", productId: "", serviceId: "", packagePrice: "", discountPercentage: "", isActive: true };
 
 // ─── Subcomponentes ───────────────────────────────────────────────────────────
@@ -142,12 +143,15 @@ export function ProductsManager({ products, services, packages, categories = [] 
 
   const [tab, setTab] = useState<Tab>("products");
   const [search, setSearch] = useState("");
-  const [modal, setModal] = useState<{ mode: "create" | "edit"; entityType: Tab; id?: string } | null>(null);
+  const [modal, setModal] = useState<{ mode: "create" | "edit"; entityType: Exclude<Tab, "products">; id?: string } | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string; entityType: Tab } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [page, setPage] = useState(1);
 
-  const [productForm, setProductForm] = useState({ ...defaultProductForm });
+  // New product form modal
+  const [productFormOpen, setProductFormOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<ProductRow | null>(null);
+
   const [serviceForm, setServiceForm] = useState({ ...defaultServiceForm });
   const [packageForm, setPackageForm] = useState({ ...defaultPackageForm });
 
@@ -159,16 +163,6 @@ export function ProductsManager({ products, services, packages, categories = [] 
   const [categoryForm, setCategoryForm] = useState({ ...defaultCategoryForm });
   const [categoryModal, setCategoryModal] = useState<{ mode: "create" | "edit"; id?: string } | null>(null);
   const [deleteCategoryTarget, setDeleteCategoryTarget] = useState<{ id: string; name: string } | null>(null);
-
-  function handleImageFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 2 * 1024 * 1024) { toast.error("La imagen no puede superar 2 MB"); return; }
-    const reader = new FileReader();
-    reader.onload = (ev) => setProductForm(f => ({ ...f, imageUrl: ev.target?.result as string ?? "" }));
-    reader.readAsDataURL(file);
-    e.target.value = "";
-  }
 
   async function handleSetOffer(e: React.FormEvent) {
     e.preventDefault();
@@ -212,31 +206,14 @@ export function ProductsManager({ products, services, packages, categories = [] 
 
   // Funciones auxiliares del modal
   function openCreate(type: Tab) {
-    if (type === "products") setProductForm({ ...defaultProductForm });
+    if (type === "products") { setEditingProduct(null); setProductFormOpen(true); return; }
     if (type === "services") setServiceForm({ ...defaultServiceForm });
     if (type === "packages") setPackageForm({ ...defaultPackageForm });
-    setModal({ mode: "create", entityType: type });
+    setModal({ mode: "create", entityType: type as Exclude<Tab, "products"> });
   }
 
   function openEdit(type: Tab, item: any) {
-    if (type === "products") {
-      let existingSpecs: Record<string, any> = {};
-      try { if (item.specifications) existingSpecs = JSON.parse(item.specifications); } catch {}
-      setProductForm({
-        name: item.name, description: item.description, category: item.category,
-        categoryId: item.categoryId ?? "",
-        manufacturer: item.manufacturer ?? "", price: String(Number(item.price)),
-        discountPrice: item.discountPrice ? String(Number(item.discountPrice)) : "",
-        stock: String(item.stock), warranty: item.warranty ?? "", isActive: item.isActive,
-        imageUrl: item.images?.[0] ?? "",
-        specEnergyLabel: existingSpecs.energyLabel ?? "",
-        specEfficiency: existingSpecs.efficiency ?? "",
-        specNoiseLevel: existingSpecs.noiseLevel ?? "",
-        specQuality: existingSpecs.quality ?? "",
-        specWifi: existingSpecs.wifi ?? false,
-        specCoverage: existingSpecs.coverage ?? "",
-      });
-    }
+    if (type === "products") { setEditingProduct(item as ProductRow); setProductFormOpen(true); return; }
     if (type === "services") setServiceForm({
       name: item.name, description: item.description, type: item.type,
       basePrice: String(Number(item.basePrice)), estimatedDuration: String(item.estimatedDuration),
@@ -249,45 +226,10 @@ export function ProductsManager({ products, services, packages, categories = [] 
       discountPercentage: item.discountPercentage ? String(Number(item.discountPercentage)) : "",
       isActive: item.isActive,
     });
-    setModal({ mode: "edit", entityType: type, id: item.id });
+    setModal({ mode: "edit", entityType: type as Exclude<Tab, "products">, id: item.id });
   }
 
   // Manejadores de envío de formularios
-  async function handleProductSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      const specs: Record<string, any> = {};
-      if (productForm.specEnergyLabel) specs.energyLabel = productForm.specEnergyLabel;
-      if (productForm.specEfficiency) specs.efficiency = productForm.specEfficiency;
-      if (productForm.specNoiseLevel) specs.noiseLevel = productForm.specNoiseLevel;
-      if (productForm.specQuality) specs.quality = productForm.specQuality;
-      if (productForm.specWifi) specs.wifi = productForm.specWifi;
-      if (productForm.specCoverage) specs.coverage = productForm.specCoverage;
-      const specifications = Object.keys(specs).length > 0 ? JSON.stringify(specs) : undefined;
-
-      const data = {
-        name: productForm.name, description: productForm.description,
-        category: productForm.category,
-        categoryId: productForm.categoryId || undefined,
-        manufacturer: productForm.manufacturer || undefined,
-        price: parseFloat(productForm.price),
-        discountPrice: productForm.discountPrice ? parseFloat(productForm.discountPrice) : undefined,
-        stock: parseInt(productForm.stock) || 0,
-        warranty: productForm.warranty || undefined,
-        isActive: productForm.isActive,
-        imageUrl: productForm.imageUrl || undefined,
-        specifications,
-      };
-      if (modal?.mode === "edit" && modal.id) await updateProduct(modal.id, data);
-      else await createProduct(data);
-      toast.success(t("saveSuccess"));
-      setModal(null);
-      router.refresh();
-    } catch { toast.error(t("saveError")); }
-    finally { setIsSubmitting(false); }
-  }
-
   async function handleServiceSubmit(e: React.FormEvent) {
     e.preventDefault();
     setIsSubmitting(true);
@@ -642,147 +584,16 @@ export function ProductsManager({ products, services, packages, categories = [] 
       </div>}
 
 
-      {/* ─── Modal de formulario ─────────────────────────────────────────── */}
+      {/* ─── Modal de formulario (servicios y paquetes) ──────────────────── */}
       {modal && (
         <Modal
           title={
-            modal.entityType === "products"
-              ? (modal.mode === "create" ? t("createProduct") : t("editProduct"))
-              : modal.entityType === "services"
+            modal.entityType === "services"
               ? (modal.mode === "create" ? t("createService") : t("editService"))
               : (modal.mode === "create" ? t("createPackage") : t("editPackage"))
           }
-          wide={modal.entityType === "products"}
           onClose={() => setModal(null)}
         >
-          {/* Product form */}
-          {modal.entityType === "products" && (
-            <form onSubmit={handleProductSubmit} className="space-y-5">
-
-              {/* ── Sección: Información básica ── */}
-              <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 space-y-3">
-                <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">{t("sectionBasic")}</p>
-                <Field label={t("fieldName")} required>
-                  <input required className={inputCls} value={productForm.name} onChange={e => setProductForm(f => ({ ...f, name: e.target.value }))} placeholder="Ej. Daikin FTXC25C" />
-                </Field>
-                <Field label={t("fieldDescription")} required>
-                  <textarea required rows={3} className={`${inputCls} resize-none`} value={productForm.description} onChange={e => setProductForm(f => ({ ...f, description: e.target.value }))} placeholder="Descripción breve del producto..." />
-                </Field>
-                <div className="grid grid-cols-2 gap-3">
-                  <Field label={t("fieldCategory")} required>
-                    <select
-                      required
-                      className={inputCls}
-                      value={productForm.categoryId}
-                      onChange={e => {
-                        const cat = categories.find(c => c.id === e.target.value);
-                        setProductForm(f => ({ ...f, categoryId: e.target.value, category: cat?.slug ?? e.target.value }));
-                      }}
-                    >
-                      <option value="">{t("selectCategory")}</option>
-                      {categories.map(cat => (
-                        <option key={cat.id} value={cat.id}>{cat.name}</option>
-                      ))}
-                    </select>
-                  </Field>
-                  <Field label={t("fieldManufacturer")}>
-                    <input className={inputCls} value={productForm.manufacturer} onChange={e => setProductForm(f => ({ ...f, manufacturer: e.target.value }))} placeholder="Ej. Daikin, Mitsubishi..." />
-                  </Field>
-                </div>
-              </div>
-
-              {/* ── Sección: Precio y stock ── */}
-              <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 space-y-3">
-                <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">{t("sectionPricing")}</p>
-                <div className="grid grid-cols-3 gap-3">
-                  <Field label={t("fieldPrice")} required>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">€</span>
-                      <input required type="number" step="0.01" min="0" className={`${inputCls} pl-7`} value={productForm.price} onChange={e => setProductForm(f => ({ ...f, price: e.target.value }))} placeholder="0.00" />
-                    </div>
-                  </Field>
-                  <Field label={t("fieldDiscountPrice")}>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">€</span>
-                      <input type="number" step="0.01" min="0" className={`${inputCls} pl-7`} value={productForm.discountPrice} onChange={e => setProductForm(f => ({ ...f, discountPrice: e.target.value }))} placeholder="0.00" />
-                    </div>
-                  </Field>
-                  <Field label={t("fieldStock")} required>
-                    <input required type="number" min="0" className={inputCls} value={productForm.stock} onChange={e => setProductForm(f => ({ ...f, stock: e.target.value }))} />
-                  </Field>
-                </div>
-                <Field label={t("fieldWarranty")}>
-                  <input className={inputCls} value={productForm.warranty} onChange={e => setProductForm(f => ({ ...f, warranty: e.target.value }))} placeholder="Ej. 2 años oficial fabricante" />
-                </Field>
-              </div>
-
-              {/* ── Sección: Imagen ── */}
-              <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 space-y-3">
-                <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">{t("sectionImage")}</p>
-                <div className="flex gap-3 items-start">
-                  {productForm.imageUrl ? (
-                    <div className="relative shrink-0">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={productForm.imageUrl} alt="preview" className="h-20 w-20 object-contain rounded-xl border border-gray-200 bg-white" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                      <button type="button" onClick={() => setProductForm(f => ({ ...f, imageUrl: "" }))} className="absolute -top-1.5 -right-1.5 bg-white border border-gray-200 rounded-full p-0.5 text-gray-400 hover:text-red-500 shadow-sm transition-colors">
-                        <X size={12} />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="h-20 w-20 rounded-xl border-2 border-dashed border-gray-200 bg-white flex items-center justify-center shrink-0 text-gray-300">
-                      <Package size={24} />
-                    </div>
-                  )}
-                  <div className="flex-1 space-y-2">
-                    <input type="url" className={inputCls} value={productForm.imageUrl.startsWith("data:") ? "" : productForm.imageUrl} onChange={e => setProductForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://... (URL de imagen)" />
-                    <label className="flex items-center gap-2 cursor-pointer px-3 py-2 border border-dashed border-gray-200 rounded-xl hover:border-primary-300 hover:bg-primary-50/30 transition-colors text-sm text-gray-500 bg-white">
-                      <Upload size={13} className="shrink-0 text-gray-400" />
-                      <span>Subir imagen (máx. 2 MB)</span>
-                      <input type="file" accept="image/*" className="hidden" onChange={handleImageFile} />
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              {/* ── Sección: Especificaciones técnicas ── */}
-              <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 space-y-3">
-                <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">{t("fieldSpecsSection")}</p>
-                <div className="grid grid-cols-3 gap-3">
-                  <Field label={t("fieldEnergyLabel")}>
-                    <input className={inputCls} value={productForm.specEnergyLabel} onChange={e => setProductForm(f => ({ ...f, specEnergyLabel: e.target.value }))} placeholder="A++" />
-                  </Field>
-                  <Field label={t("fieldEfficiency")}>
-                    <input className={inputCls} value={productForm.specEfficiency} onChange={e => setProductForm(f => ({ ...f, specEfficiency: e.target.value }))} placeholder="5.0 kW" />
-                  </Field>
-                  <Field label={t("fieldNoiseLevel")}>
-                    <input className={inputCls} value={productForm.specNoiseLevel} onChange={e => setProductForm(f => ({ ...f, specNoiseLevel: e.target.value }))} placeholder="21 dB" />
-                  </Field>
-                  <Field label={t("fieldQuality")}>
-                    <input className={inputCls} value={productForm.specQuality} onChange={e => setProductForm(f => ({ ...f, specQuality: e.target.value }))} placeholder="Premium" />
-                  </Field>
-                  <Field label={t("fieldCoverage")}>
-                    <input className={inputCls} value={productForm.specCoverage} onChange={e => setProductForm(f => ({ ...f, specCoverage: e.target.value }))} placeholder="20 m²" />
-                  </Field>
-                  <div className="flex flex-col justify-end pb-0.5">
-                    <label className="flex items-center gap-2 cursor-pointer h-[42px] px-3 bg-white border border-gray-200 rounded-xl hover:border-primary-300 transition-colors">
-                      <input type="checkbox" checked={productForm.specWifi} onChange={e => setProductForm(f => ({ ...f, specWifi: e.target.checked }))} className="w-4 h-4 rounded border-gray-300 text-primary-600 accent-primary-600" />
-                      <span className="text-sm font-medium text-gray-700">{t("fieldWifi")}</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              {/* ── Footer: activo + botones ── */}
-              <div className="flex items-center justify-between pt-1">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={productForm.isActive} onChange={e => setProductForm(f => ({ ...f, isActive: e.target.checked }))} className="w-4 h-4 rounded border-gray-300 text-primary-600 accent-primary-600" />
-                  <span className="text-sm font-medium text-gray-700">{t("fieldIsActive")}</span>
-                </label>
-                <ModalActions onCancel={() => setModal(null)} isLoading={isSubmitting} tCommon={tCommon} />
-              </div>
-            </form>
-          )}
-
           {/* Service form */}
           {modal.entityType === "services" && (
             <form onSubmit={handleServiceSubmit} className="space-y-4">
@@ -944,6 +755,15 @@ export function ProductsManager({ products, services, packages, categories = [] 
           onConfirm={handleCategoryDelete}
           onCancel={() => setDeleteCategoryTarget(null)}
           isLoading={isSubmitting}
+        />
+      )}
+
+      {/* ─── Formulario de producto (7 tabs) ───────────────────────────── */}
+      {productFormOpen && (
+        <ProductFormModal
+          initial={editingProduct}
+          categories={categories}
+          onClose={() => { setProductFormOpen(false); setEditingProduct(null); router.refresh(); }}
         />
       )}
     </div>

@@ -14,8 +14,15 @@ export const metadata = {
 
 async function getAllProducts() {
   const rows = await db.product.findMany({
-    where: { isActive: true },
-    orderBy: [{ discountPrice: "asc" }, { createdAt: "desc" }],
+    where: {
+      isActive: true,
+      OR: [
+        { pageLocation: "oferta" },
+        { pageLocation: null, productType: "air_conditioning" },
+        { pageLocation: null, productType: null },
+      ],
+    },
+    orderBy: [{ isFeatured: "desc" }, { discountPrice: "asc" }, { createdAt: "desc" }],
   });
   return rows.map(p => ({
     id: p.id,

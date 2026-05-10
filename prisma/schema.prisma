@@ -248,6 +248,19 @@ model Product {
   specifications      String?   @db.Text // JSON con especificaciones técnicas
   warranty            String?   // ej: "2 años"
   isActive            Boolean   @default(true)
+  // ── Nuevo sistema de productos ──
+  productType         String?   // "air_conditioning" | "boiler" | "aerothermal"
+  pageLocation        String?   // "oferta" | "calderas" | "aerotermia"
+  isFeatured          Boolean   @default(false)
+  brand               String?
+  series              String?
+  stockStatus         String?   @default("in_stock") // "in_stock" | "on_request" | "consult"
+  ivaIncluded         Boolean   @default(true)
+  installationIncluded Boolean  @default(false)
+  commercialTags      String[]  @default([])
+  technicalPdf        String?
+  seoTitle            String?
+  seoDescription      String?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
@@ -260,6 +273,8 @@ model Product {
   @@index([categoryId])
   @@index([sku])
   @@index([isActive])
+  @@index([productType])
+  @@index([pageLocation])
 }
 
 // ============================================

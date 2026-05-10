@@ -11,45 +11,89 @@ async function checkAdmin() {
 
 // ─── Products ─────────────────────────────────────────────────────────────────
 
-export async function createProduct(data: {
-  name: string; description: string; category: string; categoryId?: string; manufacturer?: string;
-  price: number; discountPrice?: number; stock: number; warranty?: string;
-  isActive: boolean; imageUrl?: string; specifications?: string;
-}) {
+interface ProductData {
+  name: string; description: string; shortDescription?: string;
+  category: string; categoryId?: string;
+  manufacturer?: string; brand?: string; modelNumber?: string; series?: string;
+  price: number; discountPrice?: number;
+  stock: number; stockStatus?: string; warranty?: string;
+  isActive: boolean; isFeatured?: boolean;
+  productType?: string; pageLocation?: string;
+  ivaIncluded?: boolean; installationIncluded?: boolean;
+  images?: string[]; imageUrl?: string;
+  specifications?: string;
+  commercialTags?: string[]; technicalPdf?: string;
+  seoTitle?: string; seoDescription?: string;
+  sku?: string;
+}
+
+export async function createProduct(data: ProductData) {
   await checkAdmin();
   await db.product.create({
     data: {
-      name: data.name, description: data.description, category: data.category,
+      name: data.name,
+      description: data.description,
+      shortDescription: data.shortDescription ?? null,
+      category: data.category,
       categoryId: data.categoryId ?? null,
-      manufacturer: data.manufacturer ?? null,
-      price: data.price, discountPrice: data.discountPrice ?? null,
-      stock: data.stock, warranty: data.warranty ?? null,
+      manufacturer: data.brand ?? data.manufacturer ?? null,
+      brand: data.brand ?? null,
+      modelNumber: data.modelNumber ?? null,
+      series: data.series ?? null,
+      price: data.price,
+      discountPrice: data.discountPrice ?? null,
+      stock: data.stock,
+      stockStatus: data.stockStatus ?? "in_stock",
+      warranty: data.warranty ?? null,
       isActive: data.isActive,
-      sku: `SKU-${Date.now()}`,
-      images: data.imageUrl ? [data.imageUrl] : [],
+      isFeatured: data.isFeatured ?? false,
+      productType: data.productType ?? null,
+      pageLocation: data.pageLocation ?? null,
+      ivaIncluded: data.ivaIncluded ?? true,
+      installationIncluded: data.installationIncluded ?? false,
+      sku: data.sku ?? `SKU-${Date.now()}`,
+      images: data.images ?? (data.imageUrl ? [data.imageUrl] : []),
       specifications: data.specifications ?? null,
+      commercialTags: data.commercialTags ?? [],
+      technicalPdf: data.technicalPdf ?? null,
+      seoTitle: data.seoTitle ?? null,
+      seoDescription: data.seoDescription ?? null,
     },
   });
   revalidatePath("/[locale]/admin/products", "page");
 }
 
-export async function updateProduct(id: string, data: {
-  name: string; description: string; category: string; categoryId?: string; manufacturer?: string;
-  price: number; discountPrice?: number; stock: number; warranty?: string;
-  isActive: boolean; imageUrl?: string; specifications?: string;
-}) {
+export async function updateProduct(id: string, data: ProductData) {
   await checkAdmin();
   await db.product.update({
     where: { id },
     data: {
-      name: data.name, description: data.description, category: data.category,
+      name: data.name,
+      description: data.description,
+      shortDescription: data.shortDescription ?? null,
+      category: data.category,
       categoryId: data.categoryId ?? null,
-      manufacturer: data.manufacturer ?? null,
-      price: data.price, discountPrice: data.discountPrice ?? null,
-      stock: data.stock, warranty: data.warranty ?? null,
+      manufacturer: data.brand ?? data.manufacturer ?? null,
+      brand: data.brand ?? null,
+      modelNumber: data.modelNumber ?? null,
+      series: data.series ?? null,
+      price: data.price,
+      discountPrice: data.discountPrice ?? null,
+      stock: data.stock,
+      stockStatus: data.stockStatus ?? "in_stock",
+      warranty: data.warranty ?? null,
       isActive: data.isActive,
-      images: data.imageUrl ? [data.imageUrl] : [],
+      isFeatured: data.isFeatured ?? false,
+      productType: data.productType ?? null,
+      pageLocation: data.pageLocation ?? null,
+      ivaIncluded: data.ivaIncluded ?? true,
+      installationIncluded: data.installationIncluded ?? false,
+      images: data.images ?? (data.imageUrl ? [data.imageUrl] : []),
       specifications: data.specifications ?? null,
+      commercialTags: data.commercialTags ?? [],
+      technicalPdf: data.technicalPdf ?? null,
+      seoTitle: data.seoTitle ?? null,
+      seoDescription: data.seoDescription ?? null,
     },
   });
   revalidatePath("/[locale]/admin/products", "page");
