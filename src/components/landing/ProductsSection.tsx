@@ -176,10 +176,10 @@ export function ProductsSection({ products }: { products: ProductItem[] }) {
                 </div>
               ))}
             </div>
-            {/* Right-edge fade — signals more cards and hides hard cutoff */}
+            {/* Subtle right-edge fade */}
             <div
-              className="absolute top-0 right-0 h-full w-28 pointer-events-none"
-              style={{ background: "linear-gradient(to right, transparent, #083a57)" }}
+              className="absolute top-0 right-0 h-full w-16 pointer-events-none"
+              style={{ background: "linear-gradient(to right, transparent, rgba(8,58,87,0.75))" }}
             />
           </div>
         )}
