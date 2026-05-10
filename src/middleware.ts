@@ -2,7 +2,7 @@ import { auth } from "@/auth/config";
 import { routing } from "@/i18n/routing";
 import { NextRequest, NextResponse } from "next/server";
 
-const publicPaths = ["/login", "/register", "/forgot-password"];
+const publicPaths = ["/login", "/register", "/forgot-password", "/change-password"];
 
 const roleMap: Record<string, string[]> = {
   admin: ["/admin"],
@@ -32,12 +32,18 @@ export async function middleware(req: NextRequest) {
 
   const session = await auth();
 
-  if (isPublic && session) {
+  const isChangePwd = pathWithoutLocale === "/change-password" || pathWithoutLocale.startsWith("/change-password/");
+
+  if (isPublic && session && !isChangePwd) {
     return NextResponse.redirect(new URL(`/${locale}/`, req.url));
   }
 
   if (!isPublic && !session) {
     return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
+  }
+
+  if (session && session.user?.requiresPasswordChange && !isChangePwd) {
+    return NextResponse.redirect(new URL(`/${locale}/change-password`, req.url));
   }
 
   if (session) {
