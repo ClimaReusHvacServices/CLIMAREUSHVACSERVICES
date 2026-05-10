@@ -9,6 +9,7 @@ import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import FAQSection from "@/components/landing/FAQSection";
 import Footer from "@/components/landing/Footer";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { WA_GENERAL } from "@/lib/whatsapp";
 
 const Hero = dynamic(() => import("@/components/landing/Hero"));
 const ContactMap = dynamic(() => import("@/components/landing/ContactMap"));
@@ -135,7 +136,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 </span>
                 <div>
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{t("contactSection.waLabel")}</p>
-                  <a href={`https://wa.me/34607953886?text=${encodeURIComponent("Hola, les escribo desde vuestra página web. ¿Podéis ayudarme?")}`} className="text-sm font-semibold text-primary-700 hover:underline">607 953 886</a>
+                  <a href={WA_GENERAL} className="text-sm font-semibold text-primary-700 hover:underline">607 953 886</a>
                 </div>
               </div>
             </div>

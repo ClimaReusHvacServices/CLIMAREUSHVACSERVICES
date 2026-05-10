@@ -15,7 +15,7 @@ import type { AcSpecs, BoilerSpecs, AerothermalSpecs } from "@/types/product";
 const Navbar = dynamic(() => import("@/components/landing/Navbar"));
 const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton"));
 
-const WA_NUMBER = "34607953886";
+import { waProduct } from "@/lib/whatsapp";
 
 function fmt(n: number) {
   return n.toLocaleString("es-ES", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
@@ -187,9 +187,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ local
   const backLabel = product.pageLocation === "calderas" ? "Calderas"
     : product.pageLocation === "aerotermia" ? "Aerotermia" : "Catálogo";
 
-  const waMessage = encodeURIComponent(
-    `Hola, me interesa el equipo "${product.name}"${product.brand ? ` de ${product.brand}` : ""}. ¿Podéis informarme y darme un presupuesto?`
-  );
+  const waMessage = waProduct(product.name, (product as any).brand ?? product.manufacturer);
 
   const brandDisplay = (product as any).brand ?? product.manufacturer;
   const installInfo = [
@@ -343,7 +341,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ local
               {/* CTAs */}
               <div className="space-y-2.5">
                 <a
-                  href={`https://wa.me/${WA_NUMBER}?text=${waMessage}`}
+                  href={waMessage}
                   target="_blank" rel="noreferrer"
                   className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl text-white font-extrabold text-base transition-all hover:opacity-90 hover:shadow-md"
                   style={{ backgroundColor: "#25D366" }}
@@ -452,7 +450,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ local
                   className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white text-primary-800 font-bold rounded-xl hover:bg-gray-50 transition-colors text-sm shadow-sm">
                   <Phone size={15} /> 877 234 166
                 </a>
-                <a href={`https://wa.me/${WA_NUMBER}?text=${waMessage}`} target="_blank" rel="noreferrer"
+                <a href={waMessage} target="_blank" rel="noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-7 py-3.5 font-bold rounded-xl text-white text-sm hover:opacity-90 shadow-sm"
                   style={{ backgroundColor: "#25D366" }}>
                   <svg className="w-4 h-4" viewBox="0 0 448 512" fill="white">

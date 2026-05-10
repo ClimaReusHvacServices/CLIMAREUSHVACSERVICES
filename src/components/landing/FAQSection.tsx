@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 
-const WA = "34607953886";
-const WA_TEXT = encodeURIComponent("Hola, les escribo desde vuestra página web. ¿Podéis ayudarme?");
+import { WA_GENERAL } from "@/lib/whatsapp";
 
 export default function FAQSection() {
   const t = useTranslations("landing");
@@ -30,7 +29,7 @@ export default function FAQSection() {
             {t("faq.subtitle")}
           </p>
           <a
-            href={`https://wa.me/${WA}?text=${WA_TEXT}`}
+            href={WA_GENERAL}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 mt-8 px-6 py-3 rounded-xl text-sm font-bold text-gray-900 hover:brightness-95 transition-all"

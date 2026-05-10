@@ -1,11 +1,11 @@
 "use client";
 
-const WA_TEXT = encodeURIComponent("Hola, les escribo desde vuestra página web. ¿Podéis ayudarme?");
+import { WA_GENERAL } from "@/lib/whatsapp";
 
-export default function WhatsAppButton({ phone = "34607953886" }: { phone?: string }) {
+export default function WhatsAppButton() {
   return (
     <a
-      href={`https://wa.me/${phone}?text=${WA_TEXT}`}
+      href={WA_GENERAL}
       target="_blank"
       rel="noreferrer"
       className="fixed bottom-6 right-6 z-50 w-14 h-14 sm:w-16 sm:h-16 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform duration-200"
