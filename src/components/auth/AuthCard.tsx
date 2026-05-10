@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { LogIn, UserPlus, CheckCircle2, Eye, EyeOff, AlertTriangle } from "lucide-react";
 import { validateRegisterData } from "@/utils/validation";
 
+
 type Mode = "login" | "register";
 
 // ── Defined at module level so React never sees it as a "new" component type ──
@@ -60,12 +61,12 @@ function AuthField({
   );
 }
 
-function SuccessModal({ firstName, onRedirect }: { firstName: string; onRedirect: () => void }) {
+function SuccessModal({ firstName }: { firstName: string }) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-none" />
       <div
-        className="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 flex flex-col items-center text-center"
+        className="relative z-10 bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 flex flex-col items-center text-center"
         style={{ animation: "authFadeIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both" }}
       >
         <div
@@ -88,13 +89,13 @@ function SuccessModal({ firstName, onRedirect }: { firstName: string; onRedirect
             }}
           />
         </div>
-        <button
-          onClick={onRedirect}
+        <Link
+          href="/login"
           className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold text-white hover:opacity-90 transition-opacity"
           style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
         >
           <LogIn size={15} /> Ir al inicio de sesión
-        </button>
+        </Link>
         <style>{`
           @keyframes progressFill { from { width:0% } to { width:100% } }
         `}</style>
@@ -233,7 +234,7 @@ function RegisterContent({ onSwitch }: { onSwitch: (m: Mode) => void }) {
 
   return (
     <>
-      {showSuccess && <SuccessModal firstName={firstName} onRedirect={() => router.push("/login")} />}
+      {showSuccess && <SuccessModal firstName={firstName} />}
       <div className="p-8 space-y-5">
         <div className="text-center">
           <h2 className="text-2xl font-extrabold text-gray-900">{t("auth.signUp")}</h2>
