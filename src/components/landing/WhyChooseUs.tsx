@@ -34,16 +34,16 @@ export default async function WhyChooseUs() {
       <div className="relative z-10 w-full max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 py-20 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-center">
 
         {/* Left — logo + contact info */}
-        <div className="flex flex-col items-center text-center md:border-r md:border-white/20 md:pr-16">
+        <div className="flex flex-col items-center text-center">
           <Image
             src="/logos/logo-blanco-nombre.png"
             alt="Clima HVAC Service"
             width={600}
-            height={240}
-            style={{ width: "auto", height: "240px", objectFit: "contain" }}
+            height={300}
+            style={{ width: "100%", maxWidth: "360px", height: "auto", objectFit: "contain" }}
             priority
           />
-          <div className="mt-8 space-y-2.5">
+          <div className="mt-6 space-y-2.5">
             <p className="text-white text-base font-semibold">C/ Balmes, 29 · 43204 - Reus</p>
             <p className="text-white/80 text-base">{t("why.mobileLabel")} 607 953 886</p>
           </div>
