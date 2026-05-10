@@ -13,23 +13,21 @@ export default async function WhyChooseUs() {
   ];
 
   return (
-    <section className="bg-white py-16 sm:py-24">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-stretch">
+    <section className="bg-white overflow-hidden">
+      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 items-stretch">
 
-        {/* Left — brand card */}
+        {/* Left — barcelona photo fills full column height */}
         <div
-          className="relative overflow-hidden rounded-3xl shadow-xl flex flex-col items-center justify-center text-center min-h-[340px]"
+          className="relative min-h-[420px] flex flex-col items-center justify-center text-center"
           style={{
             backgroundImage: "url('/barcelona.jpeg')",
             backgroundSize: "cover",
-            backgroundPosition: "center",
+            backgroundPosition: "center 25%",
           }}
         >
-          <div
-            className="absolute inset-0"
-            style={{ background: "linear-gradient(145deg, rgba(0,143,101,0.78) 0%, rgba(8,58,87,0.87) 100%)" }}
-          />
-          <div className="relative z-10 px-8 py-14 flex flex-col items-center gap-8">
+          {/* Natural dark scrim, no color tint */}
+          <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.40)" }} />
+          <div className="relative z-10 px-8 py-16 flex flex-col items-center gap-8">
             <Image
               src="/logos/logo-blanco-nombre.png"
               alt="Clima HVAC Service"
@@ -39,14 +37,14 @@ export default async function WhyChooseUs() {
               priority
             />
             <div className="space-y-2">
-              <p className="text-white/85 text-sm">C/ Balmes, 29 · 43204 - Reus</p>
-              <p className="text-white/85 text-sm">{t("why.mobileLabel")} 607 953 886</p>
+              <p className="text-white/90 text-sm font-medium">C/ Balmes, 29 · 43204 - Reus</p>
+              <p className="text-white/90 text-sm font-medium">{t("why.mobileLabel")} 607 953 886</p>
             </div>
           </div>
         </div>
 
-        {/* Right — benefits */}
-        <div>
+        {/* Right — benefits with its own padding */}
+        <div className="px-6 sm:px-10 py-16 sm:py-24">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
             {t("why.title")}
           </h2>

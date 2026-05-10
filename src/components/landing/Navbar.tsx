@@ -217,7 +217,7 @@ export default function Navbar() {
               src="/logos/logo-blanco-nombre.png"
               alt=""
               aria-hidden
-              className="absolute inset-0 h-32 w-auto object-contain"
+              className="absolute top-0 left-0 h-36 w-auto object-contain"
               style={{ opacity: logoColor === "white" ? 1 : 0, transition: "opacity 0.4s ease" }}
             />
           </div>
