@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { X, Info, DollarSign, Tag, Settings, Image, Search, Eye, Plus, Trash2, Wind, Flame, Droplets } from "lucide-react";
+import { X, Info, DollarSign, Tag, Settings, Image, Search, Eye, Plus, Trash2, Wind, Flame, Droplets, Upload, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
 import { createProduct, updateProduct } from "@/app/[locale]/(dashboard)/admin/products/actions";
@@ -646,44 +646,152 @@ function AeroTechnicalTab({ form, setAero }: { form: ProductFormData; setAero: S
   );
 }
 
+async function uploadImageFile(file: File): Promise<string> {
+  const fd = new FormData();
+  fd.append("file", file);
+  const res = await fetch("/api/upload", { method: "POST", body: fd });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error ?? "Error al subir la imagen");
+  return json.url as string;
+}
+
+function UploadButton({ onUrl, loading, onLoading }: {
+  onUrl: (url: string) => void;
+  loading: boolean;
+  onLoading: (v: boolean) => void;
+}) {
+  const ref = useRef<HTMLInputElement>(null);
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = "";
+    onLoading(true);
+    try {
+      const url = await uploadImageFile(file);
+      onUrl(url);
+    } catch (err: any) {
+      alert(err.message ?? "Error al subir la imagen");
+    } finally {
+      onLoading(false);
+    }
+  }
+
+  return (
+    <>
+      <input ref={ref} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+      <button
+        type="button"
+        disabled={loading}
+        onClick={() => ref.current?.click()}
+        className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-gray-200 bg-white text-xs font-semibold text-gray-600 hover:bg-primary-50 hover:border-primary-200 hover:text-primary-700 transition-colors shrink-0 disabled:opacity-50"
+      >
+        {loading ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />}
+        {loading ? "Subiendo…" : "Subir"}
+      </button>
+    </>
+  );
+}
+
 function MediaTab({ form, set }: { form: ProductFormData; set: SetFn }) {
+  const [mainLoading, setMainLoading] = useState(false);
+  const [galleryLoading, setGalleryLoading] = useState<Record<number, boolean>>({});
+
+  function setGalleryItemLoading(i: number, v: boolean) {
+    setGalleryLoading(prev => ({ ...prev, [i]: v }));
+  }
+
   return (
     <div className="space-y-4">
-      <Section title="Imagen principal">
-        <div className="col-span-2 flex gap-3 items-start">
-          <div className="w-24 h-24 rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center shrink-0 overflow-hidden">
-            {form.mainImage
-              ? <img src={form.mainImage} alt="" className="w-full h-full object-contain" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
-              : <Wind size={28} className="text-gray-200" />}
+      {/* Imagen principal */}
+      <div className="rounded-xl border border-gray-100 bg-gray-50/60 p-4">
+        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Imagen principal</p>
+        <div className="flex gap-3 items-start">
+          {/* Preview */}
+          <div className="w-24 h-24 rounded-xl border-2 border-dashed border-gray-200 bg-white flex items-center justify-center shrink-0 overflow-hidden">
+            {mainLoading
+              ? <Loader2 size={24} className="text-primary-400 animate-spin" />
+              : form.mainImage
+                ? <img src={form.mainImage} alt="" className="w-full h-full object-contain p-1"
+                    onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                : <Wind size={28} className="text-gray-200" />}
           </div>
-          <div className="flex-1">
-            <input className={inputCls} value={form.mainImage} onChange={e => set("mainImage", e.target.value)}
-              placeholder="https://... URL de imagen principal" />
-            <p className="text-[11px] text-gray-400 mt-1">Pega la URL directa de la imagen (JPG, PNG, WebP).</p>
+          {/* Controls */}
+          <div className="flex-1 space-y-2">
+            <div className="flex gap-2">
+              <input
+                className={inputCls}
+                value={form.mainImage}
+                onChange={e => set("mainImage", e.target.value)}
+                placeholder="https://... pegar URL de imagen"
+              />
+              <UploadButton
+                loading={mainLoading}
+                onLoading={setMainLoading}
+                onUrl={url => set("mainImage", url)}
+              />
+            </div>
+            <p className="text-[11px] text-gray-400">
+              Sube un archivo (JPG, PNG, WebP — máx. 8 MB) o pega una URL directa.
+            </p>
           </div>
         </div>
-      </Section>
+      </div>
 
+      {/* Galería */}
       <div className="rounded-xl border border-gray-100 bg-gray-50/60 p-4 space-y-3">
         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Galería de imágenes adicionales</p>
         {form.galleryImages.map((url, i) => (
-          <div key={i} className="flex gap-2">
-            <input className={inputCls} value={url} onChange={e => {
-              const arr = [...form.galleryImages]; arr[i] = e.target.value; set("galleryImages", arr);
-            }} placeholder={`Imagen ${i + 2}: https://...`} />
-            <button type="button" onClick={() => set("galleryImages", form.galleryImages.filter((_, j) => j !== i))}
-              className="p-2.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors shrink-0">
+          <div key={i} className="flex gap-2 items-center">
+            {url && !galleryLoading[i] && (
+              <div className="w-10 h-10 rounded-lg border border-gray-200 bg-white shrink-0 overflow-hidden">
+                <img src={url} alt="" className="w-full h-full object-contain p-0.5"
+                  onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+              </div>
+            )}
+            {galleryLoading[i] && (
+              <div className="w-10 h-10 rounded-lg border border-gray-200 bg-white shrink-0 flex items-center justify-center">
+                <Loader2 size={16} className="text-primary-400 animate-spin" />
+              </div>
+            )}
+            <input
+              className={inputCls}
+              value={url}
+              onChange={e => {
+                const arr = [...form.galleryImages];
+                arr[i] = e.target.value;
+                set("galleryImages", arr);
+              }}
+              placeholder={`Imagen ${i + 2}: https://...`}
+            />
+            <UploadButton
+              loading={!!galleryLoading[i]}
+              onLoading={v => setGalleryItemLoading(i, v)}
+              onUrl={newUrl => {
+                const arr = [...form.galleryImages];
+                arr[i] = newUrl;
+                set("galleryImages", arr);
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => set("galleryImages", form.galleryImages.filter((_, j) => j !== i))}
+              className="p-2.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors shrink-0"
+            >
               <Trash2 size={15} />
             </button>
           </div>
         ))}
-        <button type="button"
+        <button
+          type="button"
           onClick={() => set("galleryImages", [...form.galleryImages, ""])}
-          className="flex items-center gap-2 text-sm text-primary-600 hover:text-primary-700 font-medium px-1">
+          className="flex items-center gap-2 text-sm text-primary-600 hover:text-primary-700 font-medium px-1"
+        >
           <Plus size={14} /> Añadir imagen
         </button>
       </div>
 
+      {/* PDF */}
       <Section title="Documentos">
         <Field label="PDF ficha técnica (URL)" span2>
           <input className={inputCls} value={form.technicalPdf} onChange={e => set("technicalPdf", e.target.value)}
