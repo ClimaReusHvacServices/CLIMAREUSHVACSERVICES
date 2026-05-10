@@ -14,20 +14,20 @@ export default async function WhyChooseUs() {
 
   return (
     <section className="bg-white overflow-hidden">
-      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 items-stretch">
+      {/* True full-width split: left image fills half viewport, right fills other half */}
+      <div className="flex flex-col md:flex-row min-h-[540px]">
 
-        {/* Left — barcelona photo fills full column height */}
+        {/* Left — barcelona photo, exactly half viewport width, no max-w constraint */}
         <div
-          className="relative min-h-[420px] flex flex-col items-center justify-center text-center"
+          className="relative w-full md:w-1/2 min-h-[420px] md:min-h-0 flex flex-col items-center justify-center text-center"
           style={{
             backgroundImage: "url('/barcelona.jpeg')",
             backgroundSize: "cover",
             backgroundPosition: "center 25%",
           }}
         >
-          {/* Natural dark scrim, no color tint */}
-          <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.40)" }} />
-          <div className="relative z-10 px-8 py-16 flex flex-col items-center gap-8">
+          <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.38)" }} />
+          <div className="relative z-10 px-10 py-16 flex flex-col items-center gap-8">
             <Image
               src="/logos/logo-blanco-nombre.png"
               alt="Clima HVAC Service"
@@ -43,30 +43,33 @@ export default async function WhyChooseUs() {
           </div>
         </div>
 
-        {/* Right — benefits with its own padding */}
-        <div className="px-6 sm:px-10 py-16 sm:py-24">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
-            {t("why.title")}
-          </h2>
-          <p className="text-gray-500 text-base mb-8 leading-relaxed">
-            {t("why.subtitle")}
-          </p>
+        {/* Right — benefits, half viewport, centred content */}
+        <div className="w-full md:w-1/2 flex items-center justify-center bg-white">
+          <div className="w-full max-w-lg px-8 sm:px-12 py-16 sm:py-24">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
+              {t("why.title")}
+            </h2>
+            <p className="text-gray-500 text-base mb-8 leading-relaxed">
+              {t("why.subtitle")}
+            </p>
 
-          <ul className="space-y-5">
-            {BENEFITS.map((b) => (
-              <li key={b.title} className="flex items-start gap-3">
-                <CheckCircle2
-                  size={22}
-                  className="shrink-0 mt-0.5"
-                  style={{ color: "#1d7291" }}
-                />
-                <p className="text-gray-700 text-sm sm:text-base">
-                  <span className="font-semibold text-gray-800">{b.title}:</span>{" "}{b.text}
-                </p>
-              </li>
-            ))}
-          </ul>
+            <ul className="space-y-5">
+              {BENEFITS.map((b) => (
+                <li key={b.title} className="flex items-start gap-3">
+                  <CheckCircle2
+                    size={22}
+                    className="shrink-0 mt-0.5"
+                    style={{ color: "#1d7291" }}
+                  />
+                  <p className="text-gray-700 text-sm sm:text-base">
+                    <span className="font-semibold text-gray-800">{b.title}:</span>{" "}{b.text}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
+
       </div>
     </section>
   );
