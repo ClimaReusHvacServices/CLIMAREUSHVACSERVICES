@@ -3,6 +3,7 @@ import { db } from "@/db";
 import OfertaPageClient from "@/components/landing/OfertaPageClient";
 import Footer from "@/components/landing/Footer";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { auth } from "@/auth/config";
 
 const Navbar = dynamic(() => import("@/components/landing/Navbar"));
 const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton"));
@@ -49,7 +50,7 @@ async function getAllProducts() {
 export default async function OfertaPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [products, t] = await Promise.all([getAllProducts(), getTranslations("landing")]);
+  const [products, t, session] = await Promise.all([getAllProducts(), getTranslations("landing"), auth()]);
 
   return (
     <main className="bg-gray-50 min-h-screen">
@@ -79,7 +80,7 @@ export default async function OfertaPage({ params }: { params: Promise<{ locale:
             <span className="ml-auto font-medium text-primary-600">{t("ofertaPage.statsInstall")}</span>
           </div>
         </div>
-        <OfertaPageClient products={products} />
+        <OfertaPageClient products={products} isLoggedIn={!!session?.user} />
       </div>
 
       <WhatsAppButton />
