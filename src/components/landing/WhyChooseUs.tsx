@@ -31,7 +31,7 @@ export default async function WhyChooseUs() {
       />
 
       {/* Content grid overlaid on the image */}
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 py-20 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-center">
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 py-10 sm:py-20 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-center">
 
         {/* Left — logo + contact info */}
         <div className="flex flex-col items-center text-center">
@@ -51,10 +51,10 @@ export default async function WhyChooseUs() {
 
         {/* Right — why choose us */}
         <div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-3">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-3 text-center md:text-left">
             {t("why.title")}
           </h2>
-          <p className="text-white/70 text-base mb-8 leading-relaxed">
+          <p className="text-white/70 text-base mb-8 leading-relaxed text-center md:text-left">
             {t("why.subtitle")}
           </p>
 

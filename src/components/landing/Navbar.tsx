@@ -293,10 +293,10 @@ export default function Navbar() {
 
           <div className="hidden sm:block h-4 w-px bg-gray-200 mx-1" />
 
-          {/* Phone */}
+          {/* Phone — sólo escritorio; en móvil está en el menú desplegable */}
           <a
             href="tel:+34877234166"
-            className="flex items-center gap-1.5 text-primary-700 hover:text-primary-900 transition-colors"
+            className="hidden sm:flex items-center gap-1.5 text-primary-700 hover:text-primary-900 transition-colors"
             aria-label="Llamar al 877 234 166"
           >
             <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-primary-500 shrink-0">
