@@ -771,7 +771,7 @@ export function ProductFormModal({ initial, categories, onClose }: Props) {
             {!form.seoTitle && autoTitle && (
               <button type="button" className="text-[11px] text-primary-500 hover:text-primary-700 mt-1"
                 onClick={() => set("seoTitle", autoTitle)}>
-                Usar automático: "{autoTitle.slice(0, 60)}..."
+                Usar automático: &ldquo;{autoTitle.slice(0, 60)}...&rdquo;
               </button>
             )}
           </Field>
