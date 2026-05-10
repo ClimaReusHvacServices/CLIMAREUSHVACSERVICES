@@ -6,6 +6,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Users, Package, Banknote, Wrench, ShoppingBag, BarChart3 } from "lucide-react";
 import { STATUS_COLORS } from "@/lib/status-colors";
 import Image from "next/image";
+import { AutoRefresh } from "@/components/admin/AutoRefresh";
 
 async function getAdminStats() {
   const [totalUsers, totalOrders, revenueAggregate, activeWorkers] = await Promise.all([
@@ -24,10 +25,19 @@ async function getAdminStats() {
 
 const PAGE_SIZE = 10;
 
+export const dynamic = "force-dynamic";
+
 async function getOrders(page: number) {
   const [rows, total] = await Promise.all([
     db.order.findMany({
-      include: { user: { select: { firstName: true, lastName: true } } },
+      include: {
+        user: { select: { firstName: true, lastName: true } },
+        items: {
+          include: { product: { select: { name: true } } },
+          take: 1,
+          orderBy: { id: "asc" },
+        },
+      },
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
@@ -59,6 +69,7 @@ export default async function AdminDashboard({
 
   return (
     <div className="space-y-6">
+      <AutoRefresh intervalMs={30_000} />
       {/* Banner header */}
       <div className="rounded-2xl overflow-hidden shadow-md" style={{ background: "linear-gradient(135deg, #008f65 0%, #1d7291 60%, #083a57 100%)" }}>
         <div className="px-6 py-6 sm:px-8 sm:py-7 flex flex-col sm:flex-row items-start sm:items-center gap-4">
@@ -138,8 +149,17 @@ export default async function AdminDashboard({
                 </tr>
               ) : (
                 orders.map((order) => (
-                  <tr key={order.id} className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
-                    <td className="py-3 px-3 font-medium text-gray-900">{order.orderNumber}</td>
+                  <tr
+                    key={order.id}
+                    className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors cursor-pointer"
+                    onClick={() => window.location.href = `/${locale}/admin/orders/${order.id}`}
+                  >
+                    <td className="py-3 px-3">
+                      <p className="font-semibold text-gray-900 text-sm leading-tight truncate max-w-[180px]">
+                        {order.items[0]?.product?.name ?? order.orderNumber}
+                      </p>
+                      <p className="text-[10px] text-gray-400 mt-0.5">{order.orderNumber}</p>
+                    </td>
                     <td className="py-3 px-3 text-gray-700 hidden sm:table-cell">
                       {order.user.firstName} {order.user.lastName}
                     </td>

@@ -75,6 +75,23 @@ export async function claimOrderAsAdmin(orderId: string) {
   revalidatePath(`/[locale]/admin/orders/${orderId}`, "page");
 }
 
+export async function assignWorkerToOrder(orderId: string, workerId: string, note: string) {
+  const session = await checkAdmin();
+  const task = await db.task.upsert({
+    where: { orderId },
+    create: { orderId, assignedToId: workerId, status: "en_progreso", description: "Tarea asignada", priority: "alta" },
+    update: { assignedToId: workerId, status: "en_progreso" },
+  });
+  await db.order.update({ where: { id: orderId }, data: { status: "en_progreso" } });
+  if (note.trim()) {
+    await db.taskComment.create({ data: { taskId: task.id, authorId: session.user!.id, content: note.trim() } });
+  }
+  revalidatePath("/[locale]/admin/orders", "page");
+  revalidatePath(`/[locale]/admin/orders/${orderId}`, "page");
+  revalidatePath(`/[locale]/worker/orders/${orderId}`, "page");
+  revalidatePath(`/[locale]/orders/${orderId}`, "page");
+}
+
 export async function clearOrderChat(orderId: string) {
   await checkAdmin();
   const task = await db.task.findUnique({ where: { orderId }, select: { id: true } });
