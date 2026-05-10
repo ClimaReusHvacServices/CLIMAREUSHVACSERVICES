@@ -205,21 +205,20 @@ export default function Navbar() {
   return (
     <>
       {/* ── Logo superior izquierda ────────────────────────────────────── */}
-      {/* h-20 (80px) en top-1 (4px) → centro a 44px, alineado con el centro de la píldora */}
-      <div className="hidden sm:block fixed left-24 top-1 z-50">
+      <div className="hidden sm:block fixed left-24 top-0 z-50">
         <Link href="/" aria-label="Clima HVAC Service — inicio">
-          <div className="relative h-20">
+          <div className="relative h-32">
             <img
               src="/logos/logo-verde-nombre.png"
               alt="Clima HVAC Service"
-              className="h-20 w-auto object-contain"
+              className="h-32 w-auto object-contain"
               style={{ opacity: logoColor === "green" ? 1 : 0, transition: "opacity 0.4s ease" }}
             />
             <img
               src="/logos/logo-blanco-nombre.png"
               alt=""
               aria-hidden
-              className="absolute inset-0 h-20 w-auto object-contain"
+              className="absolute inset-0 h-32 w-auto object-contain"
               style={{ opacity: logoColor === "white" ? 1 : 0, transition: "opacity 0.4s ease" }}
             />
           </div>

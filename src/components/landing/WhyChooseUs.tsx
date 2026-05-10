@@ -17,27 +17,31 @@ export default async function WhyChooseUs() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
 
         {/* Left — brand card */}
-        <div className="flex flex-col items-center text-center">
-          {/* Logo */}
-          <div className="w-48 h-48 rounded-full flex items-center justify-center mb-6 shadow-lg bg-white border border-gray-100">
+        <div
+          className="relative overflow-hidden rounded-3xl shadow-xl min-h-[300px] flex flex-col items-center justify-center text-center"
+          style={{
+            backgroundImage: "url('/barcelona.jpeg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <div
+            className="absolute inset-0"
+            style={{ background: "linear-gradient(145deg, rgba(0,143,101,0.80) 0%, rgba(8,58,87,0.88) 100%)" }}
+          />
+          <div className="relative z-10 px-8 py-12 flex flex-col items-center gap-6">
             <Image
-              src="/logos/logoverde.png"
+              src="/logos/logo-blanco-nombre.png"
               alt="Clima HVAC Service"
               width={500}
-              height={500}
-              style={{ width: "120px", height: "120px", objectFit: "contain" }}
+              height={200}
+              style={{ width: "auto", height: "72px", objectFit: "contain" }}
+              priority
             />
-          </div>
-
-          <h3 className="text-xl font-extrabold tracking-tight text-gray-900">
-            CLIMA HVAC SERVICE
-          </h3>
-          <p className="text-sm italic text-gray-400 mt-0.5">Ariel Hugo José Morales</p>
-
-          <div className="mt-4 text-sm text-gray-500 leading-relaxed space-y-0.5">
-            <p className="font-semibold text-gray-600">Z-1485584-L</p>
-            <p>C/ Balmes, 29 · 43204 - Reus</p>
-            <p>{t("why.mobileLabel")} 607 953 886</p>
+            <div className="space-y-1.5">
+              <p className="text-white/80 text-sm">C/ Balmes, 29 · 43204 - Reus</p>
+              <p className="text-white/80 text-sm">{t("why.mobileLabel")} 607 953 886</p>
+            </div>
           </div>
         </div>
 

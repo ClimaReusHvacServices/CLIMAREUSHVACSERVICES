@@ -125,19 +125,22 @@ export default async function SobreNosotrosPage({
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
             <div>
-              <span className="text-xs font-bold tracking-widest uppercase text-primary-600 block mb-4">Nuestra historia</span>
+              <span className="text-xs font-bold tracking-widest uppercase text-primary-600 block mb-4">Nuestra experiencia</span>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-5 leading-tight">
-                Profesionales del clima con vocación de servicio
+                Profesionales en climatización para hogares y empresas
               </h2>
               <div className="space-y-4 text-gray-600 text-sm sm:text-base leading-relaxed">
                 <p>
-                  Clima HVAC Service nació con una misión clara: ofrecer soluciones de climatización profesionales y accesibles para hogares y negocios de Reus y toda la provincia de Tarragona.
+                  En Clima HVAC Service ofrecemos soluciones de climatización para viviendas, locales y empresas en Reus, Tarragona y alrededores.
                 </p>
                 <p>
-                  Nuestro equipo de técnicos certificados combina experiencia práctica con las últimas tecnologías del sector: desde la instalación de un split residencial hasta sistemas completos de aerotermia para grandes superficies.
+                  Contamos con técnicos habilitados y experiencia en instalación, mantenimiento y reparación de equipos de aire acondicionado, calefacción y aerotermia.
                 </p>
                 <p>
-                  Creemos que un buen ambiente en casa o en el trabajo marca la diferencia. Por eso, cada instalación la tratamos con el mismo rigor y atención al detalle que nos gustaría recibir nosotros mismos.
+                  Trabajamos con equipos de alta eficiencia energética y primeras marcas del sector, garantizando instalaciones seguras, eficientes y adaptadas a cada cliente.
+                </p>
+                <p>
+                  Nuestro objetivo es ofrecer un servicio profesional, cercano y rápido, cuidando cada instalación con atención al detalle y cumpliendo la normativa vigente.
                 </p>
               </div>
             </div>

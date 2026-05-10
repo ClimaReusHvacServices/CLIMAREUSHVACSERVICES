@@ -393,16 +393,16 @@
     "why": {
       "title": "¿Por qué elegirnos?",
       "subtitle": "Somos instaladores certificados RITE que cuidan tu hogar como si fuera el nuestro. Sin esperas, sin sorpresas en el precio y con las mejores marcas del mercado.",
-      "b1title": "Experiencia Local", "b1text": "Más de 30 años y 4.000 instalaciones en Reus y Tarragona.",
-      "b2title": "Calidad Certificada", "b2text": "Instaladores RITE y marcas líderes como Mitsubishi y Haier.",
-      "b3title": "Eficiencia y Ahorro", "b3text": "Tecnología clase A++ para el mínimo consumo energético.",
-      "b4title": "Servicio Express", "b4text": "Presupuesto gratis e instalación en solo 24 horas.",
+      "b1title": "Experiencia Local", "b1text": "Más de 30 años de experiencia en instalaciones de climatización en Reus, Tarragona y alrededores.",
+      "b2title": "Instaladores Autorizados", "b2text": "Empresa habilitada RITE con instalación y mantenimiento según normativa vigente.",
+      "b3title": "Eficiencia Energética", "b3text": "Equipos de alta eficiencia energética para mayor ahorro y confort durante todo el año.",
+      "b4title": "Atención Rápida", "b4text": "Presupuesto sin compromiso y servicio de instalación en 24/48 horas.",
       "mobileLabel": "Móvil"
     },
     "brands": {
-      "title": "Trabajamos con las mejores",
+      "title": "Trabajamos con primeras marcas",
       "badge": "marcas",
-      "subtitle": "Instalamos equipos de climatización de fabricantes reconocidos por su eficiencia, durabilidad y tecnología avanzada, como Haier, Mitsubishi Electric, Fanworld, Seico y entre otros."
+      "subtitle": "Instalamos equipos de climatización de fabricantes reconocidos por su fiabilidad, eficiencia y rendimiento, como Mitsubishi Electric, Haier, Daikin, Fujitsu y otras marcas líderes del sector."
     },
     "faq": {
       "titleLine1": "Preguntas", "titleLine2": "Frecuentes",
