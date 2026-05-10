@@ -132,20 +132,12 @@ export function CheckoutClient({ address }: { address: Address | null }) {
 
       {/* Totals */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4 space-y-2">
-        <div className="flex justify-between text-sm text-gray-500">
-          <span>Subtotal</span>
-          <span>€{fmt(subtotal)}</span>
-        </div>
-        <div className="flex justify-between text-sm text-gray-500">
-          <span>IVA (21%)</span>
-          <span>€{fmt(taxAmount)}</span>
-        </div>
         <div className="flex justify-between text-sm text-gray-400">
-          <span>Envío / desplazamiento</span>
+          <span>Desplazamiento / instalación</span>
           <span className="text-primary-600 font-medium">Incluido</span>
         </div>
         <div className="flex justify-between font-bold text-gray-900 text-lg pt-2 border-t border-gray-100">
-          <span>Total</span>
+          <span>Total <span className="text-xs font-normal text-gray-400">(IVA inc.)</span></span>
           <span>€{fmt(total)}</span>
         </div>
       </div>

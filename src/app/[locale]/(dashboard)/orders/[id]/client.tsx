@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Link } from "@/i18n/routing";
+import { useRouter, Link } from "@/i18n/routing";
 import {
   ArrowLeft, Package, MapPin, Clock,
   Banknote, CheckCircle2, Wrench,
@@ -133,6 +132,25 @@ export function ClientOrderDetailClient({ order, locale }: { order: Order; local
           </div>
         </div>
       )}
+      {order.status === "cancelada" && (
+        <div className="bg-red-50 border border-red-200 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="flex items-start gap-3 flex-1">
+            <span className="text-2xl shrink-0">❌</span>
+            <div>
+              <p className="text-sm font-bold text-red-800">Pedido cancelado</p>
+              <p className="text-xs text-red-600 mt-0.5">Este pedido ha sido cancelado. Si tienes dudas, contáctanos por WhatsApp o teléfono.</p>
+            </div>
+          </div>
+          <Link
+            href="/orders"
+            className="shrink-0 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
+            style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
+          >
+            ← Volver a mis pedidos
+          </Link>
+        </div>
+      )}
+
       {order.status === "completada" && (
         <>
           <div className="bg-green-50 border border-green-200 rounded-2xl px-5 py-4 flex items-start gap-3">
@@ -192,14 +210,8 @@ export function ClientOrderDetailClient({ order, locale }: { order: Order; local
           ))}
         </div>
         <div className="pt-3 border-t border-gray-100 space-y-1.5 text-sm">
-          <div className="flex justify-between text-gray-500">
-            <span>Subtotal</span><span>€{Number(order.subtotal).toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between text-gray-500">
-            <span>IVA (21%)</span><span>€{Number(order.taxAmount).toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between font-bold text-gray-900 text-base pt-1 border-t border-gray-100">
-            <span>Total</span>
+          <div className="flex justify-between font-bold text-gray-900 text-base">
+            <span>Total <span className="text-xs font-normal text-gray-400">(IVA inc.)</span></span>
             <span className="flex items-center gap-1">
               <Banknote size={15} className="text-primary-600" />
               €{Number(order.totalAmount).toFixed(2)}

@@ -15,6 +15,7 @@ declare module "next-auth" {
       role: UserRole;
       phoneNumber?: string;
       address?: string;
+      requiresPasswordChange: boolean;
     };
   }
 
@@ -27,6 +28,7 @@ declare module "next-auth" {
     role: UserRole;
     phoneNumber?: string;
     address?: string;
+    requiresPasswordChange: boolean;
   }
 
   interface JWT {
@@ -37,6 +39,7 @@ declare module "next-auth" {
     lastName: string;
     phoneNumber?: string;
     address?: string;
+    requiresPasswordChange: boolean;
   }
 }
 
@@ -84,6 +87,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           role: user.role,
           phoneNumber: user.phoneNumber ?? undefined,
           address: user.address ?? undefined,
+          requiresPasswordChange: user.requiresPasswordChange,
         };
       },
     }),
@@ -104,6 +108,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.lastName = user.lastName;
         token.phoneNumber = user.phoneNumber;
         token.address = user.address;
+        token.requiresPasswordChange = user.requiresPasswordChange;
       }
       return token;
     },
@@ -118,6 +123,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           lastName: string;
           phoneNumber?: string;
           address?: string;
+          requiresPasswordChange: boolean;
         };
         session.user.id = t.id;
         session.user.role = t.role;
@@ -126,6 +132,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.lastName = t.lastName;
         session.user.phoneNumber = t.phoneNumber;
         session.user.address = t.address;
+        session.user.requiresPasswordChange = t.requiresPasswordChange ?? false;
       }
       return session;
     },

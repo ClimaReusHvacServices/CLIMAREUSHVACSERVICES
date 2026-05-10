@@ -249,6 +249,19 @@ export default function Navbar() {
             <CartNavIcon />
           </div>
 
+          {/* Móvil — botón login (solo cuando no está autenticado) */}
+          {status !== "loading" && !isLoggedIn && (
+            <Link
+              href="/login"
+              className="sm:hidden flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-bold text-white shrink-0"
+              style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
+              aria-label="Iniciar sesión"
+            >
+              <LogIn size={11} />
+              <span>Entrar</span>
+            </Link>
+          )}
+
           {/* Móvil — selector de idioma inline (3 píldoras, sin desplegable) */}
           <div className="sm:hidden flex items-center gap-0.5 shrink-0">
             {LOCALES.map((l) => (

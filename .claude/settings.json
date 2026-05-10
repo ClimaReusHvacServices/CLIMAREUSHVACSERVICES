@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat src/middleware.ts)",
+      "Bash(cat src/app/middleware.ts)"
+    ]
+  }
+}
