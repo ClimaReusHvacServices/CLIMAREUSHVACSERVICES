@@ -42,7 +42,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
   }
 
-  if (session && session.user?.requiresPasswordChange && !isChangePwd) {
+  if (session && (session.user as { requiresPasswordChange?: boolean } | undefined)?.requiresPasswordChange && !isChangePwd) {
     return NextResponse.redirect(new URL(`/${locale}/change-password`, req.url));
   }
 
