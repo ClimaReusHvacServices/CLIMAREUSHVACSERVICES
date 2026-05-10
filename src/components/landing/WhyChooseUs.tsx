@@ -43,7 +43,7 @@ export default async function WhyChooseUs() {
             style={{ width: "100%", maxWidth: "360px", height: "auto", objectFit: "contain" }}
             priority
           />
-          <div className="mt-6 space-y-2.5">
+          <div className="mt-3 text-center space-y-2">
             <p className="text-white text-base font-semibold">C/ Balmes, 29 · 43204 - Reus</p>
             <p className="text-white/80 text-base">{t("why.mobileLabel")} 607 953 886</p>
           </div>
