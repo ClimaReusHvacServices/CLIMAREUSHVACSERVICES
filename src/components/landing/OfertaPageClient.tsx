@@ -6,7 +6,7 @@ import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/store/cart";
 
-const WA_PHONE = "34607953886";
+import { waOfertaProduct } from "@/lib/whatsapp";
 
 export interface ProductItem {
   id: string;
@@ -78,10 +78,9 @@ function StockPill({ status }: { status: string | null }) {
 }
 
 function WaProductButton({ product, label }: { product: ProductItem; label: string }) {
-  const msg = encodeURIComponent(`¡Hola! Me interesa el producto: *${product.name}*. ¿Podéis darme más información y presupuesto con instalación?`);
   return (
     <a
-      href={`https://wa.me/${WA_PHONE}?text=${msg}`}
+      href={waOfertaProduct(product.name)}
       target="_blank"
       rel="noreferrer"
       onClick={e => e.stopPropagation()}

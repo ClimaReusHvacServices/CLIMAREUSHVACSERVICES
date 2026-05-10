@@ -10,8 +10,7 @@ import {
 const Navbar = dynamic(() => import("@/components/landing/Navbar"));
 const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton"));
 
-const WA_NUMBER = "34607953886";
-const WA_TEXT = encodeURIComponent("Hola, les escribo desde vuestra página web. Me gustaría obtener más información sobre vuestros servicios.");
+import { WA_SOBRE_NOSOTROS as WA_TEXT } from "@/lib/whatsapp";
 
 export async function generateMetadata() {
   return {
@@ -274,7 +273,7 @@ export default async function SobreNosotrosPage({
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
-              href={`https://wa.me/${WA_NUMBER}?text=${WA_TEXT}`}
+              href={WA_TEXT}
               target="_blank"
               rel="noreferrer"
               className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl text-sm font-bold text-white hover:opacity-90 transition-all shadow-lg"

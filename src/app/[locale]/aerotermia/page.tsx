@@ -11,8 +11,7 @@ import {
 const Navbar = dynamic(() => import("@/components/landing/Navbar"));
 const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton"));
 
-const WA_NUMBER = "34607953886";
-const WA_TEXT = encodeURIComponent("Hola, les escribo desde vuestra página web. Me interesa información sobre aerotermia. ¿Podéis asesorarme?");
+import { WA_AEROTERMIA as WA_TEXT } from "@/lib/whatsapp";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -144,7 +143,7 @@ export default async function AerotermiaPage({
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <a
-                  href={`https://wa.me/${WA_NUMBER}?text=${WA_TEXT}`}
+                  href={WA_TEXT}
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl text-sm font-bold text-white transition-all hover:opacity-90 shadow-lg"
@@ -279,7 +278,7 @@ export default async function AerotermiaPage({
                 Estamos actualizando nuestro catálogo de aerotermia. Contáctanos por WhatsApp y te asesoramos con los mejores equipos según tus necesidades y presupuesto.
               </p>
               <a
-                href={`https://wa.me/${WA_NUMBER}?text=${WA_TEXT}`}
+                href={WA_TEXT}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl text-sm font-bold text-white transition-all hover:opacity-90 shadow-md"
@@ -361,7 +360,7 @@ export default async function AerotermiaPage({
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
-              href={`https://wa.me/${WA_NUMBER}?text=${WA_TEXT}`}
+              href={WA_TEXT}
               target="_blank"
               rel="noreferrer"
               className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl text-sm font-bold text-white transition-all hover:opacity-90 shadow-lg"

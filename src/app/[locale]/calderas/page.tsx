@@ -11,8 +11,7 @@ import {
 const Navbar = dynamic(() => import("@/components/landing/Navbar"));
 const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton"));
 
-const WA_NUMBER = "34607953886";
-const WA_CALDERAS = encodeURIComponent("Hola, les escribo desde vuestra página web. Me interesa información sobre calderas de gas. ¿Podéis asesorarme y darme presupuesto?");
+import { WA_CALDERAS } from "@/lib/whatsapp";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return {
@@ -111,7 +110,7 @@ export default async function CalderasPage({
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <a
-                  href={`https://wa.me/${WA_NUMBER}?text=${WA_CALDERAS}`}
+                  href={WA_CALDERAS}
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl text-sm font-bold text-white transition-all hover:opacity-90 shadow-lg"
@@ -212,7 +211,7 @@ export default async function CalderasPage({
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <a
-                  href={`https://wa.me/${WA_NUMBER}?text=${WA_CALDERAS}`}
+                  href={WA_CALDERAS}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl text-sm font-bold text-white transition-all hover:opacity-90 shadow-md"
@@ -302,7 +301,7 @@ export default async function CalderasPage({
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
-              href={`https://wa.me/${WA_NUMBER}?text=${WA_CALDERAS}`}
+              href={WA_CALDERAS}
               target="_blank"
               rel="noreferrer"
               className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl text-sm font-bold text-white hover:opacity-90 transition-all shadow-lg"

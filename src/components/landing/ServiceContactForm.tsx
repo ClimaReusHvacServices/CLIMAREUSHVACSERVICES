@@ -6,8 +6,7 @@ import { useLocale } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { LogIn, Wrench, CheckCircle2, Clock, Shield } from "lucide-react";
 import { requestServiceConsultation } from "@/app/[locale]/servicios/actions";
-
-const WA = "34607953886";
+import { waService } from "@/lib/whatsapp";
 
 export default function ServiceContactForm({ serviceTitle }: { serviceTitle: string }) {
   const { data: session } = useSession();
@@ -15,9 +14,7 @@ export default function ServiceContactForm({ serviceTitle }: { serviceTitle: str
   const locale = useLocale();
   const [requesting, startRequest] = useTransition();
 
-  const waMsg = encodeURIComponent(
-    `Hola, les escribo desde vuestra página web. Me interesa el servicio de *${serviceTitle}*. ¿Podéis informarme y darme presupuesto sin compromiso?`
-  );
+  const waMsg = waService(serviceTitle);
 
   function handleRequest() {
     startRequest(async () => {
@@ -78,7 +75,7 @@ export default function ServiceContactForm({ serviceTitle }: { serviceTitle: str
         ) : null}
 
         <a
-          href={`https://wa.me/${WA}?text=${waMsg}`}
+          href={waMsg}
           target="_blank"
           rel="noreferrer"
           className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-white text-sm font-bold transition-all hover:opacity-90"
