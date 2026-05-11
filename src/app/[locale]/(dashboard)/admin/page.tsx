@@ -62,7 +62,25 @@ export default async function AdminDashboard({
   if (!session || session.user?.role !== "admin") redirect("/");
 
   const page = Math.max(1, parseInt(pageStr ?? "1", 10) || 1);
-  const [stats, { rows: orders, total }] = await Promise.all([getAdminStats(), getOrders(page)]);
+
+  let stats: Awaited<ReturnType<typeof getAdminStats>>;
+  let orders: Awaited<ReturnType<typeof getOrders>>["rows"];
+  let total: number;
+  try {
+    const result = await Promise.all([getAdminStats(), getOrders(page)]);
+    stats = result[0];
+    orders = result[1].rows;
+    total = result[1].total;
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return (
+      <div className="p-8 bg-red-50 rounded-2xl border border-red-200">
+        <h2 className="text-red-700 font-bold text-lg mb-2">Error al cargar el panel</h2>
+        <pre className="text-red-600 text-xs whitespace-pre-wrap break-all">{msg}</pre>
+      </div>
+    );
+  }
+
   const totalPages = Math.ceil(total / PAGE_SIZE);
   const t = await getTranslations("admin");
   const tStatus = await getTranslations("status");
