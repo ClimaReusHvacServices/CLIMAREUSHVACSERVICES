@@ -66,24 +66,26 @@ export default async function AdminDashboard({
   let stats: Awaited<ReturnType<typeof getAdminStats>>;
   let orders: Awaited<ReturnType<typeof getOrders>>["rows"];
   let total: number;
+  let t: Awaited<ReturnType<typeof getTranslations<"admin">>>;
+  let tStatus: Awaited<ReturnType<typeof getTranslations<"status">>>;
+  let totalPages: number;
   try {
     const result = await Promise.all([getAdminStats(), getOrders(page)]);
     stats = result[0];
     orders = result[1].rows;
     total = result[1].total;
+    totalPages = Math.ceil(total / PAGE_SIZE);
+    t = await getTranslations("admin");
+    tStatus = await getTranslations("status");
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
+    const msg = err instanceof Error ? `${err.name}: ${err.message}\n${(err as any).stack ?? ""}` : String(err);
     return (
       <div className="p-8 bg-red-50 rounded-2xl border border-red-200">
-        <h2 className="text-red-700 font-bold text-lg mb-2">Error al cargar el panel</h2>
+        <h2 className="text-red-700 font-bold text-lg mb-2">Error al cargar el panel (page)</h2>
         <pre className="text-red-600 text-xs whitespace-pre-wrap break-all">{msg}</pre>
       </div>
     );
   }
-
-  const totalPages = Math.ceil(total / PAGE_SIZE);
-  const t = await getTranslations("admin");
-  const tStatus = await getTranslations("status");
 
   return (
     <div className="space-y-6">
