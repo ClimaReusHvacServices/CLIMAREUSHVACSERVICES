@@ -98,10 +98,8 @@ export default function Navbar() {
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // El logo está fijo en top-1 (4px) con h-20 (80px) → su centro queda a 44px del borde superior.
-    // En cada tick de scroll revisamos qué sección [data-logo] contiene esa coordenada Y.
-    // Es determinista y funciona igual en ambas direcciones de scroll.
-    const LOGO_Y = 44;
+    // Logo top -20px + h-36/2 = 52px → center at 52px.
+    const LOGO_Y = 52;
     let raf = 0;
 
     const update = () => {
@@ -205,21 +203,20 @@ export default function Navbar() {
   return (
     <>
       {/* ── Logo superior izquierda ────────────────────────────────────── */}
-      {/* h-20 (80px) en top-1 (4px) → centro a 44px, alineado con el centro de la píldora */}
-      <div className="hidden sm:block fixed left-24 top-1 z-50">
+      <div className="hidden sm:block fixed left-24 z-50" style={{ top: "-20px" }}>
         <Link href="/" aria-label="Clima HVAC Service — inicio">
-          <div className="relative h-20">
+          <div className="relative h-36">
             <img
               src="/logos/logo-verde-nombre.png"
               alt="Clima HVAC Service"
-              className="h-20 w-auto object-contain"
+              className="h-36 w-auto object-contain"
               style={{ opacity: logoColor === "green" ? 1 : 0, transition: "opacity 0.4s ease" }}
             />
             <img
               src="/logos/logo-blanco-nombre.png"
               alt=""
               aria-hidden
-              className="absolute inset-0 h-20 w-auto object-contain"
+              className="absolute top-0 left-0 h-36 w-auto object-contain"
               style={{ opacity: logoColor === "white" ? 1 : 0, transition: "opacity 0.4s ease" }}
             />
           </div>
@@ -296,10 +293,10 @@ export default function Navbar() {
 
           <div className="hidden sm:block h-4 w-px bg-gray-200 mx-1" />
 
-          {/* Phone */}
+          {/* Phone — sólo escritorio; en móvil está en el menú desplegable */}
           <a
             href="tel:+34877234166"
-            className="flex items-center gap-1.5 text-primary-700 hover:text-primary-900 transition-colors"
+            className="hidden sm:flex items-center gap-1.5 text-primary-700 hover:text-primary-900 transition-colors"
             aria-label="Llamar al 877 234 166"
           >
             <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-primary-500 shrink-0">

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { Wind, CheckCircle2 } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
@@ -31,7 +32,7 @@ function ProductCard({ product, t }: { product: ProductItem; t: (k: string) => s
   return (
     <Link
       href={`/producto/${product.id}`}
-      className="relative group bg-[#f5f2eb] rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 flex flex-col"
+      className="relative group bg-[#f5f2eb] rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 flex flex-col h-full"
     >
       {hasDiscount && (
         <div className="absolute left-4 top-4 z-20">
@@ -93,6 +94,44 @@ function ProductCard({ product, t }: { product: ProductItem; t: (k: string) => s
 
 export function ProductsSection({ products }: { products: ProductItem[] }) {
   const t = useTranslations("landing");
+  const trackRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const scrollStart = useRef(0);
+  const didDrag = useRef(false);
+
+  function onMouseDown(e: React.MouseEvent) {
+    if (!trackRef.current) return;
+    isDragging.current = true;
+    didDrag.current = false;
+    startX.current = e.pageX;
+    scrollStart.current = trackRef.current.scrollLeft;
+    trackRef.current.style.cursor = "grabbing";
+    trackRef.current.style.userSelect = "none";
+  }
+
+  function onMouseMove(e: React.MouseEvent) {
+    if (!isDragging.current || !trackRef.current) return;
+    const delta = e.pageX - startX.current;
+    if (Math.abs(delta) > 4) didDrag.current = true;
+    trackRef.current.scrollLeft = scrollStart.current - delta;
+  }
+
+  function stopDrag() {
+    isDragging.current = false;
+    if (trackRef.current) {
+      trackRef.current.style.cursor = "grab";
+      trackRef.current.style.userSelect = "";
+    }
+  }
+
+  function onClickCapture(e: React.MouseEvent) {
+    if (didDrag.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      didDrag.current = false;
+    }
+  }
 
   return (
     <section id="oferta" style={{ background: "linear-gradient(135deg, #0b5f86 0%, #1d7291 45%, #083a57 100%)" }}>
@@ -116,14 +155,36 @@ export function ProductsSection({ products }: { products: ProductItem[] }) {
             <p className="text-white/30 text-sm mt-1">{t("products.emptyDesc")}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            {products.map((p) => (
-              <ProductCard key={p.id} product={p} t={t as any} />
-            ))}
+          <div className="relative">
+            <div
+              ref={trackRef}
+              className="flex gap-5 overflow-x-auto cursor-grab pb-3"
+              style={{ scrollbarWidth: "none", scrollSnapType: "x mandatory" }}
+              onMouseDown={onMouseDown}
+              onMouseMove={onMouseMove}
+              onMouseUp={stopDrag}
+              onMouseLeave={stopDrag}
+              onClickCapture={onClickCapture}
+            >
+              {products.map((p) => (
+                <div
+                  key={p.id}
+                  className="shrink-0 w-[280px] sm:w-[300px]"
+                  style={{ scrollSnapAlign: "start" }}
+                >
+                  <ProductCard product={p} t={t as any} />
+                </div>
+              ))}
+            </div>
+            {/* Subtle right-edge fade */}
+            <div
+              className="absolute top-0 right-0 h-full w-16 pointer-events-none"
+              style={{ background: "linear-gradient(to right, transparent, rgba(8,58,87,0.75))" }}
+            />
           </div>
         )}
 
-        <div className="text-center mt-12">
+        <div className="text-center mt-10">
           <Link
             href="/oferta"
             className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-bold text-white border-2 border-white/30 hover:bg-white/10 hover:border-white/60 transition-all"
