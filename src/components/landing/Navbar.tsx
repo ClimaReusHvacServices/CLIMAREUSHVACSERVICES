@@ -98,8 +98,8 @@ export default function Navbar() {
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Logo top-0 + h-36/2 = 72px → center at 72px.
-    const LOGO_Y = 72;
+    // Logo top -20px + h-36/2 = 52px → center at 52px.
+    const LOGO_Y = 52;
     let raf = 0;
 
     const update = () => {
@@ -203,7 +203,7 @@ export default function Navbar() {
   return (
     <>
       {/* ── Logo superior izquierda ────────────────────────────────────── */}
-      <div className="hidden sm:block fixed left-24 top-0 z-50">
+      <div className="hidden sm:block fixed left-24 z-50" style={{ top: "-20px" }}>
         <Link href="/" aria-label="Clima HVAC Service — inicio">
           <div className="relative h-36">
             <img
