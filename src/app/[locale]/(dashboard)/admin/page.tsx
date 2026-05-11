@@ -7,6 +7,7 @@ import { Users, Package, Banknote, Wrench, ShoppingBag, BarChart3 } from "lucide
 import { STATUS_COLORS } from "@/lib/status-colors";
 import Image from "next/image";
 import { AutoRefresh } from "@/components/admin/AutoRefresh";
+import { ClickableRow } from "@/components/admin/ClickableRow";
 
 async function getAdminStats() {
   const [totalUsers, totalOrders, revenueAggregate, activeWorkers] = await Promise.all([
@@ -63,29 +64,12 @@ export default async function AdminDashboard({
 
   const page = Math.max(1, parseInt(pageStr ?? "1", 10) || 1);
 
-  let stats: Awaited<ReturnType<typeof getAdminStats>>;
-  let orders: Awaited<ReturnType<typeof getOrders>>["rows"];
-  let total: number;
-  let t: Awaited<ReturnType<typeof getTranslations<"admin">>>;
-  let tStatus: Awaited<ReturnType<typeof getTranslations<"status">>>;
-  let totalPages: number;
-  try {
-    const result = await Promise.all([getAdminStats(), getOrders(page)]);
-    stats = result[0];
-    orders = result[1].rows;
-    total = result[1].total;
-    totalPages = Math.ceil(total / PAGE_SIZE);
-    t = await getTranslations("admin");
-    tStatus = await getTranslations("status");
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? `${err.name}: ${err.message}\n${(err as any).stack ?? ""}` : String(err);
-    return (
-      <div className="p-8 bg-red-50 rounded-2xl border border-red-200">
-        <h2 className="text-red-700 font-bold text-lg mb-2">Error al cargar el panel (page)</h2>
-        <pre className="text-red-600 text-xs whitespace-pre-wrap break-all">{msg}</pre>
-      </div>
-    );
-  }
+  const [{ totalUsers, totalOrders, totalRevenue, activeWorkers }, { rows: orders, total }] =
+    await Promise.all([getAdminStats(), getOrders(page)]);
+
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  const t = await getTranslations("admin");
+  const tStatus = await getTranslations("status");
 
   return (
     <div className="space-y-6">
@@ -113,26 +97,26 @@ export default async function AdminDashboard({
           <StatItem
             icon={<Banknote size={18} />}
             label={t("totalRevenue")}
-            value={`€${stats.totalRevenue.toFixed(2)}`}
+            value={`€${totalRevenue.toFixed(2)}`}
             sub="Solo pedidos pagados"
             gradient="from-[#008f65] to-[#00b37d]"
           />
           <StatItem
             icon={<Package size={18} />}
             label={t("totalOrders")}
-            value={stats.totalOrders}
+            value={totalOrders}
             gradient="from-[#1d7291] to-[#2490b5]"
           />
           <StatItem
             icon={<Users size={18} />}
             label="Clientes"
-            value={stats.totalUsers}
+            value={totalUsers}
             gradient="from-[#6366f1] to-[#8b5cf6]"
           />
           <StatItem
             icon={<Wrench size={18} />}
             label={t("activeWorkers")}
-            value={stats.activeWorkers}
+            value={activeWorkers}
             gradient="from-[#d97706] to-[#f59e0b]"
           />
         </div>
@@ -169,10 +153,10 @@ export default async function AdminDashboard({
                 </tr>
               ) : (
                 orders.map((order) => (
-                  <tr
+                  <ClickableRow
                     key={order.id}
-                    className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors cursor-pointer"
-                    onClick={() => window.location.href = `/${locale}/admin/orders/${order.id}`}
+                    href={`/admin/orders/${order.id}`}
+                    className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors"
                   >
                     <td className="py-3 px-3">
                       <p className="font-semibold text-gray-900 text-sm leading-tight truncate max-w-[180px]">
@@ -189,7 +173,7 @@ export default async function AdminDashboard({
                       </span>
                     </td>
                     <td className="py-3 px-3 font-medium text-gray-900">€{Number(order.totalAmount).toFixed(2)}</td>
-                  </tr>
+                  </ClickableRow>
                 ))
               )}
             </tbody>
