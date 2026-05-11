@@ -15,7 +15,6 @@ const Hero = dynamic(() => import("@/components/landing/Hero"));
 const ContactMap = dynamic(() => import("@/components/landing/ContactMap"));
 const Navbar = dynamic(() => import("@/components/landing/Navbar"));
 const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton"));
-const ServiceRequestWidget = dynamic(() => import("@/components/landing/ServiceRequestWidget"));
 
 async function getActiveProducts() {
   const rows = await db.product.findMany({
@@ -151,7 +150,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </div>
 
       <WhatsAppButton />
-      <ServiceRequestWidget />
       <Footer />
     </main>
   );
