@@ -80,7 +80,7 @@ export default async function OfertaPage({ params }: { params: Promise<{ locale:
             <span className="ml-auto font-medium text-primary-600">{t("ofertaPage.statsInstall")}</span>
           </div>
         </div>
-        <OfertaPageClient products={products} isLoggedIn={!!session?.user} />
+        <OfertaPageClient products={products} userRole={session?.user?.role ?? null} />
       </div>
 
       <WhatsAppButton />

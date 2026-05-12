@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Wind, CheckCircle2, ShoppingCart, Check } from "lucide-react";
+import { Wind, CheckCircle2, ShoppingCart, Check, MessageSquare } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/store/cart";
@@ -95,12 +95,12 @@ function PrimaryWaButton({ product, label }: { product: ProductItem; label: stri
       className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
       style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
     >
-      {WA_SVG} {label}
+      <MessageSquare size={14} /> {label}
     </a>
   );
 }
 
-function ProductCard({ product, isLoggedIn, t }: { product: ProductItem; isLoggedIn: boolean; t: (k: string) => string }) {
+function ProductCard({ product, userRole = null, t }: { product: ProductItem; userRole?: string | null; t: (k: string) => string }) {
   const hasDiscount = product.discountPrice !== null && product.discountPrice < product.price;
   const displayPrice = hasDiscount ? product.discountPrice! : product.price;
   const savingsPct = hasDiscount
@@ -161,11 +161,11 @@ function ProductCard({ product, isLoggedIn, t }: { product: ProductItem; isLogge
 
       {/* CTA — outside Link so clicks don't navigate */}
       <div className="px-4 pb-4 flex flex-col gap-2">
-        {product.stock > 0 && product.stockStatus === "in_stock"
-          ? isLoggedIn
-            ? <AddToCartInline product={product} />
-            : <LoginToCartButton />
-          : <PrimaryWaButton product={product} label="Solicitar presupuesto" />
+        {product.stock > 0 && product.stockStatus === "in_stock" && userRole === "cliente"
+          ? <AddToCartInline product={product} />
+          : product.stock > 0 && product.stockStatus === "in_stock" && userRole === null
+            ? <LoginToCartButton />
+            : <PrimaryWaButton product={product} label="Solicitar presupuesto" />
         }
         <WaProductButton product={product} label="Consultar por WhatsApp" />
       </div>
@@ -173,7 +173,7 @@ function ProductCard({ product, isLoggedIn, t }: { product: ProductItem; isLogge
   );
 }
 
-export function ProductsSection({ products, isLoggedIn = false }: { products: ProductItem[]; isLoggedIn?: boolean }) {
+export function ProductsSection({ products, userRole = null }: { products: ProductItem[]; userRole?: string | null }) {
   const t = useTranslations("landing");
   const trackRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
@@ -253,7 +253,7 @@ export function ProductsSection({ products, isLoggedIn = false }: { products: Pr
                   className="shrink-0 w-[280px] sm:w-[300px]"
                   style={{ scrollSnapAlign: "start" }}
                 >
-                  <ProductCard product={p} isLoggedIn={isLoggedIn} t={t as any} />
+                  <ProductCard product={p} userRole={userRole} t={t as any} />
                 </div>
               ))}
             </div>
