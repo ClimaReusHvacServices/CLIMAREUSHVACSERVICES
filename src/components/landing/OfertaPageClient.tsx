@@ -122,6 +122,19 @@ function AddToCartInline({ product }: { product: ProductItem }) {
   );
 }
 
+function LoginToCartButton() {
+  return (
+    <Link
+      href="/login"
+      className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-sm font-bold text-white hover:opacity-90 transition-all"
+      style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <ShoppingCart size={14} /> Iniciar sesión para comprar
+    </Link>
+  );
+}
+
 function ProductCard({ product, highlight = false, isLoggedIn, t }: {
   product: ProductItem;
   highlight?: boolean;
@@ -202,21 +215,20 @@ function ProductCard({ product, highlight = false, isLoggedIn, t }: {
             </p>
           </div>
 
-          <div
-            className="mt-3 w-full py-2 rounded-xl text-xs font-semibold text-primary-700 text-center border border-primary-100 bg-primary-50/50 group-hover:bg-primary-100 transition-colors"
-          >
-            {t("products.cardDetail")} →
-          </div>
         </div>
       </Link>
       {/* CTA — outside the Link so it doesn't navigate */}
-      <div className="px-5 pb-5">
-        {isLoggedIn ? (
-          product.stock > 0 && product.stockStatus === "in_stock"
-            ? <AddToCartInline product={product} />
-            : <WaProductButton product={product} label="Consultar disponibilidad" />
+      <div className="px-5 pb-5 flex flex-col gap-2">
+        {product.stock > 0 && product.stockStatus === "in_stock" ? (
+          <>
+            {isLoggedIn
+              ? <AddToCartInline product={product} />
+              : <LoginToCartButton />
+            }
+            <WaProductButton product={product} label="Consultar por WhatsApp" />
+          </>
         ) : (
-          <WaProductButton product={product} label="¡Lo quiero!" />
+          <WaProductButton product={product} label="Consultar disponibilidad" />
         )}
       </div>
     </div>
