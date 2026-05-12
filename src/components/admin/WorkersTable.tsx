@@ -182,6 +182,7 @@ export function WorkersTable({ workers }: { workers: WorkerRow[] }) {
                 <th className="text-left py-3 px-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Trabajador</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-500 text-xs uppercase tracking-wider hidden sm:table-cell">Email</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-500 text-xs uppercase tracking-wider hidden md:table-cell">Especialidades</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-500 text-xs uppercase tracking-wider hidden sm:table-cell">Completados</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Disponible</th>
                 <th className="py-3 px-4 w-20" />
               </tr>
@@ -189,7 +190,7 @@ export function WorkersTable({ workers }: { workers: WorkerRow[] }) {
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-16 text-center">
+                  <td colSpan={6} className="py-16 text-center">
                     <Wrench size={40} className="mx-auto mb-3 text-gray-200" />
                     <p className="text-gray-400 text-sm">{workers.length === 0 ? "No hay trabajadores registrados" : "Sin resultados"}</p>
                   </td>
@@ -223,6 +224,11 @@ export function WorkersTable({ workers }: { workers: WorkerRow[] }) {
                         {w.specialties.length > 2 && <span className="text-gray-400 text-xs">+{w.specialties.length - 2}</span>}
                       </div>
                     ) : <span className="text-gray-300 text-xs">—</span>}
+                  </td>
+                  <td className="py-3 px-4 hidden sm:table-cell">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-primary-50 text-primary-700">
+                      {w.totalJobsCompleted}
+                    </span>
                   </td>
                   <td className="py-3 px-4">
                     <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold ${w.isAvailable ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-500"}`}>

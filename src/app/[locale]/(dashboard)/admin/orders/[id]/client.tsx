@@ -5,10 +5,10 @@ import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
 import {
   ArrowLeft, User, MapPin, Package, CheckCircle2,
-  Clock, Banknote, AlertCircle, UserCheck, Trash2, X,
+  Clock, Banknote, AlertCircle, UserCheck, Trash2, X, ClipboardCheck,
 } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { updateOrderStatus, sendOrderMessage, assignWorkerToOrder, clearOrderChat } from "./actions";
+import { updateOrderStatus, sendOrderMessage, assignWorkerToOrder, clearOrderChat, takeOrderAsAdmin } from "./actions";
 import { STATUS_COLORS } from "@/lib/status-colors";
 import { ChatBox } from "@/components/chat/ChatBox";
 
@@ -48,6 +48,8 @@ interface Order {
   shippingCost: any;
   totalAmount: any;
   notes: string | null;
+  agreedBudget: any;
+  adminNotes: string | null;
   scheduledDate: Date | null;
   installationRequired: boolean;
   createdAt: Date;
@@ -57,33 +59,29 @@ interface Order {
   task: { id: string; assignedToId: string | null; assignedTo: { firstName: string; lastName: string } | null; comments: Comment[] } | null;
 }
 
-function generateOrderSummary(order: Order): string {
-  const products = order.items
-    .map(i => `• ${i.product?.name ?? i.servicePackage?.name ?? "Artículo"} ×${i.quantity} → €${Number(i.totalPrice).toFixed(2)}`)
-    .join("\n");
-  const client = `${order.user.firstName} ${order.user.lastName}${order.user.phoneNumber ? " · " + order.user.phoneNumber : ""}`;
-  return `📋 Pedido ${order.orderNumber}:\n${products}\n\nCliente: ${client}\nTotal: €${Number(order.totalAmount).toFixed(2)} (IVA inc.)`;
-}
-
 function WorkerAssignModal({
-  orderId, workers, currentWorkerId, orderSummary, onClose, onAssigned,
+  orderId, workers, currentWorkerId, initialBudget, initialNotes, onClose, onAssigned,
 }: {
   orderId: string;
   workers: Worker[];
   currentWorkerId: string | null;
-  orderSummary: string;
+  initialBudget: number | null;
+  initialNotes: string;
   onClose: () => void;
   onAssigned: () => void;
 }) {
   const [selected, setSelected] = useState(currentWorkerId ?? workers[0]?.id ?? "");
-  const [note, setNote] = useState("");
+  const [budget, setBudget] = useState(initialBudget !== null ? String(initialBudget) : "");
+  const [notes, setNotes] = useState(initialNotes);
+  const [chatNote, setChatNote] = useState("");
   const [assigning, setAssigning] = useState(false);
 
   async function handleAssign() {
     if (!selected) { toast.error("Selecciona un técnico"); return; }
     setAssigning(true);
     try {
-      await assignWorkerToOrder(orderId, selected, note || orderSummary);
+      const parsedBudget = budget.trim() ? parseFloat(budget.replace(",", ".")) : null;
+      await assignWorkerToOrder(orderId, selected, parsedBudget, notes, chatNote);
       toast.success("Técnico asignado correctamente");
       onAssigned();
     } catch {
@@ -107,6 +105,7 @@ function WorkerAssignModal({
           </button>
         </div>
 
+        {/* Worker selector */}
         <div className="space-y-2">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Seleccionar técnico</p>
           {workers.length === 0 ? (
@@ -136,18 +135,48 @@ function WorkerAssignModal({
           )}
         </div>
 
+        {/* Agreed budget */}
         <div>
           <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-            Nota para el técnico (opcional)
+            Presupuesto acordado con el cliente (€)
+          </label>
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            value={budget}
+            onChange={e => setBudget(e.target.value)}
+            placeholder="ej: 1450.00"
+            className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-100 transition"
+          />
+        </div>
+
+        {/* Admin notes for worker */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+            Notas para el técnico
           </label>
           <textarea
-            value={note}
-            onChange={e => setNote(e.target.value)}
-            placeholder={orderSummary}
-            rows={4}
+            value={notes}
+            onChange={e => setNotes(e.target.value)}
+            placeholder="Indicaciones importantes, materiales a llevar, acceso al edificio..."
+            rows={3}
             className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl resize-none focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-100 transition"
           />
-          <p className="text-[10px] text-gray-400 mt-1">Si no escribes nada, se enviará el resumen del pedido automáticamente.</p>
+        </div>
+
+        {/* Optional chat message */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+            Mensaje en el chat (opcional)
+          </label>
+          <textarea
+            value={chatNote}
+            onChange={e => setChatNote(e.target.value)}
+            placeholder="Se enviará automáticamente al chat del pedido..."
+            rows={2}
+            className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl resize-none focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-100 transition"
+          />
         </div>
 
         <div className="flex gap-3">
@@ -179,6 +208,7 @@ export function OrderDetailClient({ order, locale, workers }: { order: Order; lo
   const [status, setStatus] = useState(order.status);
   const [paymentStatus, setPaymentStatus] = useState(order.paymentStatus);
   const [savingStatus, setSavingStatus] = useState(false);
+  const [takingOrder, setTakingOrder] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [clearing, setClearing] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
@@ -194,10 +224,22 @@ export function OrderDetailClient({ order, locale, workers }: { order: Order; lo
     } finally { setSavingStatus(false); }
   }
 
+  async function handleTakeOrder() {
+    setTakingOrder(true);
+    try {
+      await takeOrderAsAdmin(order.id);
+      toast.success("Pedido tomado. Ahora puedes chatear con el cliente y asignar técnico.");
+      router.refresh();
+    } catch {
+      toast.error("Error al tomar el pedido");
+    } finally { setTakingOrder(false); }
+  }
+
   const hasChanged = status !== order.status || paymentStatus !== order.paymentStatus;
   const assignedWorker = order.task?.assignedTo ?? null;
   const canClearChat = (order.task?.comments.length ?? 0) > 0 &&
     ((order.status === "completada" && order.paymentStatus === "pagado") || order.status === "cancelada");
+  const isTaken = order.status !== "pendiente";
 
   async function handleClearChat() {
     setClearing(true);
@@ -240,7 +282,8 @@ export function OrderDetailClient({ order, locale, workers }: { order: Order; lo
           orderId={order.id}
           workers={workers}
           currentWorkerId={order.task?.assignedToId ?? null}
-          orderSummary={generateOrderSummary(order)}
+          initialBudget={order.agreedBudget ? Number(order.agreedBudget) : null}
+          initialNotes={order.adminNotes ?? ""}
           onClose={() => setShowAssignModal(false)}
           onAssigned={() => { setShowAssignModal(false); router.refresh(); }}
         />
@@ -258,13 +301,59 @@ export function OrderDetailClient({ order, locale, workers }: { order: Order; lo
           </div>
           <div className="flex flex-col items-end gap-1">
             <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${STATUS_COLORS[order.status] ?? "bg-gray-100 text-gray-600"}`}>
-              Pedido: {ORDER_STATUSES.find(s => s.value === order.status)?.label ?? order.status}
+              {ORDER_STATUSES.find(s => s.value === order.status)?.label ?? order.status}
             </span>
             <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${PAYMENT_COLORS[order.paymentStatus] ?? "bg-gray-100 text-gray-600"}`}>
               Pago: {PAYMENT_STATUSES.find(s => s.value === order.paymentStatus)?.label ?? order.paymentStatus}
             </span>
           </div>
         </div>
+
+        {/* Tomar pedido — solo si está pendiente */}
+        {!isTaken && (
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 flex items-center gap-4">
+            <div className="p-3 rounded-xl bg-amber-100 shrink-0">
+              <ClipboardCheck size={20} className="text-amber-600" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-amber-800">Pedido nuevo sin gestionar</p>
+              <p className="text-xs text-amber-600 mt-0.5">Toma este pedido para confirmar que lo estás gestionando y chatear con el cliente.</p>
+            </div>
+            <button
+              onClick={handleTakeOrder}
+              disabled={takingOrder}
+              className="px-5 py-2.5 text-sm font-bold text-white rounded-xl flex items-center gap-2 shrink-0 transition-all hover:opacity-90 disabled:opacity-50"
+              style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
+            >
+              {takingOrder
+                ? <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                : <ClipboardCheck size={14} />}
+              Tomar pedido
+            </button>
+          </div>
+        )}
+
+        {/* Presupuesto acordado + notas (si existen) */}
+        {(order.agreedBudget !== null || order.adminNotes) && (
+          <div className="bg-white rounded-2xl border border-primary-200 shadow-sm p-5 space-y-3">
+            <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+              <Banknote size={15} className="text-primary-600" />
+              Presupuesto acordado con el cliente
+            </h2>
+            {order.agreedBudget !== null && (
+              <div className="flex items-center gap-3">
+                <span className="text-2xl font-bold" style={{ color: "#008f65" }}>€{Number(order.agreedBudget).toFixed(2)}</span>
+                <span className="text-xs text-gray-400">(importe final acordado)</span>
+              </div>
+            )}
+            {order.adminNotes && (
+              <div className="pt-2 border-t border-gray-100">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Notas para el técnico</p>
+                <p className="text-sm text-gray-700 whitespace-pre-wrap">{order.adminNotes}</p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Status + worker management */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
@@ -297,39 +386,41 @@ export function OrderDetailClient({ order, locale, workers }: { order: Order; lo
             </button>
           </div>
 
-          {/* Worker assignment row */}
-          <div className="pt-3 border-t border-gray-100">
-            {assignedWorker ? (
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0" style={{ background: "linear-gradient(to right, #f59e0b, #d97706)" }}>
-                  {assignedWorker.firstName[0]}{assignedWorker.lastName[0]}
+          {/* Worker assignment row — only after order is taken */}
+          {isTaken && (
+            <div className="pt-3 border-t border-gray-100">
+              {assignedWorker ? (
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0" style={{ background: "linear-gradient(to right, #f59e0b, #d97706)" }}>
+                    {assignedWorker.firstName[0]}{assignedWorker.lastName[0]}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-gray-500">Técnico asignado</p>
+                    <p className="text-sm font-bold text-gray-900">{assignedWorker.firstName} {assignedWorker.lastName}</p>
+                  </div>
+                  <button
+                    onClick={() => setShowAssignModal(true)}
+                    className="px-3 py-1.5 text-xs font-semibold text-amber-700 border border-amber-300 rounded-lg hover:bg-amber-50 transition-colors shrink-0"
+                  >
+                    Reasignar
+                  </button>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-gray-500">Técnico asignado</p>
-                  <p className="text-sm font-bold text-gray-900">{assignedWorker.firstName} {assignedWorker.lastName}</p>
-                </div>
+              ) : (
                 <button
                   onClick={() => setShowAssignModal(true)}
-                  className="px-3 py-1.5 text-xs font-semibold text-amber-700 border border-amber-300 rounded-lg hover:bg-amber-50 transition-colors shrink-0"
+                  className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-xl transition-all hover:opacity-90 bg-amber-500 hover:bg-amber-600"
                 >
-                  Reasignar
+                  <UserCheck size={14} />
+                  Asignar técnico
                 </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => setShowAssignModal(true)}
-                className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-xl transition-all hover:opacity-90 bg-amber-500 hover:bg-amber-600"
-              >
-                <UserCheck size={14} />
-                Asignar técnico
-              </button>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Two columns */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          {/* Client info — only contact data */}
+          {/* Client info */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
             <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
               <User size={15} className="text-primary-600" />
@@ -347,7 +438,7 @@ export function OrderDetailClient({ order, locale, workers }: { order: Order; lo
               {order.user.phoneNumber && (
                 <div className="flex justify-between">
                   <span className="text-gray-500">Teléfono</span>
-                  <span className="font-medium text-gray-700">{order.user.phoneNumber}</span>
+                  <a href={`tel:${order.user.phoneNumber}`} className="font-semibold text-primary-700 hover:underline">{order.user.phoneNumber}</a>
                 </div>
               )}
             </div>
@@ -366,7 +457,7 @@ export function OrderDetailClient({ order, locale, workers }: { order: Order; lo
             )}
           </div>
 
-          {/* Products + pricing + installation address */}
+          {/* Products + pricing + address */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
             <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
               <Package size={15} className="text-primary-600" />
@@ -401,7 +492,7 @@ export function OrderDetailClient({ order, locale, workers }: { order: Order; lo
                 </div>
               )}
               <div className="flex justify-between font-bold text-gray-900 text-base pt-1 border-t border-gray-100">
-                <span>Total <span className="text-xs font-normal text-gray-400">(IVA inc.)</span></span>
+                <span>Total carrito <span className="text-xs font-normal text-gray-400">(IVA inc.)</span></span>
                 <span className="flex items-center gap-1">
                   <Banknote size={15} className="text-primary-600" />
                   €{Number(order.totalAmount).toFixed(2)}
@@ -414,7 +505,6 @@ export function OrderDetailClient({ order, locale, workers }: { order: Order; lo
                 Instalación incluida / requerida
               </div>
             )}
-            {/* Installation address */}
             <div className="pt-3 border-t border-gray-100">
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-1.5">
                 <MapPin size={12} />

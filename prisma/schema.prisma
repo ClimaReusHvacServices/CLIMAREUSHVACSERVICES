@@ -363,6 +363,8 @@ model Order {
   totalAmount         Decimal   @db.Decimal(10, 2)
   installationRequired Boolean   @default(false)
   notes               String?   @db.Text
+  agreedBudget        Decimal?  @db.Decimal(10, 2)
+  adminNotes          String?   @db.Text
   scheduledDate       DateTime?
   completedDate       DateTime?
   cancelledDate       DateTime?
