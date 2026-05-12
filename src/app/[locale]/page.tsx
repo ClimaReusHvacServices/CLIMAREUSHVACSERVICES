@@ -35,6 +35,7 @@ async function getActiveProducts() {
     discountPrice: p.discountPrice ? Number(p.discountPrice) : null,
     warranty: p.warranty,
     stock: p.stock,
+    stockStatus: p.stockStatus ?? "in_stock",
     images: p.images,
   }));
 }
@@ -61,7 +62,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {/* Section 2 — Products (dark teal bg → white logo) */}
       <div data-logo="white">
         <ScrollReveal>
-          <ProductsSection products={products} />
+          <ProductsSection products={products} isLoggedIn={!!session?.user} />
         </ScrollReveal>
       </div>
 
