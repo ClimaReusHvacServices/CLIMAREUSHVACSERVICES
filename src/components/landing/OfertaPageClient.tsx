@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Wind, CheckCircle2, Star, Filter, ChevronDown, Flame, Tag, ShoppingCart, Check, MapPin, MessageSquare } from "lucide-react";
+import { Wind, CheckCircle2, Star, Filter, ChevronDown, Flame, Tag, ShoppingCart, Check, MapPin } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/store/cart";
@@ -145,7 +145,7 @@ function PrimaryWaButton({ product, label }: { product: ProductItem; label: stri
       className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
       style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
     >
-      <MessageSquare size={14} /> {label}
+      <ShoppingCart size={14} /> {label}
     </a>
   );
 }
@@ -234,9 +234,9 @@ function ProductCard({ product, highlight = false, userRole = null, t }: {
       </Link>
       {/* CTA — outside the Link so it doesn't navigate */}
       <div className="px-5 pb-5 flex flex-col gap-2">
-        {product.stock > 0 && product.stockStatus === "in_stock" && userRole === "cliente"
+        {userRole === "cliente"
           ? <AddToCartInline product={product} />
-          : product.stock > 0 && product.stockStatus === "in_stock" && userRole === null
+          : userRole === null
             ? <LoginToCartButton />
             : <PrimaryWaButton product={product} label="Solicitar presupuesto" />
         }
