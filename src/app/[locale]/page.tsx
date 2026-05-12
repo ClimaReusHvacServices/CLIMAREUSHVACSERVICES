@@ -62,7 +62,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {/* Section 2 — Products (dark teal bg → white logo) */}
       <div data-logo="white">
         <ScrollReveal>
-          <ProductsSection products={products} isLoggedIn={!!session?.user} />
+          <ProductsSection products={products} userRole={session?.user?.role ?? null} />
         </ScrollReveal>
       </div>
 
