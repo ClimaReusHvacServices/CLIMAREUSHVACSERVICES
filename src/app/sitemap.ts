@@ -22,7 +22,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...urls("/servicios", 0.8, "monthly"),
     ...urls("/servicios/instalacion", 0.7, "monthly"),
     ...urls("/servicios/mantenimiento", 0.7, "monthly"),
-    ...urls("/servicios/reparacion", 0.7, "monthly"),
     ...urls("/servicios/aerotermia", 0.7, "monthly"),
     ...urls("/aerotermia", 0.8, "monthly"),
     ...urls("/calderas", 0.8, "monthly"),

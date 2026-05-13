@@ -38,7 +38,7 @@ export default function TermsPage() {
         <Section title="Objeto">
           <p>
             Las presentes Condiciones Generales regulan la prestación de servicios de instalación,
-            mantenimiento, reparación y comercialización de sistemas de climatización, aerotermia y
+            mantenimiento y comercialización de sistemas de climatización, aerotermia y
             ventilación ofrecidos por Ariel Hugo José Morales / Clima HVAC Service.
           </p>
           <p>
@@ -152,7 +152,7 @@ export default function TermsPage() {
           <p>En cumplimiento con lo dispuesto en la Ley 34/2002 (LSSI-CE), se informa que el presente sitio web pertenece a:</p>
           <ul className="list-none space-y-1">
             <li><strong>Titular:</strong> Ariel Hugo José Morales / Clima HVAC Service</li>
-            <li><strong>Actividad:</strong> Instalación, mantenimiento y reparación de sistemas de climatización y aerotermia</li>
+            <li><strong>Actividad:</strong> Instalación y mantenimiento de sistemas de climatización y aerotermia</li>
             <li><strong>NIF:</strong> Z-1485584-L</li>
             <li><strong>Domicilio:</strong> Calle Balmes, 29 – 43204 Reus, Tarragona</li>
             <li><strong>Teléfono:</strong> 607 953 886</li>

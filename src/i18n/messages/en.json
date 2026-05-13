@@ -355,8 +355,8 @@
       "roleAdmin": "Administrator", "roleCliente": "Client", "roleTrabajador": "Technician"
     },
     "hero": {
-      "title": "Air conditioning installation and repair in Reus and Tarragona",
-      "subtitle": "Specialists in air conditioning installation, maintenance and repair",
+      "title": "Air conditioning installation in Reus and Tarragona",
+      "subtitle": "Specialists in air conditioning installation and maintenance",
       "cta": "Request a free quote"
     },
     "products": {
@@ -413,9 +413,9 @@
       "q2": "How often should air conditioning be serviced?",
       "a2": "It is recommended to carry out maintenance at least once a year to ensure the proper functioning of the equipment. Maintenance helps improve energy efficiency, extend the life of the system and maintain good air quality.",
       "q3": "In which areas do you offer air conditioning services?",
-      "a3": "We offer installation, maintenance and repair of air conditioning systems in Reus, Tarragona and nearby towns such as Cambrils, Salou and Vila-seca.",
-      "q4": "Do you repair all air conditioning brands?",
-      "a4": "Yes. Our technical service has experience in repairing different types of air conditioning systems and works with recognised brands such as Haier and Mitsubishi Electric, among others."
+      "a3": "We offer installation and maintenance of air conditioning systems in Reus, Tarragona and nearby towns such as Cambrils, Salou and Vila-seca.",
+      "q4": "Which brands do you work with?",
+      "a4": "We work with leading market brands such as Haier and Mitsubishi Electric, among others. We always install high energy-efficiency equipment."
     },
     "testimonials": {
       "badge": "Testimonials",
@@ -431,7 +431,7 @@
       "r6text": "I hired them for a multi-split air conditioning installation and was very satisfied. Clean work, fair price and no surprises. Totally recommendable."
     },
     "footer": {
-      "tagline": "Air conditioning installation and repair in Reus and Tarragona.",
+      "tagline": "Air conditioning installation in Reus and Tarragona.",
       "colAddress": "Address", "colContact": "Contact", "colHours": "Opening hours",
       "mapsLink": "View on Google Maps →",
       "telLabel": "Tel:", "waLabel": "WhatsApp:",
@@ -463,7 +463,7 @@
     },
     "serviciosPage": {
       "badge": "Our services", "title": "Professional Air Conditioning Solutions",
-      "subtitle": "Installation, maintenance and repair with RITE-certified guarantee. Over 30 years creating the perfect climate for your home or business.",
+      "subtitle": "Installation and maintenance with RITE-certified guarantee. Over 30 years creating the perfect climate for your home or business.",
       "ctaMore": "View more →",
       "s1title": "Air conditioning installation in Reus and Tarragona",
       "s1desc": "We carry out installation of split, multi-split and heat pump air conditioning systems tailored to the needs of each space. Our technical team manages the entire process: from the initial survey to commissioning.",
@@ -471,8 +471,8 @@
       "s2desc": "Aerothermal is one of the most efficient solutions for heating homes and producing domestic hot water. We install modern systems that provide heating, cooling and hot water with a single unit.",
       "s3title": "Preventive air conditioning maintenance",
       "s3desc": "Regular maintenance is essential to keep air conditioning equipment performing well and to prevent costly breakdowns. Our service includes a technical inspection, filter cleaning, refrigerant gas check and system verification.",
-      "s4title": "Air conditioning repair",
-      "s4desc": "If your air conditioning system is malfunctioning or not working properly, our technical team carries out quick diagnostics and professional repairs. We work with different types of HVAC systems and well-known brands."
+      "s4title": "Request a personalised quote",
+      "s4desc": "Need to install an air conditioning unit? Tell us about your project and we'll prepare a detailed quote tailored to your home or business, with no obligation."
     },
     "serviceForm": {
       "title": "Send us a message",
@@ -545,28 +545,28 @@
         "li5t": "Drain Cleaning", "li5": "We prevent uncomfortable drips and damp patches on walls that damage the structure and cause mould.",
         "li6t": "Outdoor Unit Inspection", "li6": "We check the fan, compressor and fins to ensure correct heat exchange.",
         "h3": "Annual maintenance plans",
-        "p3": "We offer annual maintenance contracts with scheduled inspections for individuals and businesses. These include priority service, discounts on repairs and peace of mind all year round. Request our rates with no obligation.",
+        "p3": "We offer annual maintenance contracts with scheduled inspections for individuals and businesses. These include priority service, discounts on inspections and peace of mind all year round. Request our rates with no obligation.",
         "h4": "Maintenance for communities and businesses",
         "p4": "We manage complete installation maintenance for residents' associations, hotels, offices and industrial premises. We issue a technical report after each inspection and adapt to whatever schedule causes the least disruption."
       },
       "repair": {
-        "title": "Urgent Air Conditioning Repair in Reus and Tarragona",
-        "subtitle": "Multi-brand technical service, fast and guaranteed. Do not let a breakdown ruin your day.",
-        "serviceTitle": "Air Conditioning Repair",
-        "h1": "We fix any fault in your air conditioning system",
-        "p1a": "Is your air conditioning noisy, not cooling or smelling bad? Our technical team travels to your location with the tools and spare parts needed to solve the problem on the first visit.",
-        "p1b": "We work with all brands on the market: Mitsubishi, Haier, Daikin, Samsung, Panasonic, LG, Toshiba, Fujitsu and many more.",
-        "h2": "Common faults we repair every day",
-        "li1t": "Refrigerant Gas Leaks", "li1": "We locate the leak, seal it and recharge with certified eco-friendly gas.",
-        "li2t": "Compressor or Fan Failures", "li2": "We repair or replace critical components of the outdoor unit with original parts.",
-        "li3t": "Electronic Problems", "li3": "We fix errors in circuit boards, sensors and thermostats that prevent normal operation.",
-        "li4t": "Drain Blockages", "li4": "Deep cleaning to remove water blockages that cause leaks and damp.",
-        "li5t": "Noise and Vibration", "li5": "We identify and eliminate any abnormal noise caused by mechanical wear or accumulated dirt.",
-        "li6t": "Communication Error between Units", "li6": "Advanced electronic diagnostics to restore indoor-outdoor communication.",
-        "h3": "Clima HVAC Service promise: No surprises on the invoice",
-        "p3": "Before any repair, we carry out a clear diagnosis and provide a fixed quote. We only proceed with your express authorisation. No small print, no hidden costs.",
-        "h4": "Guarantee on all our repairs",
-        "p4": "All repairs include a written guarantee on the replaced part and labour. If the problem recurs within the guarantee period, we return at no additional cost."
+        "title": "Personalised Air Conditioning Installation in Reus and Tarragona",
+        "subtitle": "A tailored quote with no obligation. We install the unit that best suits your space and needs.",
+        "serviceTitle": "Personalised Installation",
+        "h1": "An installation adapted to every space",
+        "p1a": "Every home or business has its own characteristics. That is why at Clima HVAC Service we carry out a free prior survey to determine the most efficient and cost-effective solution for your case.",
+        "p1b": "We work with the best brands on the market: Mitsubishi Electric, Haier, Daikin, Fujitsu and many more.",
+        "h2": "What does our personalised installation service include?",
+        "li1t": "Free technical visit", "li1": "We assess your space and needs before presenting any quote.",
+        "li2t": "Ideal equipment selection", "li2": "We recommend the most efficient model based on the surface area, orientation and use of the space.",
+        "li3t": "Professional installation", "li3": "Our RITE-certified technicians carry out the installation in less than 24/48 hours.",
+        "li4t": "Documentation management", "li4": "We handle all technical documentation and regulatory registration.",
+        "li5t": "Commissioning and training", "li5": "We show you how to use the unit so you get the most out of its efficiency from day one.",
+        "li6t": "Guarantee included", "li6": "All installations include a guarantee on labour and the installed equipment.",
+        "h3": "Clima HVAC Service promise: Fixed quote, no surprises",
+        "p3": "We provide a detailed quote before starting any work. We only proceed with your express authorisation. No small print, no hidden costs.",
+        "h4": "Guarantee on all our installations",
+        "p4": "All installations include a written guarantee on labour. If any issue arising from the installation appears within the guarantee period, we return at no additional cost."
       }
     },
     "blogPage": {
