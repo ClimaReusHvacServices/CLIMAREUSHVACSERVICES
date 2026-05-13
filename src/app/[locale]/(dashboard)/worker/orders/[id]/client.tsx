@@ -6,7 +6,7 @@ import { Link } from "@/i18n/routing";
 import { toast } from "sonner";
 import {
   ArrowLeft, User, MapPin, Package, CheckCircle2,
-  Clock, Banknote, Wrench,
+  Clock, Banknote, Wrench, FileText,
 } from "lucide-react";
 import { markOrderComplete, markOrderPaid } from "../../actions";
 import { sendOrderMessage } from "@/app/[locale]/(dashboard)/admin/orders/[id]/actions";
@@ -59,6 +59,8 @@ interface Order {
   shippingCost: any;
   totalAmount: any;
   notes: string | null;
+  agreedBudget: any;
+  adminNotes: string | null;
   scheduledDate: Date | null;
   installationRequired: boolean;
   createdAt: Date;
@@ -164,6 +166,28 @@ export function WorkerOrderDetailClient({
               </button>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Presupuesto acordado + notas del admin */}
+      {(order.agreedBudget !== null || order.adminNotes) && (
+        <div className="bg-primary-50 border border-primary-200 rounded-2xl p-5 space-y-3">
+          <h2 className="text-sm font-bold text-primary-900 flex items-center gap-2">
+            <FileText size={15} className="text-primary-600" />
+            Información del admin para este trabajo
+          </h2>
+          {order.agreedBudget !== null && (
+            <div className="flex items-center gap-3">
+              <span className="text-2xl font-bold" style={{ color: "#008f65" }}>€{Number(order.agreedBudget).toFixed(2)}</span>
+              <span className="text-xs text-primary-600 font-semibold">Presupuesto acordado con el cliente</span>
+            </div>
+          )}
+          {order.adminNotes && (
+            <div className="pt-2 border-t border-primary-200">
+              <p className="text-xs font-semibold text-primary-600 uppercase tracking-wide mb-1">Notas del admin</p>
+              <p className="text-sm text-primary-900 whitespace-pre-wrap">{order.adminNotes}</p>
+            </div>
+          )}
         </div>
       )}
 

@@ -2,29 +2,14 @@ import { auth } from "@/auth/config";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { setRequestLocale } from "next-intl/server";
-import { ShoppingBag, CheckCircle2, Wrench, Award, Clock, ChevronRight } from "lucide-react";
+import { CheckCircle2, Wrench, Award, ChevronRight } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { ClaimButton, ReleaseButton } from "./WorkerActions";
 
 export const dynamic = "force-dynamic";
 
 async function getWorkerData(userId: string) {
-  const [trabajador, availableOrders, myOrders] = await Promise.all([
+  const [trabajador, myOrders] = await Promise.all([
     db.trabajador.findUnique({ where: { userId } }),
-    db.order.findMany({
-      where: {
-        status: { in: ["pendiente", "confirmada"] },
-        OR: [
-          { task: { is: null } },
-          { task: { assignedToId: null } },
-        ],
-      },
-      include: {
-        user: { select: { firstName: true, lastName: true } },
-        items: { select: { id: true } },
-      },
-      orderBy: { createdAt: "asc" },
-    }),
     db.order.findMany({
       where: { task: { assignedToId: userId } },
       include: {
@@ -35,7 +20,7 @@ async function getWorkerData(userId: string) {
       orderBy: { createdAt: "desc" },
     }),
   ]);
-  return { trabajador, availableOrders, myOrders };
+  return { trabajador, myOrders };
 }
 
 export default async function WorkerDashboard({
@@ -49,7 +34,7 @@ export default async function WorkerDashboard({
   const session = await auth();
   if (!session || session.user?.role !== "trabajador") redirect("/");
 
-  const { trabajador, availableOrders, myOrders } = await getWorkerData(session.user.id);
+  const { trabajador, myOrders } = await getWorkerData(session.user.id);
 
   const active = myOrders.filter(o => o.task?.status !== "completada");
   const completed = myOrders.filter(o => o.task?.status === "completada");
@@ -82,14 +67,7 @@ export default async function WorkerDashboard({
 
       {/* Stats strip */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="grid grid-cols-3 divide-x divide-gray-100">
-          <div className="p-4 sm:p-5 flex flex-col gap-2">
-            <div className="self-start p-2 rounded-xl text-white bg-gradient-to-br from-amber-500 to-orange-400">
-              <Clock size={16} />
-            </div>
-            <p className="text-2xl font-bold text-gray-900">{availableOrders.length}</p>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Disponibles</p>
-          </div>
+        <div className="grid grid-cols-2 divide-x divide-gray-100">
           <div className="p-4 sm:p-5 flex flex-col gap-2">
             <div className="self-start p-2 rounded-xl text-white bg-gradient-to-br from-[#1d7291] to-[#2490b5]">
               <Wrench size={16} />
@@ -105,38 +83,6 @@ export default async function WorkerDashboard({
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Completados</p>
           </div>
         </div>
-      </div>
-
-      {/* Available orders */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2"
-          style={{ background: "linear-gradient(to right, #008f6508, #1d729108)" }}>
-          <ShoppingBag size={15} className="text-primary-600" />
-          <h2 className="text-sm font-bold text-gray-900">Pedidos disponibles</h2>
-          <span className="ml-auto text-xs text-gray-400">{availableOrders.length} esperando</span>
-        </div>
-        {availableOrders.length === 0 ? (
-          <div className="py-10 text-center">
-            <ShoppingBag size={36} className="mx-auto mb-3 text-gray-200" />
-            <p className="text-gray-400 text-sm">No hay pedidos disponibles ahora mismo.</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-gray-50">
-            {availableOrders.map(order => (
-              <div key={order.id} className="px-5 py-4 flex items-center gap-4 hover:bg-gray-50/60 transition-colors">
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-900 text-sm">{order.orderNumber}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    {order.user.firstName} {order.user.lastName}
-                    <span className="mx-1.5 text-gray-300">·</span>
-                    {order.items.length} artículo{order.items.length !== 1 ? "s" : ""}
-                  </p>
-                </div>
-                <ClaimButton orderId={order.id} />
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
       {/* My active orders */}
@@ -160,18 +106,14 @@ export default async function WorkerDashboard({
                     {order.items.length} artículo{order.items.length !== 1 ? "s" : ""}
                   </p>
                 </Link>
-                <div className="flex items-center gap-2 shrink-0">
-                  <ReleaseButton taskId={order.task?.id ?? ""} orderId={order.id} />
-                  <Link
-                    href={`/worker/orders/${order.id}` as any}
-                    className="px-3 py-2 text-sm font-semibold rounded-xl transition-colors flex items-center gap-1.5 shrink-0"
-                    style={{ background: "linear-gradient(to right, #008f65, #1d7291)", color: "white" }}
-                    title="Ver pedido y chat"
-                  >
-                    <ChevronRight size={14} />
-                    Ver pedido
-                  </Link>
-                </div>
+                <Link
+                  href={`/worker/orders/${order.id}` as any}
+                  className="px-3 py-2 text-sm font-semibold rounded-xl transition-colors flex items-center gap-1.5 shrink-0"
+                  style={{ background: "linear-gradient(to right, #008f65, #1d7291)", color: "white" }}
+                >
+                  <ChevronRight size={14} />
+                  Ver pedido
+                </Link>
               </div>
             ))}
           </div>

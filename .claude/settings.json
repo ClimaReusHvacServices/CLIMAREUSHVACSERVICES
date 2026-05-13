@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(cat src/middleware.ts)",
-      "Bash(cat src/app/middleware.ts)"
+      "Bash(cat src/app/middleware.ts)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\TRANSDIGITALCOOP\\\\Desktop\\\\Clima Reus HVAC Services\" -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "PowerShell(head -30)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\TRANSDIGITALCOOP\\\\Desktop\\\\Clima Reus HVAC Services\\\\public\" -Filter \"*barcel*\" -Recurse)",
+      "PowerShell(Copy-Item \"c:\\\\Users\\\\TRANSDIGITALCOOP\\\\Desktop\\\\Clima Reus HVAC Services\\\\Imagenes\\\\iconos-logos\\\\barcelona.jpeg\" \"c:\\\\Users\\\\TRANSDIGITALCOOP\\\\Desktop\\\\Clima Reus HVAC Services\\\\public\\\\barcelona.jpeg\")",
+      "Bash(git check-ignore *)"
     ]
   }
 }

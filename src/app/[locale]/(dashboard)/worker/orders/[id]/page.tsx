@@ -21,7 +21,7 @@ export default async function WorkerOrderDetailPage({
     where: { id },
     include: {
       user: { select: { firstName: true, lastName: true, email: true, phoneNumber: true } },
-      address: true,
+      address: { select: { street: true, city: true, state: true, postalCode: true, country: true } },
       items: {
         include: {
           product: { select: { name: true, images: true } },
