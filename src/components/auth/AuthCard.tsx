@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { signIn, getSession } from "next-auth/react";
 import { useTranslations, useLocale } from "next-intl";
-import { Link } from "@/i18n/routing";
+import { useRouter, Link } from "@/i18n/routing";
 import { toast } from "sonner";
 import { LogIn, UserPlus, CheckCircle2, Eye, EyeOff, AlertTriangle } from "lucide-react";
 import { validateRegisterData } from "@/utils/validation";
