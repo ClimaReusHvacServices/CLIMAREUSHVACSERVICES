@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useTranslations } from "next-intl";
-import { useRouter, Link } from "@/i18n/routing";
+import { signIn, getSession } from "next-auth/react";
+import { useTranslations, useLocale } from "next-intl";
+import { Link } from "@/i18n/routing";
 import { toast } from "sonner";
 import { LogIn, UserPlus, CheckCircle2, Eye, EyeOff, AlertTriangle } from "lucide-react";
 import { validateRegisterData } from "@/utils/validation";
@@ -106,7 +106,7 @@ function SuccessModal({ firstName }: { firstName: string }) {
 
 function LoginContent({ onSwitch }: { onSwitch: (m: Mode) => void }) {
   const t = useTranslations();
-  const router = useRouter();
+  const locale = useLocale();
   const [loading, setLoading] = useState(false);
   const [showPw, setShowPw] = useState(false);
   const [form, setForm] = useState({ email: "", password: "", rememberMe: false });
@@ -124,7 +124,11 @@ function LoginContent({ onSwitch }: { onSwitch: (m: Mode) => void }) {
     try {
       const res = await signIn("credentials", { email: form.email.trim(), password: form.password, redirect: false });
       if (res?.error) toast.error(t("auth.loginError"));
-      else if (res?.ok) window.location.href = "/";
+      else if (res?.ok) {
+        const session = await getSession();
+        const needsChange = (session?.user as any)?.requiresPasswordChange;
+        window.location.href = needsChange ? `/${locale}/change-password` : "/";
+      }
     } catch { toast.error(t("errors.serverError")); }
     finally { setLoading(false); }
   };
