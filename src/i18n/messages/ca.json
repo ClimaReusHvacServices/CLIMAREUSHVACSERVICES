@@ -355,8 +355,8 @@
       "roleAdmin": "Administrador", "roleCliente": "Client", "roleTrabajador": "Tècnic"
     },
     "hero": {
-      "title": "Instal·lació i reparació d'aire condicionat a Reus i Tarragona",
-      "subtitle": "Especialistes en instal·lació, manteniment i reparació d'aire condicionat",
+      "title": "Instal·lació d'aire condicionat a Reus i Tarragona",
+      "subtitle": "Especialistes en instal·lació i manteniment d'aire condicionat",
       "cta": "Sol·licitar pressupost gratis"
     },
     "products": {
@@ -413,9 +413,9 @@
       "q2": "Cada quant temps s'ha de fer el manteniment de l'aire condicionat?",
       "a2": "Es recomana realitzar manteniment almenys una vegada a l'any per garantir el bon funcionament de l'equip. El manteniment ajuda a millorar l'eficiència energètica, allargar la vida útil del sistema i mantenir una bona qualitat de l'aire.",
       "q3": "En quines zones oferiu servei de climatització?",
-      "a3": "Oferim instal·lació, manteniment i reparació de sistemes de climatització a Reus, Tarragona i localitats properes com Cambrils, Salou i Vila-seca.",
-      "q4": "Repareu totes les marques d'aire condicionat?",
-      "a4": "Sí. El nostre servei tècnic té experiència en la reparació de diferents sistemes de climatització i treballa amb marques reconegudes com Haier i Mitsubishi Electric, entre d'altres."
+      "a3": "Oferim instal·lació i manteniment de sistemes de climatització a Reus, Tarragona i localitats properes com Cambrils, Salou i Vila-seca.",
+      "q4": "Amb quines marques treballeu?",
+      "a4": "Treballem amb marques líders del mercat com Haier i Mitsubishi Electric, entre d'altres. Sempre instal·lem equips d'alta eficiència energètica."
     },
     "testimonials": {
       "badge": "Testimonis",
@@ -431,7 +431,7 @@
       "r6text": "Vaig contractar la instal·lació d'aire condicionat multisplit i vaig quedar molt satisfeta. Treball net, preu just i sense sorpreses. Totalment recomanable."
     },
     "footer": {
-      "tagline": "Instal·lació i reparació d'aire condicionat a Reus i Tarragona.",
+      "tagline": "Instal·lació d'aire condicionat a Reus i Tarragona.",
       "colAddress": "Adreça", "colContact": "Contacte", "colHours": "Horari d'obertura",
       "mapsLink": "Veure a Google Maps →",
       "telLabel": "Tel:", "waLabel": "WhatsApp:",
@@ -463,7 +463,7 @@
     },
     "serviciosPage": {
       "badge": "Els nostres serveis", "title": "Solucions de Climatització Professional",
-      "subtitle": "Instal·lació, manteniment i reparació amb garantia certificada RITE. Més de 30 anys creant el clima perfecte per a la teva llar o negoci.",
+      "subtitle": "Instal·lació i manteniment amb garantia certificada RITE. Més de 30 anys creant el clima perfecte per a la teva llar o negoci.",
       "ctaMore": "Veure més →",
       "s1title": "Instal·lació d'aire condicionat a Reus i Tarragona",
       "s1desc": "Realitzem instal·lació d'aire condicionat tipus split, multisplit i bombes de calor adaptades a les necessitats de cada espai. El nostre equip tècnic gestiona tot el procés: des de la visita tècnica fins a la posada en marxa.",
@@ -471,8 +471,8 @@
       "s2desc": "L'aerotèrmia és una de les solucions més eficients per climatitzar habitatges i produir aigua calenta sanitària. Instal·lem sistemes moderns que permeten calefacció, refrigeració i aigua calenta amb un sol equip.",
       "s3title": "Manteniment preventiu d'aire condicionat",
       "s3desc": "El manteniment regular és imprescindible per mantenir el rendiment dels equips de climatització i prevenir avaries costoses. El nostre servei inclou revisió tècnica, neteja de filtres, control del gas refrigerant i verificació del sistema.",
-      "s4title": "Reparació d'aire condicionat",
-      "s4desc": "Si el teu sistema de climatització presenta fallades o no funciona correctament, el nostre equip tècnic realitza diagnòstics ràpids i reparacions professionals. Treballem amb diferents tipus de sistemes HVAC i marques reconegudes."
+      "s4title": "Sol·licitar pressupost personalitzat",
+      "s4desc": "Necessites instal·lar un equip d'aire condicionat? Explica'ns el teu cas i et prepararem un pressupost detallat sense compromís, adaptat a la teva llar o negoci."
     },
     "serviceForm": {
       "title": "Envia'ns un missatge",
@@ -545,28 +545,28 @@
         "li5t": "Neteja de Desguassos", "li5": "Evitem degotejos incòmodes i humitats a les teves parets que danyen l'estructura i generen floridura.",
         "li6t": "Inspecció de la Unitat Exterior", "li6": "Revisem ventilador, compressor i aletes per garantir el correcte intercanvi de calor.",
         "h3": "Plans de manteniment anuals",
-        "p3": "Oferim contractes de manteniment anuals amb revisions programades per a particulars i empreses. Inclouen prioritat en atenció, descomptes en reparacions i tranquil·litat tot l'any. Consulta les nostres tarifes sense compromís.",
+        "p3": "Oferim contractes de manteniment anuals amb revisions programades per a particulars i empreses. Inclouen prioritat en atenció, descomptes en revisions i tranquil·litat tot l'any. Consulta les nostres tarifes sense compromís.",
         "h4": "Manteniment per a comunitats i empreses",
         "p4": "Gestionem el manteniment d'instal·lacions completes en comunitats de veïns, hotels, oficines i naus industrials. Emetem informe tècnic després de cada revisió i ens adaptem a l'horari que menys molesti."
       },
       "repair": {
-        "title": "Reparació Urgent d'Aire Condicionat a Reus i Tarragona",
-        "subtitle": "Servei tècnic multimarca ràpid i garantit. No deixis que una avaria arruïni el teu dia.",
-        "serviceTitle": "Reparació d'Aire Condicionat",
-        "h1": "Solucionem qualsevol fallada en el teu sistema de climatització",
-        "p1a": "El teu aire condicionat fa soroll, no refreda o fa mala olor? El nostre equip tècnic es desplaça a la teva ubicació amb les eines i recanvis necessaris per solucionar el problema en la primera visita.",
-        "p1b": "Treballem amb totes les marques del mercat: Mitsubishi, Haier, Daikin, Samsung, Panasonic, LG, Toshiba, Fujitsu i moltes més.",
-        "h2": "Avaries comunes que reparem cada dia",
-        "li1t": "Fuites de Gas Refrigerant", "li1": "Localitzem el por, segellen i recarreguem amb gas ecològic certificat.",
-        "li2t": "Fallades al Compressor o Ventilador", "li2": "Reparem o substituïm components crítics de la unitat exterior amb peces originals.",
-        "li3t": "Problemes Electrònics", "li3": "Solucionem errors en plaques base, sensors i termostats que impedeixen el funcionament normal.",
-        "li4t": "Obstruccions al Desguàs", "li4": "Neteja profunda per eliminar bloqueigs d'aigua que provoquen goteres i humitats.",
-        "li5t": "Sorolls i Vibracions", "li5": "Identifiquem i eliminem qualsevol soroll anormal causat per desgast mecànic o brutícia acumulada.",
-        "li6t": "Error de Comunicació entre Unitats", "li6": "Diagnòstic electrònic avançat per restaurar la comunicació interior-exterior.",
-        "h3": "Compromís Clima HVAC Service: Sense sorpreses a la factura",
-        "p3": "Abans de qualsevol reparació, realitzem un diagnòstic clar i et lliurem un pressupost tancat. Només procedim amb la teva autorització expressa. Sense lletra petita, sense costos ocults.",
-        "h4": "Garantia en totes les nostres reparacions",
-        "p4": "Totes les reparacions inclouen garantia per escrit sobre la peça substituïda i la mà d'obra. Si el problema reapareix dins del període de garantia, tornem sense cost addicional."
+        "title": "Instal·lació Personalitzada d'Aire Condicionat a Reus i Tarragona",
+        "subtitle": "Pressupost a mida, sense compromís. Instal·lem l'equip que millor s'adapta al teu espai i necessitats.",
+        "serviceTitle": "Instal·lació Personalitzada",
+        "h1": "Una instal·lació adaptada a cada espai",
+        "p1a": "Cada habitatge o local té les seves pròpies característiques. Per això, a Clima HVAC Service realitzem un estudi previ gratuït per determinar la solució més eficient i econòmica per al teu cas.",
+        "p1b": "Treballem amb les millors marques del mercat: Mitsubishi Electric, Haier, Daikin, Fujitsu i moltes més.",
+        "h2": "Què inclou el nostre servei d'instal·lació personalitzada?",
+        "li1t": "Visita tècnica gratuïta", "li1": "Avaluem el teu espai i necessitats abans de presentar cap pressupost.",
+        "li2t": "Selecció de l'equip ideal", "li2": "Et recomanem el model més eficient segons la superfície, orientació i ús de l'espai.",
+        "li3t": "Instal·lació professional", "li3": "Els nostres tècnics certificats RITE realitzen la instal·lació en menys de 24/48 hores.",
+        "li4t": "Gestió de documentació", "li4": "Ens encarreguem de tota la documentació tècnica i el registre reglamentari.",
+        "li5t": "Posada en marxa i formació", "li5": "T'expliquem com fer servir l'equip perquè aprofitis al màxim la seva eficiència des del primer dia.",
+        "li6t": "Garantia inclosa", "li6": "Totes les instal·lacions inclouen garantia sobre la mà d'obra i l'equip instal·lat.",
+        "h3": "Compromís Clima HVAC Service: Pressupost tancat sense sorpreses",
+        "p3": "Et lliurem un pressupost detallat abans de començar. Només procedim amb la teva autorització expressa. Sense lletra petita, sense costos ocults.",
+        "h4": "Garantia en totes les nostres instal·lacions",
+        "p4": "Totes les instal·lacions inclouen garantia per escrit sobre la mà d'obra. Si detectem qualsevol incidència derivada de la instal·lació dins del període de garantia, tornem sense cost addicional."
       }
     },
     "blogPage": {

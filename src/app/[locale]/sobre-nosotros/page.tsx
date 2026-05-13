@@ -69,7 +69,6 @@ const SERVICES_LIST = [
   "Instalación y sustitución de calderas de gas de condensación",
   "Sistemas de aerotermia para calefacción, frío y ACS",
   "Mantenimiento preventivo y correctivo de climatización",
-  "Reparación de averías en equipos de aire acondicionado",
   "Asesoramiento energético para viviendas y negocios",
   "Instalaciones en locales comerciales y oficinas",
   "Tramitación de certificados y documentación técnica",
@@ -114,7 +113,7 @@ export default async function SobreNosotrosPage({
               Especialistas en climatización en Reus y Tarragona
             </h1>
             <p className="text-white/80 text-base sm:text-lg leading-relaxed max-w-2xl">
-              Instalamos, reparamos y mantenemos sistemas de aire acondicionado, aerotermia y calderas de gas. Técnicos certificados, atención personalizada y compromiso con la calidad en cada instalación.
+              Instalamos y mantenemos sistemas de aire acondicionado, aerotermia y calderas de gas. Técnicos certificados, atención personalizada y compromiso con la calidad en cada instalación.
             </p>
           </div>
         </div>
@@ -134,7 +133,7 @@ export default async function SobreNosotrosPage({
                   En Clima HVAC Service ofrecemos soluciones de climatización para viviendas, locales y empresas en Reus, Tarragona y alrededores.
                 </p>
                 <p>
-                  Contamos con técnicos habilitados y experiencia en instalación, mantenimiento y reparación de equipos de aire acondicionado, calefacción y aerotermia.
+                  Contamos con técnicos habilitados y experiencia en instalación y mantenimiento de equipos de aire acondicionado, calefacción y aerotermia.
                 </p>
                 <p>
                   Trabajamos con equipos de alta eficiencia energética y primeras marcas del sector, garantizando instalaciones seguras, eficientes y adaptadas a cada cliente.

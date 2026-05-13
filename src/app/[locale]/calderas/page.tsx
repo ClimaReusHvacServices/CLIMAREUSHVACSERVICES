@@ -47,8 +47,8 @@ const REASONS = [
   },
   {
     icon: AlertTriangle,
-    title: "Las reparaciones se repiten",
-    desc: "Si ya has reparado la caldera dos o más veces en los últimos años, probablemente el coste de mantenerla supera el de sustituirla.",
+    title: "El rendimiento cae con los años",
+    desc: "Una caldera antigua que pierde eficiencia puede costar más en gas cada invierno que lo que costaría sustituirla por un modelo de condensación actual.",
   },
   {
     icon: Flame,

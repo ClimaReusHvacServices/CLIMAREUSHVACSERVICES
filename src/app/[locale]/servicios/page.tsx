@@ -9,7 +9,7 @@ const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton
 
 export const metadata = {
   title: "Servicios de Climatización en Reus | Clima HVAC Service",
-  description: "Instalación, mantenimiento y reparación de aire acondicionado y aerotermia en Reus y Tarragona. Instaladores certificados RITE.",
+  description: "Instalación y mantenimiento de aire acondicionado y aerotermia en Reus y Tarragona. Instaladores certificados RITE.",
 };
 
 export default async function ServiciosPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -35,12 +35,6 @@ export default async function ServiciosPage({ params }: { params: Promise<{ loca
       image: "/Imagenes/Interior_confortable.jpg",
       title: t("serviciosPage.s3title"),
       description: t("serviciosPage.s3desc"),
-    },
-    {
-      href: "/servicios/reparacion",
-      image: "/Imagenes/Exterior_edificio.jpg",
-      title: t("serviciosPage.s4title"),
-      description: t("serviciosPage.s4desc"),
     },
   ];
 
