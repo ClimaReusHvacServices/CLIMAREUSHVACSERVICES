@@ -124,7 +124,7 @@ function LoginContent({ onSwitch }: { onSwitch: (m: Mode) => void }) {
     try {
       const res = await signIn("credentials", { email: form.email.trim(), password: form.password, redirect: false });
       if (res?.error) toast.error(t("auth.loginError"));
-      else if (res?.ok) router.push("/");
+      else if (res?.ok) window.location.href = "/";
     } catch { toast.error(t("errors.serverError")); }
     finally { setLoading(false); }
   };
