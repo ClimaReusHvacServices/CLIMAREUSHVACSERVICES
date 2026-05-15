@@ -203,7 +203,7 @@ export default function Navbar() {
   return (
     <>
       {/* ── Logo superior izquierda ────────────────────────────────────── */}
-      <div className="hidden sm:block fixed left-24 z-50" style={{ top: "-20px" }}>
+      <div className="hidden lg:block fixed left-24 z-50" style={{ top: "-20px" }}>
         <Link href="/" aria-label="Clima HVAC Service — inicio">
           <div className="relative h-36">
             <img
@@ -224,33 +224,33 @@ export default function Navbar() {
       </div>
 
       {/* ── Píldora central de navegación ─────────────────────────────── */}
-      <div ref={mobileRef} className="fixed left-1/2 top-4 sm:top-5 -translate-x-1/2 z-50 w-[calc(100%-2rem)] sm:w-auto">
-        <nav className="flex items-center bg-white/80 backdrop-blur-xl px-3 sm:px-5 py-2.5 rounded-full shadow-lg border border-white/40 whitespace-nowrap gap-2 sm:gap-3">
+      <div ref={mobileRef} className="fixed left-1/2 top-4 lg:top-5 -translate-x-1/2 z-50 w-[calc(100%-2rem)] lg:w-auto">
+        <nav className="flex items-center bg-white/80 backdrop-blur-xl px-3 lg:px-5 py-2.5 rounded-full shadow-lg border border-white/40 whitespace-nowrap gap-2 lg:gap-3">
 
-          {/* Móvil — botón hamburguesa */}
+          {/* Móvil/Tablet — botón hamburguesa */}
           <button
             onClick={() => setOpen((v) => !v)}
-            className="sm:hidden w-7 h-7 flex items-center justify-center rounded-full text-gray-700 hover:bg-gray-100 transition-colors shrink-0"
+            className="lg:hidden w-7 h-7 flex items-center justify-center rounded-full text-gray-700 hover:bg-gray-100 transition-colors shrink-0"
             aria-label={open ? "Cerrar menú" : "Abrir menú"}
           >
             {open ? <X size={16} /> : <Menu size={16} />}
           </button>
 
-          {/* Móvil — etiqueta de sección dinámica */}
-          <Link href="/" onClick={() => setOpen(false)} className="sm:hidden text-sm font-bold text-primary-800 mr-auto">
+          {/* Móvil/Tablet — etiqueta de sección dinámica */}
+          <Link href="/" onClick={() => setOpen(false)} className="lg:hidden text-sm font-bold text-primary-800 mr-auto">
             {mobileLabel}
           </Link>
 
-          {/* Móvil — carrito */}
-          <div className="sm:hidden text-primary-700 shrink-0">
+          {/* Móvil/Tablet — carrito */}
+          <div className="lg:hidden text-primary-700 shrink-0">
             <CartNavIcon />
           </div>
 
-          {/* Móvil — botón login (solo cuando no está autenticado) */}
+          {/* Móvil/Tablet — botón login (solo cuando no está autenticado) */}
           {status !== "loading" && !isLoggedIn && (
             <Link
               href="/login"
-              className="sm:hidden flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-bold text-white shrink-0"
+              className="lg:hidden flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-bold text-white shrink-0"
               style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
               aria-label="Iniciar sesión"
             >
@@ -259,8 +259,8 @@ export default function Navbar() {
             </Link>
           )}
 
-          {/* Móvil — selector de idioma inline (3 píldoras, sin desplegable) */}
-          <div className="sm:hidden flex items-center gap-0.5 shrink-0">
+          {/* Móvil/Tablet — selector de idioma inline (3 píldoras, sin desplegable) */}
+          <div className="lg:hidden flex items-center gap-0.5 shrink-0">
             {LOCALES.map((l) => (
               <button
                 key={l.code}
@@ -279,36 +279,36 @@ export default function Navbar() {
           </div>
 
           {/* Escritorio — enlaces de navegación */}
-          <div className="hidden sm:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-3 xl:gap-4">
             {NAV_LINKS.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href as any}
-                className="text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors first:font-semibold first:text-primary-800"
+                className="text-xs xl:text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors first:font-semibold first:text-primary-800"
               >
                 {label}
               </Link>
             ))}
           </div>
 
-          <div className="hidden sm:block h-4 w-px bg-gray-200 mx-1" />
+          <div className="hidden lg:block h-4 w-px bg-gray-200 mx-1" />
 
-          {/* Phone — sólo escritorio; en móvil está en el menú desplegable */}
+          {/* Phone — sólo escritorio */}
           <a
             href="tel:+34877234166"
-            className="hidden sm:flex items-center gap-1.5 text-primary-700 hover:text-primary-900 transition-colors"
+            className="hidden lg:flex items-center gap-1.5 text-primary-700 hover:text-primary-900 transition-colors"
             aria-label="Llamar al 877 234 166"
           >
             <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-primary-500 shrink-0">
               <Phone size={13} className="text-white" />
             </span>
-            <span className="text-xs font-bold tracking-wide hidden xs:inline sm:inline">877 234 166</span>
+            <span className="text-xs font-bold tracking-wide">877 234 166</span>
           </a>
         </nav>
 
-        {/* Mobile dropdown */}
+        {/* Mobile/Tablet dropdown */}
         {open && (
-          <div className="sm:hidden mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 overflow-hidden">
+          <div className="lg:hidden mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 overflow-hidden">
             {NAV_LINKS.map(({ href, label }) => (
               <Link
                 key={href}
@@ -381,7 +381,7 @@ export default function Navbar() {
       </div>
 
       {/* ── Derecha: Idioma + Carrito + Usuario/Login (solo escritorio) ─ */}
-      <div className="fixed right-4 sm:right-6 top-4 sm:top-5 z-50 hidden sm:flex items-center gap-2">
+      <div className="fixed right-4 lg:right-6 top-4 lg:top-5 z-50 hidden lg:flex items-center gap-2">
         {/* Píldora de idioma */}
         <div className="bg-white/80 backdrop-blur-xl rounded-full shadow-lg border border-white/40">
           <LangPicker />

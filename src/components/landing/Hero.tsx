@@ -78,11 +78,11 @@ export default function Hero({
       </div>
 
       <div className="relative z-10 container mx-auto h-full flex items-center">
-        <div className="max-w-full md:max-w-[45%] p-6 md:p-12 md:pl-20">
+        <div className="max-w-full md:max-w-[65%] lg:max-w-[50%] xl:max-w-[45%] p-6 md:p-10 md:pl-14 lg:p-12 lg:pl-20">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-white drop-shadow-md">
             {t("hero.title")}
           </h1>
-          <p className="mt-4 md:mt-6 text-sm sm:text-base md:text-lg text-white/90 max-w-xl">
+          <p className="mt-4 md:mt-5 text-sm sm:text-base md:text-lg text-white/90 max-w-xl">
             {t("hero.subtitle")}
           </p>
           <div className="mt-8">
