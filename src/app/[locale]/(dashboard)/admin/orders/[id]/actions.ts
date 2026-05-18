@@ -73,8 +73,13 @@ export async function takeOrderAsAdmin(orderId: string) {
   // Auto-comment so there's a record of who took it
   const task = await db.task.findUnique({ where: { orderId }, select: { id: true } });
   if (task) {
+    const u = session.user as any;
+    const adminName = (`${u.firstName ?? ""} ${u.lastName ?? ""}`).trim();
+    const greeting = adminName
+      ? `Hola, mi nombre es ${adminName}, y estoy aquí para ayudarte a cuadrar el presupuesto y los detalles de tu instalación. 😊`
+      : `Hola, estoy aquí para ayudarte a cuadrar el presupuesto y los detalles de tu instalación. 😊`;
     await db.taskComment.create({
-      data: { taskId: task.id, authorId: session.user!.id, content: "✅ Pedido tomado. Contactando con el cliente para cuadrar presupuesto." },
+      data: { taskId: task.id, authorId: session.user!.id, content: `✅ Pedido tomado. ${greeting}` },
     });
   }
   revalidatePath("/[locale]/admin/orders", "page");

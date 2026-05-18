@@ -10,18 +10,14 @@ import { AutoRefresh } from "@/components/admin/AutoRefresh";
 import { ClickableRow } from "@/components/admin/ClickableRow";
 
 async function getAdminStats() {
-  const [totalUsers, totalOrders, revenueAggregate, activeWorkers] = await Promise.all([
+  const [totalUsers, totalOrders, paidOrders, activeWorkers] = await Promise.all([
     db.user.count({ where: { role: "cliente" } }),
     db.order.count(),
-    db.order.aggregate({ _sum: { totalAmount: true }, where: { paymentStatus: "pagado" } }),
+    db.order.findMany({ where: { paymentStatus: "pagado" }, select: { totalAmount: true, agreedBudget: true } }),
     db.user.count({ where: { role: "trabajador", isActive: true } }),
   ]);
-  return {
-    totalUsers,
-    totalOrders,
-    totalRevenue: Number(revenueAggregate._sum.totalAmount ?? 0),
-    activeWorkers,
-  };
+  const totalRevenue = paidOrders.reduce((sum, o) => sum + Number(o.agreedBudget ?? o.totalAmount), 0);
+  return { totalUsers, totalOrders, totalRevenue, activeWorkers };
 }
 
 const PAGE_SIZE = 10;
@@ -172,7 +168,7 @@ export default async function AdminDashboard({
                         {tStatus(order.status as any)}
                       </span>
                     </td>
-                    <td className="py-3 px-3 font-medium text-gray-900">€{Number(order.totalAmount).toFixed(2)}</td>
+                    <td className="py-3 px-3 font-medium text-gray-900">€{Number((order as any).agreedBudget ?? order.totalAmount).toFixed(2)}</td>
                   </ClickableRow>
                 ))
               )}

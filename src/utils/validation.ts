@@ -17,6 +17,8 @@ export const registerSchema = z
     lastName: z.string().min(2, "El apellido debe tener al menos 2 caracteres"),
     phoneNumber: z.string().regex(/^[0-9+\-\s()]+$/, "Teléfono inválido"),
     address: z.string().min(5, "La dirección debe tener al menos 5 caracteres"),
+    city: z.string().min(2, "La ciudad es requerida"),
+    postalCode: z.string().regex(/^\d{5}$/, "Código postal inválido (5 dígitos)"),
     email: z.string().email("Email inválido"),
     username: z
       .string()
