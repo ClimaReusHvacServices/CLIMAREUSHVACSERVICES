@@ -466,7 +466,12 @@
       "offersUnit": "equip", "offersUnits": "equips", "offersPromo": "en promoció",
       "catalogTitle": "Catàleg complet",
       "catalogUnit": "producte", "catalogUnits": "productes",
-      "catalogEmpty": "No hi ha productes en aquesta categoria"
+      "catalogEmpty": "No hi ha productes en aquesta categoria",
+      "waConsult": "Consultar per WhatsApp",
+      "addToCart": "Afegir al carret",
+      "addAnother": "Afegir una altra unitat",
+      "loginToBuy": "Inicia sessió per comprar",
+      "requestQuote": "Sol·licitar pressupost"
     },
     "serviciosPage": {
       "badge": "Els nostres serveis", "title": "Solucions de Climatització Professional",

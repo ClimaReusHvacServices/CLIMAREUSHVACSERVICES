@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Wind, CheckCircle2, Star, Filter, ChevronDown, Flame, Tag, ShoppingCart, Check, MapPin } from "lucide-react";
+import { Wind, CheckCircle2, Filter, ChevronDown, Flame, Tag, ShoppingCart, Check } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/store/cart";
@@ -33,30 +33,6 @@ function fmt(n: number) {
   return n.toLocaleString("es-ES", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }
 
-function Stars({ n = 5 }: { n?: number }) {
-  return (
-    <div className="flex gap-0.5">
-      {[1, 2, 3, 4, 5].map(i => (
-        <Star key={i} size={12} fill={i <= n ? "#f59e0b" : "none"} stroke="#f59e0b" strokeWidth={1.5} />
-      ))}
-    </div>
-  );
-}
-
-function getAreaRange(product: ProductItem): string | null {
-  if (product.productType !== "air_conditioning") return null;
-  try {
-    const s = product.specifications as Record<string, unknown> | null;
-    if (!s) return null;
-    const min = s.recommendedAreaMin as number | undefined;
-    const max = s.recommendedAreaMax as number | undefined;
-    if (min && max) return `${min}–${max} m²`;
-    if (max) return `Hasta ${max} m²`;
-    if (min) return `Desde ${min} m²`;
-  } catch { /* ignore */ }
-  return null;
-}
-
 function StockPill({ status }: { status: string | null }) {
   if (!status || status === "in_stock") return (
     <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-wide text-teal-700 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded-full">
@@ -77,33 +53,28 @@ function StockPill({ status }: { status: string | null }) {
   );
 }
 
-function WaProductButton({ product, label }: { product: ProductItem; label: string }) {
-  return (
-    <a
-      href={waOfertaProduct(product.name)}
-      target="_blank"
-      rel="noreferrer"
-      onClick={e => e.stopPropagation()}
-      className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-      style={{ background: "linear-gradient(to right, #25D366, #128C7E)" }}
-    >
-      {/* WhatsApp icon */}
-      <svg viewBox="0 0 448 512" className="w-4 h-4 fill-white shrink-0">
-        <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-23.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
-      </svg>
-      {label}
-    </a>
-  );
-}
+const WA_SVG = (
+  <svg viewBox="0 0 448 512" className="w-4 h-4 fill-white shrink-0">
+    <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-23.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
+  </svg>
+);
 
-function AddToCartInline({ product }: { product: ProductItem }) {
+function ProductCard({ product, userRole = null, t }: {
+  product: ProductItem;
+  highlight?: boolean;
+  userRole?: string | null;
+  t: (k: string) => string;
+}) {
   const { addItem, items } = useCart();
   const [justAdded, setJustAdded] = useState(false);
   const hasDiscount = product.discountPrice !== null && product.discountPrice < product.price;
   const displayPrice = hasDiscount ? product.discountPrice! : product.price;
+  const savingsPct = hasDiscount
+    ? Math.round(((product.price - product.discountPrice!) / product.price) * 100)
+    : 0;
   const inCart = items.some(i => i.productId === product.id);
 
-  function handle(e: React.MouseEvent) {
+  function handleCart(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
     addItem({ productId: product.id, name: product.name, price: displayPrice, originalPrice: product.price, imageUrl: product.images?.[0] ?? null });
@@ -112,136 +83,114 @@ function AddToCartInline({ product }: { product: ProductItem }) {
   }
 
   return (
-    <button
-      onClick={handle}
-      className={`flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-sm font-bold text-white transition-all ${justAdded ? "bg-green-500" : "hover:opacity-90"}`}
-      style={justAdded ? {} : { background: "linear-gradient(to right, #008f65, #1d7291)" }}
-    >
-      {justAdded ? <><Check size={14} />¡Añadido!</> : <><ShoppingCart size={14} />{inCart ? "Añadir otra" : "Añadir al carrito"}</>}
-    </button>
-  );
-}
-
-function LoginToCartButton() {
-  return (
-    <Link
-      href="/login"
-      className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-sm font-bold text-white hover:opacity-90 transition-all"
-      style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
-      onClick={(e) => e.stopPropagation()}
-    >
-      <ShoppingCart size={14} /> Iniciar sesión para comprar
-    </Link>
-  );
-}
-
-function PrimaryWaButton({ product, label }: { product: ProductItem; label: string }) {
-  return (
-    <a
-      href={waOfertaProduct(product.name)}
-      target="_blank"
-      rel="noreferrer"
-      onClick={e => e.stopPropagation()}
-      className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-      style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
-    >
-      <ShoppingCart size={14} /> {label}
-    </a>
-  );
-}
-
-function ProductCard({ product, highlight = false, userRole = null, t }: {
-  product: ProductItem;
-  highlight?: boolean;
-  userRole?: string | null;
-  t: (k: string) => string;
-}) {
-  const hasDiscount = product.discountPrice !== null && product.discountPrice < product.price;
-  const displayPrice = hasDiscount ? product.discountPrice! : product.price;
-  const savingsPct = hasDiscount
-    ? Math.round(((product.price - product.discountPrice!) / product.price) * 100)
-    : 0;
-
-  return (
-    <div className={`group bg-white rounded-2xl overflow-hidden border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col ${
-      highlight ? "border-amber-200 shadow-md" : "border-gray-100 shadow-sm"
-    }`}>
-      <Link href={`/producto/${product.id}`} className="flex flex-col flex-1">
-        <div className="px-4 pt-4 h-8 flex items-center gap-2">
-          {hasDiscount && (
-            <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-widest uppercase text-white bg-red-500 px-2.5 py-0.5 rounded-full">
-              <Flame size={9} /> -{savingsPct}%
-            </span>
-          )}
-          {product.stock === 0 && (
-            <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2.5 py-0.5 rounded-full">
-              {t("products.modalOutStock")}
-            </span>
-          )}
+    <div className="relative group bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col h-full">
+      {/* Discount badge */}
+      {hasDiscount && (
+        <div className="absolute left-3 top-3 z-20">
+          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-white px-2.5 py-1 rounded-full shadow-sm bg-red-500">
+            <Flame size={9} /> -{savingsPct}% {t("products.discountLabel")}
+          </span>
         </div>
+      )}
 
-        <div className={`mx-4 h-44 rounded-xl flex flex-col items-center justify-center gap-2 border overflow-hidden ${
-          highlight ? "bg-gradient-to-br from-amber-50 to-orange-50 border-amber-100/60" : "bg-gradient-to-br from-gray-50 to-gray-100 border-gray-100/60"
-        }`}>
+      {/* Stock badge top-right */}
+      <div className="absolute right-3 top-3 z-20">
+        <StockPill status={product.stockStatus} />
+      </div>
+
+      <Link href={`/producto/${product.id}`} className="flex flex-col flex-1">
+        {/* Image */}
+        <div className="h-44 bg-gray-50 flex items-center justify-center overflow-hidden border-b border-gray-100">
           {product.images?.[0] ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={product.images[0]} alt={product.name} className="w-full h-full object-contain p-2" />
+            <img src={product.images[0]} alt={product.name} className="w-full h-full object-contain p-3" />
           ) : (
             <>
-              <Wind size={52} strokeWidth={0.8} className={highlight ? "text-amber-200" : "text-gray-200"} />
-              <p className="text-[11px] text-gray-300 font-medium">{t("products.cardImageSoon")}</p>
+              <Wind size={52} strokeWidth={0.8} className="text-gray-200" />
+              <p className="text-[10px] text-gray-300 font-medium mt-1">{t("products.cardImageSoon")}</p>
             </>
           )}
         </div>
 
-        <div className="px-5 pt-4 pb-3 flex flex-col flex-1">
-          <div className="flex items-center gap-2 flex-wrap">
-            <Stars n={5} />
-            <StockPill status={product.stockStatus} />
-          </div>
-          <h3 className="font-bold text-gray-900 text-base leading-tight mt-2 group-hover:text-primary-700 transition-colors line-clamp-2">
+        {/* Content */}
+        <div className="px-4 pt-3 pb-3 flex flex-col flex-1">
+          {(product.brand ?? product.manufacturer) && (
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">
+              {product.brand ?? product.manufacturer}
+            </p>
+          )}
+          <h3 className="font-bold text-gray-900 text-base leading-snug group-hover:text-primary-700 transition-colors line-clamp-2">
             {product.name}
           </h3>
-          {product.shortDescription ? (
-            <p className="text-gray-500 text-xs mt-1 line-clamp-2 leading-relaxed">{product.shortDescription}</p>
-          ) : (
-            <p className="text-gray-500 text-xs mt-0.5">{product.category}</p>
-          )}
-          <div className="flex items-center gap-2 mt-1 flex-wrap">
-            {(product.brand || product.manufacturer) && (
-              <span className="text-gray-400 text-[11px]">{product.brand ?? product.manufacturer}</span>
-            )}
-            {(() => { const area = getAreaRange(product); return area ? (
-              <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-primary-600 bg-primary-50 border border-primary-100 px-2 py-0.5 rounded-full">
-                <MapPin size={9} /> {area}
-              </span>
-            ) : null; })()}
-          </div>
+          <p className="text-gray-400 text-xs mt-0.5">{product.category}</p>
 
-          <div className="mt-auto pt-4">
-            <div className="flex items-baseline gap-2 flex-wrap">
-              <span className="text-2xl font-bold" style={{ color: "#d97706" }}>{fmt(displayPrice)} €</span>
+          <div className="mt-auto pt-3 flex items-end justify-between gap-2">
+            <div>
               {hasDiscount && (
-                <span className="text-gray-400 line-through text-sm">{fmt(product.price)} €</span>
+                <span className="text-gray-400 line-through text-xs font-medium block">
+                  {fmt(product.price)} €
+                </span>
+              )}
+              <span className="text-2xl font-bold text-gray-900 leading-none">
+                {fmt(displayPrice)} <span className="text-base font-semibold">€</span>
+              </span>
+              <p className="text-primary-600 text-[10px] font-semibold mt-0.5 flex items-center gap-0.5">
+                <CheckCircle2 size={10} /> {t("products.cardInstall")}
+              </p>
+            </div>
+
+            {/* Two round action buttons */}
+            <div className="flex items-center gap-2 shrink-0">
+              {/* WhatsApp */}
+              <a
+                href={waOfertaProduct(product.name)}
+                target="_blank"
+                rel="noreferrer"
+                onClick={e => e.stopPropagation()}
+                title={t("ofertaPage.waConsult")}
+                className="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md transition-all hover:scale-110 active:scale-95"
+                style={{ background: "linear-gradient(135deg, #25D366, #128C7E)" }}
+              >
+                {WA_SVG}
+              </a>
+
+              {/* Cart / Login */}
+              {userRole === "cliente" ? (
+                <button
+                  onClick={handleCart}
+                  title={inCart ? t("ofertaPage.addAnother") : t("ofertaPage.addToCart")}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md transition-all hover:scale-110 active:scale-95 ${justAdded ? "bg-green-500" : ""}`}
+                  style={justAdded ? {} : { background: "linear-gradient(135deg, #008f65, #1d7291)" }}
+                >
+                  {justAdded ? <Check size={16} /> : <ShoppingCart size={16} />}
+                </button>
+              ) : userRole === null ? (
+                <Link
+                  href="/login"
+                  onClick={e => e.stopPropagation()}
+                  title={t("ofertaPage.loginToBuy")}
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md transition-all hover:scale-110"
+                  style={{ background: "linear-gradient(135deg, #008f65, #1d7291)" }}
+                >
+                  <ShoppingCart size={16} />
+                </Link>
+              ) : (
+                <a
+                  href={waOfertaProduct(product.name)}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={e => e.stopPropagation()}
+                  title={t("ofertaPage.requestQuote")}
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md transition-all hover:scale-110"
+                  style={{ background: "linear-gradient(135deg, #008f65, #1d7291)" }}
+                >
+                  <ShoppingCart size={16} />
+                </a>
               )}
             </div>
-            <p className="text-primary-600 text-xs font-semibold mt-1 flex items-center gap-1">
-              <CheckCircle2 size={11} /> {t("products.feat1")}
-            </p>
           </div>
-
         </div>
       </Link>
-      {/* CTA — outside the Link so it doesn't navigate */}
-      <div className="px-5 pb-5 flex flex-col gap-2">
-        {userRole === "cliente"
-          ? <AddToCartInline product={product} />
-          : userRole === null
-            ? <LoginToCartButton />
-            : <PrimaryWaButton product={product} label="Solicitar presupuesto" />
-        }
-        <WaProductButton product={product} label="Consultar por WhatsApp" />
-      </div>
     </div>
   );
 }

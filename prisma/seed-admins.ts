@@ -1,10 +1,10 @@
 import { PrismaClient } from "@prisma/client";
-import { createHash } from "crypto";
+import bcryptjs from "bcryptjs";
 
 const db = new PrismaClient();
 
 function hashPassword(password: string): string {
-  return createHash("sha256").update(password).digest("hex");
+  return bcryptjs.hashSync(password, 10);
 }
 
 async function main() {

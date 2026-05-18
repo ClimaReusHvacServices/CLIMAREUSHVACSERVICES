@@ -466,7 +466,12 @@
       "offersUnit": "unit", "offersUnits": "units", "offersPromo": "on promotion",
       "catalogTitle": "Full catalogue",
       "catalogUnit": "product", "catalogUnits": "products",
-      "catalogEmpty": "No products in this category"
+      "catalogEmpty": "No products in this category",
+      "waConsult": "Ask on WhatsApp",
+      "addToCart": "Add to cart",
+      "addAnother": "Add another",
+      "loginToBuy": "Sign in to buy",
+      "requestQuote": "Request quote"
     },
     "serviciosPage": {
       "badge": "Our services", "title": "Professional Air Conditioning Solutions",

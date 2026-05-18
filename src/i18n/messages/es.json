@@ -466,7 +466,12 @@
       "offersUnit": "equipo", "offersUnits": "equipos", "offersPromo": "en promoción",
       "catalogTitle": "Catálogo completo",
       "catalogUnit": "producto", "catalogUnits": "productos",
-      "catalogEmpty": "No hay productos en esta categoría"
+      "catalogEmpty": "No hay productos en esta categoría",
+      "waConsult": "Consultar por WhatsApp",
+      "addToCart": "Añadir al carrito",
+      "addAnother": "Añadir otra unidad",
+      "loginToBuy": "Iniciar sesión para comprar",
+      "requestQuote": "Solicitar presupuesto"
     },
     "serviciosPage": {
       "badge": "Nuestros servicios", "title": "Soluciones de Climatización Profesional",
