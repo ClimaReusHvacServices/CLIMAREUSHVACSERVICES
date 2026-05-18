@@ -1,10 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ClipboardList, ChevronRight } from "lucide-react";
+import { ClipboardList, ChevronRight, ShoppingBag } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { useRouter } from "@/i18n/routing";
-import DataTable from "@/components/common/DataTable";
 import { STATUS_COLORS } from "@/lib/status-colors";
 
 interface OrderRow {
@@ -16,6 +14,14 @@ interface OrderRow {
   items: { id: string; product: { name: string } | null }[];
 }
 
+const STATUS_STRIP: Record<string, string> = {
+  pendiente:   "#9ca3af",
+  confirmada:  "#1d7291",
+  en_progreso: "#f59e0b",
+  completada:  "#008f65",
+  cancelada:   "#e5e7eb",
+};
+
 function orderLabel(items: OrderRow["items"]): string {
   if (items.length === 0) return "Pedido";
   const first = items[0].product?.name ?? "Producto";
@@ -26,61 +32,79 @@ function orderLabel(items: OrderRow["items"]): string {
 export function ClientOrdersTable({ orders, locale }: { orders: OrderRow[]; locale: string }) {
   const t = useTranslations("clientOrders");
   const tStatus = useTranslations("status");
-  const router = useRouter();
-  const empty = (
-    <div className="text-center py-16">
-      <ClipboardList size={48} className="mx-auto mb-4 text-gray-200" />
-      <p className="text-gray-500 font-medium">{t("noOrders")}</p>
-      <p className="text-gray-400 text-sm mt-1 mb-6">{t("noOrdersDesc")}</p>
-      <Link
-        href="/oferta"
-        className="inline-block text-white px-6 py-2.5 rounded-xl font-medium transition-colors text-sm"
-        style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
-      >
-        {t("goToShop")}
-      </Link>
-    </div>
-  );
 
-  const columns = [
-    { key: "number", label: t("colNumber") },
-    { key: "items", label: t("colItems"), hideOn: "sm" as const },
-    { key: "status", label: t("colStatus") },
-    { key: "total", label: t("colTotal") },
-    { key: "date", label: t("colDate"), hideOn: "md" as const },
-    { key: "action", label: "" },
-  ];
+  if (orders.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <div className="w-20 h-20 rounded-2xl bg-white flex items-center justify-center mb-5 shadow-sm border border-gray-100">
+          <ClipboardList size={36} className="text-gray-200" />
+        </div>
+        <p className="text-gray-700 font-bold text-lg">{t("noOrders")}</p>
+        <p className="text-gray-400 text-sm mt-1 mb-8 max-w-[240px]">{t("noOrdersDesc")}</p>
+        <Link
+          href="/oferta"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-white px-6 py-3 rounded-xl shadow-md hover:opacity-90 transition-opacity"
+          style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
+        >
+          <ShoppingBag size={15} />
+          {t("goToShop")}
+        </Link>
+      </div>
+    );
+  }
 
   return (
-    <DataTable
-      columns={columns}
-      data={orders}
-      pageSize={10}
-      minWidth="420px"
-      emptyComponent={orders.length === 0 ? empty : undefined}
-      renderRow={(order: OrderRow) => (
-        <tr
-          key={order.id}
-          className="border-b border-gray-50 hover:bg-primary-50/40 transition-colors cursor-pointer"
-          onClick={() => router.push(`/orders/${order.id}` as any)}
-        >
-          <td className="py-3 px-4">
-            <p className="font-semibold text-gray-900 leading-tight">{orderLabel(order.items)}</p>
-            <p className="text-xs text-gray-400">{order.orderNumber}</p>
-          </td>
-          <td className="py-3 px-4 text-gray-600 hidden sm:table-cell">{order.items.length} {t("items")}</td>
-          <td className="py-3 px-4">
-            <span className={`inline-block px-2 py-1 rounded-lg text-xs font-semibold ${STATUS_COLORS[order.status] ?? "bg-gray-100 text-gray-600"}`}>
-              {tStatus(order.status as any)}
-            </span>
-          </td>
-          <td className="py-3 px-4 font-medium text-gray-900">€{Number(order.totalAmount).toFixed(2)}</td>
-          <td className="py-3 px-4 text-gray-500 text-xs hidden md:table-cell">{new Date(order.createdAt).toLocaleDateString(locale)}</td>
-          <td className="py-3 px-4">
-            <ChevronRight size={14} className="text-gray-300" />
-          </td>
-        </tr>
-      )}
-    />
+    <div className="space-y-3">
+      {orders.map((order) => {
+        const stripColor = STATUS_STRIP[order.status] ?? "#e5e7eb";
+        const statusClass = STATUS_COLORS[order.status] ?? "bg-gray-100 text-gray-600";
+        const dateStr = new Date(order.createdAt).toLocaleDateString(locale, {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        });
+
+        return (
+          <Link
+            key={order.id}
+            href={`/orders/${order.id}` as any}
+            className="relative flex items-stretch bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all block"
+          >
+            {/* Status color strip */}
+            <div className="w-1 shrink-0" style={{ background: stripColor }} />
+
+            <div className="flex-1 px-4 py-4 min-w-0">
+              {/* Top row */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-semibold text-gray-900 leading-snug truncate">
+                    {orderLabel(order.items)}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-0.5">{order.orderNumber}</p>
+                </div>
+                <span className={`shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full ${statusClass}`}>
+                  {tStatus(order.status as any)}
+                </span>
+              </div>
+
+              {/* Bottom row */}
+              <div className="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs text-gray-400">
+                  <span>{order.items.length} {t("items")}</span>
+                  <span>·</span>
+                  <span>{dateStr}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-gray-900 text-sm">
+                    €{Number(order.totalAmount).toFixed(2)}
+                  </span>
+                  <ChevronRight size={14} className="text-gray-300" />
+                </div>
+              </div>
+            </div>
+          </Link>
+        );
+      })}
+    </div>
   );
 }

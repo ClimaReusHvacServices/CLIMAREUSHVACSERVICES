@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useRef } from "react";
 import { signIn, getSession } from "next-auth/react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter, Link } from "@/i18n/routing";
@@ -192,6 +192,97 @@ function LoginContent({ onSwitch }: { onSwitch: (m: Mode) => void }) {
   );
 }
 
+type NominatimResult = {
+  place_id: number;
+  display_name: string;
+  address: {
+    road?: string; house_number?: string; city?: string; town?: string;
+    village?: string; municipality?: string; postcode?: string;
+  };
+};
+
+function AddressAutocomplete({
+  value, error,
+  onChange, onSelect,
+}: {
+  value: string; error?: string;
+  onChange: (val: string) => void;
+  onSelect: (street: string, city: string, postalCode: string) => void;
+}) {
+  const [suggestions, setSuggestions] = useState<NominatimResult[]>([]);
+  const [open, setOpen] = useState(false);
+  const [searching, setSearching] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const search = (q: string) => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (q.length < 5) { setSuggestions([]); setOpen(false); return; }
+    debounceRef.current = setTimeout(async () => {
+      setSearching(true);
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&addressdetails=1&countrycodes=es&limit=5`,
+          { headers: { "Accept-Language": "es" } }
+        );
+        const data: NominatimResult[] = await res.json();
+        setSuggestions(data);
+        setOpen(data.length > 0);
+      } catch { /* silent */ }
+      finally { setSearching(false); }
+    }, 500);
+  };
+
+  const pick = (r: NominatimResult) => {
+    const { road, house_number, city, town, village, municipality, postcode } = r.address;
+    const street = [road, house_number].filter(Boolean).join(", ") || r.display_name.split(",")[0];
+    const resolvedCity = city ?? town ?? village ?? municipality ?? "";
+    const resolvedPostal = postcode?.split(";")[0] ?? "";
+    onSelect(street, resolvedCity, resolvedPostal);
+    setSuggestions([]);
+    setOpen(false);
+  };
+
+  return (
+    <div className="relative">
+      <label className="block text-xs font-semibold text-gray-600 mb-1.5">Dirección (calle y número)</label>
+      <div className="relative">
+        <input
+          type="text"
+          value={value}
+          onChange={e => { onChange(e.target.value); search(e.target.value); }}
+          onBlur={() => setTimeout(() => setOpen(false), 200)}
+          onFocus={() => suggestions.length > 0 && setOpen(true)}
+          placeholder="Calle Principal, 123"
+          autoComplete="off"
+          className={`w-full px-3.5 py-2.5 pr-8 text-sm border rounded-xl focus:outline-none focus:ring-1 transition-shadow bg-gray-50 ${
+            error ? "border-red-300 focus:border-red-400 focus:ring-red-100"
+                  : "border-gray-200 focus:border-primary-400 focus:ring-primary-100"
+          }`}
+        />
+        {searching && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+            <div className="w-3.5 h-3.5 border-2 border-primary-400 border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+      </div>
+      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+      {open && suggestions.length > 0 && (
+        <ul className="absolute z-50 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden max-h-52 overflow-y-auto">
+          {suggestions.map(r => (
+            <li
+              key={r.place_id}
+              onMouseDown={() => pick(r)}
+              className="px-3.5 py-2.5 text-xs text-gray-700 hover:bg-primary-50 cursor-pointer border-b border-gray-50 last:border-0 leading-snug"
+            >
+              {r.display_name}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 function RegisterContent({ onSwitch }: { onSwitch: (m: Mode) => void }) {
   const t = useTranslations();
   const router = useRouter();
@@ -203,6 +294,7 @@ function RegisterContent({ onSwitch }: { onSwitch: (m: Mode) => void }) {
   const [showPw, setShowPw] = useState(false);
   const [form, setForm] = useState({
     firstName: "", lastName: "", phoneNumber: "", address: "",
+    city: "", postalCode: "",
     email: "", username: "", password: "", confirmPassword: "",
   });
 
@@ -210,6 +302,11 @@ function RegisterContent({ onSwitch }: { onSwitch: (m: Mode) => void }) {
     const { name, value } = e.target;
     setForm(p => ({ ...p, [name]: value }));
     if (errors[name]) setErrors(p => ({ ...p, [name]: "" }));
+  };
+
+  const handleAddressSelect = (street: string, city: string, postalCode: string) => {
+    setForm(p => ({ ...p, address: street, city, postalCode }));
+    setErrors(p => ({ ...p, address: "", city: "", postalCode: "" }));
   };
 
   const submit = async (e: React.FormEvent) => {
@@ -263,8 +360,38 @@ function RegisterContent({ onSwitch }: { onSwitch: (m: Mode) => void }) {
             <AuthField label={t("auth.email")} name="email" type="email" placeholder="email@ejemplo.com"
               value={form.email} error={errors.email} onChange={set} />
           </div>
-          <AuthField label={t("auth.address")} name="address" placeholder="Calle Principal, 123"
-            value={form.address} error={errors.address} onChange={set} />
+          <AddressAutocomplete
+            value={form.address}
+            error={errors.address}
+            onChange={val => { setForm(p => ({ ...p, address: val })); if (errors.address) setErrors(p => ({ ...p, address: "" })); }}
+            onSelect={handleAddressSelect}
+          />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5">Ciudad</label>
+              <input
+                name="city" type="text" value={form.city}
+                onChange={set} placeholder="Reus"
+                className={`w-full px-3.5 py-2.5 text-sm border rounded-xl focus:outline-none focus:ring-1 transition-shadow bg-gray-50 ${
+                  errors.city ? "border-red-300 focus:border-red-400 focus:ring-red-100"
+                              : "border-gray-200 focus:border-primary-400 focus:ring-primary-100"
+                }`}
+              />
+              {errors.city && <p className="text-xs text-red-500 mt-1">{errors.city}</p>}
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5">Código postal</label>
+              <input
+                name="postalCode" type="text" value={form.postalCode}
+                onChange={set} placeholder="43201" maxLength={5}
+                className={`w-full px-3.5 py-2.5 text-sm border rounded-xl focus:outline-none focus:ring-1 transition-shadow bg-gray-50 ${
+                  errors.postalCode ? "border-red-300 focus:border-red-400 focus:ring-red-100"
+                                    : "border-gray-200 focus:border-primary-400 focus:ring-primary-100"
+                }`}
+              />
+              {errors.postalCode && <p className="text-xs text-red-500 mt-1">{errors.postalCode}</p>}
+            </div>
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <AuthField label={t("auth.username")} name="username" placeholder="tu_usuario"
               helper="Letras, números, - y _"

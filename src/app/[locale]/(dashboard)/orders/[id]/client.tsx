@@ -251,6 +251,16 @@ export function ClientOrderDetailClient({ order, locale }: { order: Order; local
         placeholder={order.task?.assignedTo ? "Escribe un mensaje al técnico..." : "Escribe tu consulta o dudas sobre el servicio..."}
         onSend={content => sendClientMessage(order.id, content)}
       />
+
+      {/* Floating Mis Pedidos button */}
+      <Link
+        href="/orders"
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-full text-white text-sm font-bold shadow-xl transition-all hover:opacity-90 hover:scale-105 active:scale-95"
+        style={{ background: "linear-gradient(to right, #008f65, #1d7291)" }}
+      >
+        <Package size={16} />
+        Mis Pedidos
+      </Link>
     </div>
   );
 }

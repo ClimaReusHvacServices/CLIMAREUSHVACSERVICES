@@ -315,7 +315,14 @@
     "noOrders": "Encara no tens comandes.",
     "noOrdersDesc": "Visita la botiga per sol·licitar un servei.",
     "goToShop": "Anar a la botiga",
-    "items": "article(s)"
+    "items": "article(s)",
+    "statTotal": "Total",
+    "statActive": "Actius",
+    "statCompleted": "Completats"
+  },
+  "clientShell": {
+    "welcomeBack": "Benvingut de nou",
+    "hello": "Hola, {name}"
   },
   "profile": {
     "title": "El meu perfil",
@@ -392,7 +399,7 @@
     },
     "why": {
       "title": "Per què triar-nos?",
-      "subtitle": "Som instal·ladors certificats RITE que cuidem la teva llar com si fos la nostra. Sense esperes, sense sorpreses en el preu i amb les millors marques del mercat.",
+      "subtitle": "Som instal·ladors autoritzats RITE que cuidem la teva llar com si fos la nostra. Sense esperes, sense sorpreses en el preu i amb les millors marques del mercat.",
       "b1title": "Experiència Local", "b1text": "Més de 30 anys d'experiència en instal·lacions de climatització a Reus, Tarragona i voltants.",
       "b2title": "Instal·ladors Autoritzats", "b2text": "Empresa habilitada RITE amb instal·lació i manteniment segons la normativa vigent.",
       "b3title": "Eficiència Energètica", "b3text": "Equips d'alta eficiència energètica per a un major estalvi i confort durant tot l'any.",
@@ -459,7 +466,12 @@
       "offersUnit": "equip", "offersUnits": "equips", "offersPromo": "en promoció",
       "catalogTitle": "Catàleg complet",
       "catalogUnit": "producte", "catalogUnits": "productes",
-      "catalogEmpty": "No hi ha productes en aquesta categoria"
+      "catalogEmpty": "No hi ha productes en aquesta categoria",
+      "waConsult": "Consultar per WhatsApp",
+      "addToCart": "Afegir al carret",
+      "addAnother": "Afegir una altra unitat",
+      "loginToBuy": "Inicia sessió per comprar",
+      "requestQuote": "Sol·licitar pressupost"
     },
     "serviciosPage": {
       "badge": "Els nostres serveis", "title": "Solucions de Climatització Professional",
@@ -559,7 +571,7 @@
         "h2": "Què inclou el nostre servei d'instal·lació personalitzada?",
         "li1t": "Visita tècnica gratuïta", "li1": "Avaluem el teu espai i necessitats abans de presentar cap pressupost.",
         "li2t": "Selecció de l'equip ideal", "li2": "Et recomanem el model més eficient segons la superfície, orientació i ús de l'espai.",
-        "li3t": "Instal·lació professional", "li3": "Els nostres tècnics certificats RITE realitzen la instal·lació en menys de 24/48 hores.",
+        "li3t": "Instal·lació professional", "li3": "Els nostres tècnics autoritzats RITE realitzen la instal·lació en menys de 24/48 hores.",
         "li4t": "Gestió de documentació", "li4": "Ens encarreguem de tota la documentació tècnica i el registre reglamentari.",
         "li5t": "Posada en marxa i formació", "li5": "T'expliquem com fer servir l'equip perquè aprofitis al màxim la seva eficiència des del primer dia.",
         "li6t": "Garantia inclosa", "li6": "Totes les instal·lacions inclouen garantia sobre la mà d'obra i l'equip instal·lat.",

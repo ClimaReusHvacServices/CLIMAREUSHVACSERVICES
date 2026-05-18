@@ -151,7 +151,7 @@ export function ClientsTable({ clients, locale }: { clients: ClientRow[]; locale
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr style={{ background: "linear-gradient(to right, #008f6510, #1d729110)" }} className="border-b border-gray-100">
+              <tr className="border-b border-gray-100 bg-gray-50/60">
                 <th className="text-left py-3 px-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Cliente</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-500 text-xs uppercase tracking-wider hidden sm:table-cell">Email</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-500 text-xs uppercase tracking-wider hidden md:table-cell">Teléfono</th>

@@ -1,10 +1,10 @@
 import { PrismaClient } from "@prisma/client";
-import { createHash } from "crypto";
+import bcryptjs from "bcryptjs";
 
 const db = new PrismaClient();
 
 function hashPassword(password: string): string {
-  return createHash("sha256").update(password).digest("hex");
+  return bcryptjs.hashSync(password, 10);
 }
 
 async function main() {
@@ -12,6 +12,7 @@ async function main() {
     { firstName: "Ariel", lastName: "Admin", email: "ariel@climahvacservice.es", username: "ariel.admin" },
     { firstName: "Wanda", lastName: "Admin", email: "wanda@climahvacservice.es", username: "wanda.admin" },
     { firstName: "Juan",  lastName: "Admin", email: "juan@climahvacservice.es",  username: "juan.admin"  },
+    { firstName: "Brian", lastName: "Admin", email: "brian@climahvacservice.es", username: "brian.admin" },
   ];
 
   const tempPassword = "ClimaReus2025!";

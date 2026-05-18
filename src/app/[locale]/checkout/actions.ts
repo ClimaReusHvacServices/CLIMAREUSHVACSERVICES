@@ -68,8 +68,8 @@ export async function createOrder(items: CheckoutItem[]): Promise<{ orderId: str
     };
   });
 
-  const taxAmount = Math.round(subtotal * 21) / 100;
-  const totalAmount = subtotal + taxAmount;
+  const taxAmount = 0;
+  const totalAmount = subtotal;
 
   // Race-condition-safe order number using timestamp + random suffix
   const orderNumber = `ORD-${new Date().getFullYear()}-${Date.now().toString(36).toUpperCase().slice(-6)}`;
