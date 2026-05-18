@@ -25,9 +25,9 @@ function reviewDate(time: number): string | null {
 }
 
 export function TestimonialsSlider({ reviews, sourceLabel }: { reviews: GoogleReview[]; sourceLabel: string }) {
-  if (reviews.length === 0) return null;
-
   const [paused, setPaused] = useState(false);
+
+  if (reviews.length === 0) return null;
 
   const sorted = [...reviews].sort((a, b) => b.rating - a.rating || b.time - a.time);
   const LOOP = sorted.length * ITEM;
