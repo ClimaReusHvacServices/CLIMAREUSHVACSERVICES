@@ -1,6 +1,6 @@
 "use client";
 import { Link } from "@/i18n/routing";
-import { Phone, Menu, X, LogIn, Globe, ChevronDown, LogOut, User, LayoutDashboard, ShoppingCart } from "lucide-react";
+import { Phone, Menu, X, LogIn, Globe, ChevronDown, LogOut, User, LayoutDashboard, ShoppingCart, ClipboardList } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
@@ -241,6 +241,17 @@ export default function Navbar() {
             {mobileLabel}
           </Link>
 
+          {/* Móvil/Tablet — Mis Pedidos (solo clientes autenticados) */}
+          {isLoggedIn && role === "cliente" && (
+            <Link
+              href="/orders"
+              aria-label={t("navbar.myOrders")}
+              className="lg:hidden flex items-center justify-center text-primary-700 shrink-0"
+            >
+              <ClipboardList size={18} />
+            </Link>
+          )}
+
           {/* Móvil/Tablet — carrito */}
           <div className="lg:hidden text-primary-700 shrink-0">
             <CartNavIcon />
@@ -386,6 +397,18 @@ export default function Navbar() {
         <div className="bg-white/80 backdrop-blur-xl rounded-full shadow-lg border border-white/40">
           <LangPicker />
         </div>
+
+        {/* Mis Pedidos — solo escritorio, solo clientes autenticados */}
+        {isLoggedIn && role === "cliente" && (
+          <Link
+            href="/orders"
+            aria-label={t("navbar.myOrders")}
+            title={t("navbar.myOrders")}
+            className="flex items-center justify-center w-9 h-9 rounded-full bg-white/80 backdrop-blur-xl shadow-lg border border-white/40 text-primary-700 hover:bg-primary-50 hover:border-primary-200 transition-all"
+          >
+            <ClipboardList size={16} />
+          </Link>
+        )}
 
         {/* Cart icon — visible for all on landing pages (desktop) */}
         <div className="flex items-center justify-center w-9 h-9 rounded-full bg-white/80 backdrop-blur-xl shadow-lg border border-white/40 text-primary-700 hover:bg-primary-50 hover:border-primary-200 transition-all">
