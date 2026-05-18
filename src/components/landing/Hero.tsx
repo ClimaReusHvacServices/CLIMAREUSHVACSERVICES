@@ -15,7 +15,7 @@ const BLUR_PLACEHOLDER = `data:image/svg+xml;base64,${btoa(
 
 export default function Hero({
   images = [
-    "/Imagenes/pexels_1.jpg",
+    "/Imagenes/fondoaire.jpeg",
     "/Imagenes/pexels_2.jpg",
     "/Imagenes/pexels_3.jpg",
   ],
