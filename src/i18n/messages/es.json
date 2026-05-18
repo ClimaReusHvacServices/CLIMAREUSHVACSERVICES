@@ -315,7 +315,14 @@
     "noOrders": "No tienes pedidos aún.",
     "noOrdersDesc": "Visita la tienda para solicitar un servicio.",
     "goToShop": "Ir a la tienda",
-    "items": "artículo(s)"
+    "items": "artículo(s)",
+    "statTotal": "Total",
+    "statActive": "Activos",
+    "statCompleted": "Completados"
+  },
+  "clientShell": {
+    "welcomeBack": "Bienvenido de vuelta",
+    "hello": "Hola, {name}"
   },
   "profile": {
     "title": "Mi Perfil",

@@ -315,7 +315,14 @@
     "noOrders": "Encara no tens comandes.",
     "noOrdersDesc": "Visita la botiga per sol·licitar un servei.",
     "goToShop": "Anar a la botiga",
-    "items": "article(s)"
+    "items": "article(s)",
+    "statTotal": "Total",
+    "statActive": "Actius",
+    "statCompleted": "Completats"
+  },
+  "clientShell": {
+    "welcomeBack": "Benvingut de nou",
+    "hello": "Hola, {name}"
   },
   "profile": {
     "title": "El meu perfil",

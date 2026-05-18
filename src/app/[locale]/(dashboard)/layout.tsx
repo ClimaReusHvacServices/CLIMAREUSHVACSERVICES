@@ -22,6 +22,8 @@ export default async function DashboardLayout({
       <ClientShell
         myOrdersLabel={t("myOrders")}
         myProfileLabel={t("myProfile")}
+        firstName={user?.firstName ?? ""}
+        lastName={user?.lastName ?? ""}
       >
         {children}
       </ClientShell>

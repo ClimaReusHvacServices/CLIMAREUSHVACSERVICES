@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
-import { Link } from "@/i18n/routing";
 import { usePathname } from "next/navigation";
-import { ClipboardList, UserCircle, Home } from "lucide-react";
-import Image from "next/image";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
+import { ClipboardList, UserCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 
 const Navbar = dynamic(() => import("@/components/landing/Navbar"), { ssr: false });
@@ -13,9 +12,11 @@ interface ClientShellProps {
   children: React.ReactNode;
   myOrdersLabel: string;
   myProfileLabel: string;
+  firstName: string;
+  lastName: string;
 }
 
-function SidebarLink({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) {
+function TabLink({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) {
   const pathname = usePathname();
   const segments = pathname.split("/").filter((s) => !["es", "en", "ca"].includes(s));
   const page = "/" + (segments[0] ?? "");
@@ -24,64 +25,62 @@ function SidebarLink({ href, icon, label }: { href: string; icon: React.ReactNod
   return (
     <Link
       href={href as any}
-      className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+      className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${
         isActive
-          ? "bg-primary-50 text-primary-700 font-semibold"
-          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+          ? "bg-white text-primary-700 shadow-md"
+          : "text-white/75 hover:text-white hover:bg-white/10"
       }`}
     >
-      <span className={`shrink-0 ${isActive ? "text-primary-600" : "text-gray-400"}`}>{icon}</span>
+      <span className="shrink-0">{icon}</span>
       {label}
     </Link>
   );
 }
 
-export function ClientShell({ children, myOrdersLabel, myProfileLabel }: ClientShellProps) {
+export function ClientShell({ children, myOrdersLabel, myProfileLabel, firstName, lastName }: ClientShellProps) {
+  const t = useTranslations("clientShell");
+  const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || "?";
+  const displayName = firstName || "Cliente";
+
   return (
-    <div className="min-h-screen" data-logo="green" style={{ background: "linear-gradient(160deg, #eef5f2 0%, #e8f0f5 50%, #eef0ec 100%)" }}>
-      {/* Landing navbar at top */}
+    <div className="min-h-screen bg-[#f0f4f7]" data-logo="white">
       <Navbar />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-16">
-        <div className="flex gap-6 items-start">
-
-          {/* Sidebar — desktop */}
-          <aside className="hidden md:block w-52 shrink-0 sticky top-24">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              {/* Logo link to home */}
-              <Link href="/" className="flex items-center justify-center px-4 py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                <Image
-                  src="/logos/horizontal-logoverde.png"
-                  alt="Clima HVAC Service"
-                  width={500}
-                  height={500}
-                  style={{ height: "54px", width: "auto", objectFit: "contain" }}
-                />
-              </Link>
-
-              <nav className="p-2 space-y-0.5">
-                <p className="px-3 pt-3 pb-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                  Mi cuenta
-                </p>
-                <SidebarLink href="/orders"  icon={<ClipboardList size={15} />} label={myOrdersLabel} />
-                <SidebarLink href="/profile" icon={<UserCircle size={15} />}    label={myProfileLabel} />
-              </nav>
-
-              <div className="px-2 pb-2">
-                <Link
-                  href="/"
-                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-primary-600 hover:bg-primary-50 transition-colors"
-                >
-                  <Home size={13} />
-                  Volver al inicio
-                </Link>
-              </div>
+      {/* Gradient hero header */}
+      <div
+        className="pt-[72px]"
+        style={{ background: "linear-gradient(135deg, #0d3c4d 0%, #1d7291 55%, #008f65 100%)" }}
+      >
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-8 pb-0">
+          {/* Avatar + greeting */}
+          <div className="flex items-center gap-4 mb-8">
+            <div
+              className="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-xl shrink-0 border-2 border-white/30 shadow-lg"
+              style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(10px)" }}
+            >
+              {initials}
             </div>
-          </aside>
+            <div>
+              <p className="text-white/60 text-xs font-semibold uppercase tracking-widest">
+                {t("welcomeBack")}
+              </p>
+              <h1 className="text-white text-xl sm:text-2xl font-bold leading-tight mt-0.5">
+                {t("hello", { name: displayName })} 👋
+              </h1>
+            </div>
+          </div>
 
-          {/* Main content */}
-          <main className="flex-1 min-w-0">{children}</main>
+          {/* Tab navigation */}
+          <div className="flex gap-2">
+            <TabLink href="/orders"  icon={<ClipboardList size={14} />} label={myOrdersLabel} />
+            <TabLink href="/profile" icon={<UserCircle size={14} />}    label={myProfileLabel} />
+          </div>
         </div>
+      </div>
+
+      {/* Content */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6">
+        {children}
       </div>
     </div>
   );
