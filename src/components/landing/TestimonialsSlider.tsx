@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { GoogleReview } from "@/lib/google-reviews";
 
 const CARD_W = 320;
@@ -26,14 +27,29 @@ function reviewDate(time: number): string | null {
 export function TestimonialsSlider({ reviews, sourceLabel }: { reviews: GoogleReview[]; sourceLabel: string }) {
   if (reviews.length === 0) return null;
 
-  // Sort: 5 stars first, then most recent within each rating group
-  const sorted = [...reviews].sort((a, b) => b.rating - a.rating || b.time - a.time);
+  const [paused, setPaused] = useState(false);
 
+  const sorted = [...reviews].sort((a, b) => b.rating - a.rating || b.time - a.time);
   const LOOP = sorted.length * ITEM;
   const TRACK = [...sorted, ...sorted, ...sorted];
 
   return (
-    <div className="relative">
+    <div
+      className="relative select-none"
+      onMouseDown={() => setPaused(true)}
+      onMouseUp={() => setPaused(false)}
+      onMouseLeave={() => setPaused(false)}
+      onTouchStart={() => setPaused(true)}
+      onTouchEnd={() => setPaused(false)}
+      onTouchCancel={() => setPaused(false)}
+    >
+      {/* Pause indicator */}
+      {paused && (
+        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 bg-black/50 text-white text-[11px] font-semibold px-3 py-1 rounded-full pointer-events-none backdrop-blur-sm">
+          ⏸ Pausado
+        </div>
+      )}
+
       <div className="absolute inset-y-0 left-0 w-20 z-10 pointer-events-none"
         style={{ background: "linear-gradient(to right, #0d3c4d, transparent)" }} />
       <div className="absolute inset-y-0 right-0 w-20 z-10 pointer-events-none"
@@ -41,12 +57,16 @@ export function TestimonialsSlider({ reviews, sourceLabel }: { reviews: GoogleRe
 
       <div
         className="flex items-stretch"
-        style={{ animation: `reviews-scroll ${sorted.length * 7}s linear -${Math.floor(sorted.length * 3.5)}s infinite`, width: "max-content" }}
+        style={{
+          animation: `reviews-scroll ${sorted.length * 7}s linear -${Math.floor(sorted.length * 3.5)}s infinite`,
+          animationPlayState: paused ? "paused" : "running",
+          width: "max-content",
+        }}
       >
         {TRACK.map((r, i) => (
           <div
             key={i}
-            className="shrink-0 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col"
+            className="shrink-0 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col cursor-grab active:cursor-grabbing"
             style={{ width: CARD_W, marginRight: GAP }}
           >
             <Stars n={r.rating} />
