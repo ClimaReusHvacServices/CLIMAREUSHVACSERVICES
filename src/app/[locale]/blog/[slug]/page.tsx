@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
-import { getPostBySlug, getAllPosts } from "@/lib/blog";
+import { getPublishedPostBySlug, getPublishedPosts } from "@/lib/blog";
 import Footer from "@/components/landing/Footer";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
@@ -13,12 +13,13 @@ const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
 export async function generateStaticParams() {
-  return getAllPosts().map(p => ({ slug: p.slug }));
+  const posts = await getPublishedPosts();
+  return posts.map(p => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPublishedPostBySlug(slug);
   if (!post) return {};
   return {
     title: `${post.title} | Clima HVAC Service`,
@@ -36,7 +37,7 @@ function formatDate(dateStr: string, locale: string): string {
 export default async function BlogPostPage({ params }: Props) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
-  const [t, post] = await Promise.all([getTranslations("landing"), Promise.resolve(getPostBySlug(slug))]);
+  const [t, post] = await Promise.all([getTranslations("landing"), getPublishedPostBySlug(slug)]);
   if (!post) notFound();
 
   return (

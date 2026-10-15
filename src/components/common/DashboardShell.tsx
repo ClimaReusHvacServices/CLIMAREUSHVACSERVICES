@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Link, usePathname } from "@/i18n/routing";
 import {
   LayoutDashboard, Users, Wrench, ShoppingBag, Package,
-  ClipboardList, UserCircle, Store, Menu, X, History,
+  ClipboardList, UserCircle, Store, Menu, X, History, BookOpen,
 } from "lucide-react";
 import Image from "next/image";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -12,7 +12,7 @@ import { UserAvatar } from "./UserAvatar";
 
 const ICON_MAP = {
   LayoutDashboard, Users, Wrench, ShoppingBag, Package,
-  ClipboardList, UserCircle, Store, History,
+  ClipboardList, UserCircle, Store, History, BookOpen,
 };
 type IconName = keyof typeof ICON_MAP;
 
@@ -21,7 +21,7 @@ interface NavItem { href: string; iconName: IconName; label: string; }
 interface NavLabels {
   adminSection: string; clienteSection: string; trabajadorSection: string;
   adminHome: string; users: string; workers: string; orders: string;
-  products: string; shop: string; myOrders: string; myProfile: string; myTasks: string;
+  products: string; shop: string; blog: string; myOrders: string; myProfile: string; myTasks: string;
   historial?: string;
 }
 
@@ -34,6 +34,7 @@ function buildNav(role: string, l: NavLabels): { section: string; items: NavItem
       { href: "/admin/workers",    iconName: "Wrench",          label: l.workers },
       { href: "/admin/orders",     iconName: "ShoppingBag",     label: l.orders },
       { href: "/admin/products",   iconName: "Package",         label: l.products },
+      { href: "/admin/blog",        iconName: "BookOpen",        label: l.blog },
       { href: "/admin/historial",    iconName: "History",         label: l.historial ?? "Historial" },
     ],
   };

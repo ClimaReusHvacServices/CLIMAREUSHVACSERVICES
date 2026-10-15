@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import { getAllPosts } from "@/lib/blog";
+import { getPublishedPosts } from "@/lib/blog";
 import Footer from "@/components/landing/Footer";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
@@ -25,7 +25,7 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("landing");
-  const posts = getAllPosts();
+  const posts = await getPublishedPosts();
 
   return (
     <main className="bg-gray-50 min-h-screen">

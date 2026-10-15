@@ -93,10 +93,35 @@ model User {
   notifications     Notification[]
   serviceRequests   ServiceRequest[]
   pushSubscriptions PushSubscription[]
+  blogPosts         BlogPost[]
 
   @@index([email])
   @@index([username])
   @@index([role])
+}
+
+// ============================================
+// BLOG
+// ============================================
+
+model BlogPost {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  excerpt     String   @db.Text
+  content     String   @db.Text
+  coverImage  String?
+  coverGradient String  @default("linear-gradient(135deg, #0d3c4d 0%, #1d7291 55%, #008f65 100%)")
+  date        DateTime @default(now())
+  category    String
+  readTime    Int      @default(5)
+  isPublished Boolean  @default(true)
+  authorId    String?
+  author      User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isPublished, date])
 }
 
 // ============================================

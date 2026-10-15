@@ -109,3 +109,29 @@ export function getPostBySlug(slug: string): BlogPost | undefined {
 export function getAllPosts(): BlogPost[] {
   return [...blogPosts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
+
+function fromDatabase(post: {
+  slug: string; title: string; excerpt: string; coverImage: string | null;
+  coverGradient: string; date: Date; category: string; readTime: number; content: string;
+}): BlogPost {
+  return { ...post, date: post.date.toISOString().slice(0, 10) };
+}
+
+export async function getPublishedPosts(): Promise<BlogPost[]> {
+  if (!process.env.DATABASE_URL) return getAllPosts();
+  const posts = await db.blogPost.findMany({
+    where: { isPublished: true },
+    orderBy: { date: "desc" },
+  });
+  const databasePosts = posts.map(fromDatabase);
+  const databaseSlugs = new Set(databasePosts.map(post => post.slug));
+  return [...databasePosts, ...getAllPosts().filter(post => !databaseSlugs.has(post.slug))]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
+
+export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | undefined> {
+  if (!process.env.DATABASE_URL) return getPostBySlug(slug);
+  const post = await db.blogPost.findFirst({ where: { slug, isPublished: true } });
+  return post ? fromDatabase(post) : getPostBySlug(slug);
+}
+import { db } from "@/db";
