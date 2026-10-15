@@ -1,3 +1,6 @@
+import { Prisma } from "@prisma/client";
+import { db } from "@/db";
+
 export interface BlogPost {
   slug: string;
   title: string;
@@ -119,10 +122,16 @@ function fromDatabase(post: {
 
 export async function getPublishedPosts(): Promise<BlogPost[]> {
   if (!process.env.DATABASE_URL) return getAllPosts();
-  const posts = await db.blogPost.findMany({
-    where: { isPublished: true },
-    orderBy: { date: "desc" },
-  });
+  let posts;
+  try {
+    posts = await db.blogPost.findMany({
+      where: { isPublished: true },
+      orderBy: { date: "desc" },
+    });
+  } catch (error) {
+    if (isMissingBlogTableError(error)) return getAllPosts();
+    throw error;
+  }
   const databasePosts = posts.map(fromDatabase);
   const databaseSlugs = new Set(databasePosts.map(post => post.slug));
   return [...databasePosts, ...getAllPosts().filter(post => !databaseSlugs.has(post.slug))]
@@ -131,7 +140,15 @@ export async function getPublishedPosts(): Promise<BlogPost[]> {
 
 export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | undefined> {
   if (!process.env.DATABASE_URL) return getPostBySlug(slug);
-  const post = await db.blogPost.findFirst({ where: { slug, isPublished: true } });
-  return post ? fromDatabase(post) : getPostBySlug(slug);
+  try {
+    const post = await db.blogPost.findFirst({ where: { slug, isPublished: true } });
+    return post ? fromDatabase(post) : getPostBySlug(slug);
+  } catch (error) {
+    if (isMissingBlogTableError(error)) return getPostBySlug(slug);
+    throw error;
+  }
 }
-import { db } from "@/db";
+
+function isMissingBlogTableError(error: unknown): boolean {
+  return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2021";
+}
