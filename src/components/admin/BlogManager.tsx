@@ -19,6 +19,13 @@ const emptyPost = {
 };
 const inputClass = "w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-accent-400 focus:outline-none focus:ring-1 focus:ring-accent-100";
 
+function plainTextFromContent(content: string): string {
+  if (!content.includes("<")) return content;
+  const container = document.createElement("div");
+  container.innerHTML = content;
+  return container.textContent?.replace(/\n{3,}/g, "\n\n").trim() ?? content;
+}
+
 export function BlogManager({ posts, databaseReady = true }: { posts: Post[]; databaseReady?: boolean }) {
   const router = useRouter();
   const [editing, setEditing] = useState<Post | null>(null);
@@ -28,7 +35,11 @@ export function BlogManager({ posts, databaseReady = true }: { posts: Post[]; da
   const [uploading, setUploading] = useState(false);
 
   const openCreate = () => { setEditing(null); setForm({ ...emptyPost }); setModalOpen(true); };
-  const openEdit = (post: Post) => { setEditing(post); setForm({ ...post, coverImage: post.coverImage ?? "" }); setModalOpen(true); };
+  const openEdit = (post: Post) => {
+    setEditing(post);
+    setForm({ ...post, content: plainTextFromContent(post.content), coverImage: post.coverImage ?? "" });
+    setModalOpen(true);
+  };
   const setField = (field: keyof typeof form, value: string | number | boolean) =>
     setForm(current => ({ ...current, [field]: value }));
 
@@ -130,7 +141,7 @@ function EditorModal({ form, editing, loading, uploading, setField, uploadCover,
           <label className="space-y-1"><span className="text-xs font-semibold uppercase text-gray-600">Fecha *</span><input required type="date" className={inputClass} value={form.date} onChange={e => setField("date", e.target.value)} /></label>
           <label className="space-y-1"><span className="text-xs font-semibold uppercase text-gray-600">Minutos de lectura *</span><input required min={1} max={120} type="number" className={inputClass} value={form.readTime} onChange={e => setField("readTime", Number(e.target.value))} /></label>
           <label className="space-y-1 sm:col-span-2"><span className="text-xs font-semibold uppercase text-gray-600">Extracto *</span><textarea required rows={2} className={inputClass} value={form.excerpt} onChange={e => setField("excerpt", e.target.value)} /></label>
-          <label className="space-y-1 sm:col-span-2"><span className="text-xs font-semibold uppercase text-gray-600">Contenido HTML *</span><textarea required rows={12} className={`${inputClass} font-mono text-xs`} value={form.content} onChange={e => setField("content", e.target.value)} placeholder="<p>Escribe el contenido del artículo...</p>" /></label>
+          <label className="space-y-1 sm:col-span-2"><span className="text-xs font-semibold uppercase text-gray-600">Contenido del artículo *</span><textarea required rows={12} className={inputClass} value={form.content} onChange={e => setField("content", e.target.value)} placeholder="Escribe aquí el contenido normal del artículo. Separa los párrafos con una línea en blanco." /></label>
           <div className="space-y-2 sm:col-span-2">
             <span className="block text-xs font-semibold uppercase text-gray-600">Portada</span>
             <div className="flex flex-wrap items-center gap-3">

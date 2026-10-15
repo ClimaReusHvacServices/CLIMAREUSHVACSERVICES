@@ -6,6 +6,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { Calendar, Clock, ArrowLeft, Phone } from "lucide-react";
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 
 const Navbar = dynamic(() => import("@/components/landing/Navbar"));
 const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton"));
@@ -32,6 +33,18 @@ function formatDate(dateStr: string, locale: string): string {
     locale === "ca" ? "ca-ES" : locale === "en" ? "en-GB" : "es-ES",
     { year: "numeric", month: "long", day: "numeric" }
   );
+}
+
+function renderArticleContent(content: string): ReactNode {
+  if (content.includes("<p>") || content.includes("<h2>") || content.includes("<ul>")) {
+    return <div dangerouslySetInnerHTML={{ __html: content }} />;
+  }
+
+  return content
+    .split(/\n{2,}/)
+    .map((paragraph, index) => (
+      <p key={index} className="mb-4 last:mb-0 whitespace-pre-line">{paragraph}</p>
+    ));
 }
 
 export default async function BlogPostPage({ params }: Props) {
@@ -78,10 +91,9 @@ export default async function BlogPostPage({ params }: Props) {
       {/* Cuerpo del artículo */}
       <div data-logo="green">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
-          <div
-            className="bg-white rounded-2xl shadow-sm p-6 sm:p-10 blog-content"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
+          <div className="bg-white rounded-2xl shadow-sm p-6 sm:p-10 blog-content">
+            {renderArticleContent(post.content)}
+          </div>
 
           {/* Botón volver */}
           <div className="mt-8">
