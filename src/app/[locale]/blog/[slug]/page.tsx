@@ -47,6 +47,25 @@ function renderArticleContent(content: string): ReactNode {
     ));
 }
 
+function ComparisonTable() {
+  const rows = [
+    ["N° de estancias", "1", "Varias"],
+    ["Unidad exterior", "1 por unidad", "1 para todas"],
+    ["Coste inicial", "Más bajo", "Más alto"],
+    ["Eficiencia energética", "Variable", "Puede ser mayor"],
+    ["Control por habitación", "Sí (cada unidad por separado)", "Sí (independiente por interiores)"],
+    ["Instalación", "Simple", "Más compleja"],
+  ];
+  return (
+    <div className="mt-8">
+      <h2>Comparativa clave: Split vs Multisplit</h2>
+      <table><thead><tr><th>Característica</th><th>Split</th><th>Multisplit</th></tr></thead>
+        <tbody>{rows.map(row => <tr key={row[0]}>{row.map((cell, index) => index === 0 ? <td key={cell}><strong>{cell}</strong></td> : <td key={cell}>{cell}</td>)}</tr>)}</tbody>
+      </table>
+    </div>
+  );
+}
+
 export default async function BlogPostPage({ params }: Props) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
@@ -93,6 +112,8 @@ export default async function BlogPostPage({ params }: Props) {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
           <div className="bg-white rounded-2xl shadow-sm p-6 sm:p-10 blog-content">
             {renderArticleContent(post.content)}
+            {post.showComparisonTable && <ComparisonTable />}
+            {post.tipText && <div className="nota-final"><p>{post.tipText}</p></div>}
           </div>
 
           {/* Botón volver */}

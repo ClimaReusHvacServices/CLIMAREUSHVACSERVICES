@@ -17,6 +17,8 @@ type BlogPostData = {
   category: string;
   readTime: number;
   isPublished: boolean;
+  showComparisonTable: boolean;
+  tipText?: string;
 };
 
 async function checkAdmin() {
@@ -51,6 +53,8 @@ function normalizeData(data: BlogPostData) {
     category,
     readTime: data.readTime,
     isPublished: data.isPublished,
+    showComparisonTable: data.showComparisonTable,
+    tipText: data.tipText?.trim() || null,
   };
 }
 
@@ -111,6 +115,8 @@ export async function deleteBlogPost(id: string) {
           category: post.category,
           readTime: post.readTime,
           isPublished: false,
+          showComparisonTable: post.showComparisonTable,
+          tipText: post.tipText,
           authorId,
         },
       });

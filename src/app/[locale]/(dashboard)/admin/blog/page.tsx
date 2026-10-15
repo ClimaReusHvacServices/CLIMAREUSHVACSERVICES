@@ -28,6 +28,8 @@ export default async function AdminBlogPage({ params }: { params: Promise<{ loca
     category: string;
     readTime: number;
     isPublished: boolean;
+    showComparisonTable: boolean;
+    tipText: string | null;
   }> = [];
   let databaseReady = true;
   try {

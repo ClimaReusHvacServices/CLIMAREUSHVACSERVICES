@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS "BlogPost" (
     "category" TEXT NOT NULL,
     "readTime" INTEGER NOT NULL DEFAULT 5,
     "isPublished" BOOLEAN NOT NULL DEFAULT true,
+    "showComparisonTable" BOOLEAN NOT NULL DEFAULT false,
+    "tipText" TEXT,
     "authorId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -31,3 +33,6 @@ BEGIN
       ON DELETE SET NULL ON UPDATE CASCADE;
   END IF;
 END $$;
+
+ALTER TABLE "BlogPost" ADD COLUMN IF NOT EXISTS "showComparisonTable" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "BlogPost" ADD COLUMN IF NOT EXISTS "tipText" TEXT;

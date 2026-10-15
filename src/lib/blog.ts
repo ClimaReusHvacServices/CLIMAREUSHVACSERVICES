@@ -11,6 +11,8 @@ export interface BlogPost {
   category: string;
   readTime: number;
   content: string;
+  showComparisonTable: boolean;
+  tipText: string | null;
 }
 
 export const blogPosts: BlogPost[] = [
@@ -102,6 +104,8 @@ export const blogPosts: BlogPost[] = [
 <h2>Conclusión</h2>
 <p>Tanto los sistemas <strong>Split</strong> como los <strong>Multisplit</strong> tienen su lugar en 2026. Un Split es ideal para espacios individuales y con menor coste inicial, mientras que un Multisplit es perfecto si necesitas climatizar varias estancias y buscas eficiencia energética y estética exterior.</p>
     `.trim(),
+    showComparisonTable: false,
+    tipText: null,
   },
 ];
 
@@ -116,6 +120,7 @@ export function getAllPosts(): BlogPost[] {
 function fromDatabase(post: {
   slug: string; title: string; excerpt: string; coverImage: string | null;
   coverGradient: string; date: Date; category: string; readTime: number; content: string;
+  showComparisonTable: boolean; tipText: string | null;
 }): BlogPost {
   return { ...post, date: post.date.toISOString().slice(0, 10) };
 }

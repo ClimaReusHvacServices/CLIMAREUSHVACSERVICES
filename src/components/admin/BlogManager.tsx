@@ -10,12 +10,14 @@ type Post = {
   id: string; title: string; slug: string; excerpt: string; content: string;
   coverImage: string | null; coverGradient: string; date: string;
   category: string; readTime: number; isPublished: boolean;
+  showComparisonTable: boolean; tipText: string | null;
 };
 
 const emptyPost = {
   title: "", slug: "", excerpt: "", content: "", coverImage: "",
   coverGradient: "linear-gradient(135deg, #0d3c4d 0%, #1d7291 55%, #008f65 100%)",
   date: new Date().toISOString().slice(0, 10), category: "Guías", readTime: 5, isPublished: true,
+  showComparisonTable: false, tipText: "",
 };
 const inputClass = "w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-accent-400 focus:outline-none focus:ring-1 focus:ring-accent-100";
 
@@ -37,7 +39,7 @@ export function BlogManager({ posts, databaseReady = true }: { posts: Post[]; da
   const openCreate = () => { setEditing(null); setForm({ ...emptyPost }); setModalOpen(true); };
   const openEdit = (post: Post) => {
     setEditing(post);
-    setForm({ ...post, content: plainTextFromContent(post.content), coverImage: post.coverImage ?? "" });
+    setForm({ ...post, content: plainTextFromContent(post.content), coverImage: post.coverImage ?? "", tipText: post.tipText ?? "" });
     setModalOpen(true);
   };
   const setField = (field: keyof typeof form, value: string | number | boolean) =>
@@ -142,6 +144,20 @@ function EditorModal({ form, editing, loading, uploading, setField, uploadCover,
           <label className="space-y-1"><span className="text-xs font-semibold uppercase text-gray-600">Minutos de lectura *</span><input required min={1} max={120} type="number" className={inputClass} value={form.readTime} onChange={e => setField("readTime", Number(e.target.value))} /></label>
           <label className="space-y-1 sm:col-span-2"><span className="text-xs font-semibold uppercase text-gray-600">Extracto *</span><textarea required rows={2} className={inputClass} value={form.excerpt} onChange={e => setField("excerpt", e.target.value)} /></label>
           <label className="space-y-1 sm:col-span-2"><span className="text-xs font-semibold uppercase text-gray-600">Contenido del artículo *</span><textarea required rows={12} className={inputClass} value={form.content} onChange={e => setField("content", e.target.value)} placeholder="Escribe aquí el contenido normal del artículo. Separa los párrafos con una línea en blanco." /></label>
+          <div className="space-y-3 rounded-xl border border-gray-100 bg-gray-50 p-4 sm:col-span-2">
+            <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+              <input type="checkbox" checked={form.showComparisonTable} onChange={e => setField("showComparisonTable", e.target.checked)} />
+              Añadir tabla comparativa Split vs Multisplit
+            </label>
+            <p className="text-xs text-gray-500">La tabla se mostrará automáticamente al final del contenido del artículo.</p>
+          </div>
+          <div className="space-y-2 sm:col-span-2">
+            <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+              <input type="checkbox" checked={Boolean(form.tipText)} onChange={e => setField("tipText", e.target.checked ? "Consejo: revisa las necesidades de tu vivienda antes de elegir el sistema de climatización." : "")} />
+              Añadir bloque de consejo
+            </label>
+            {form.tipText && <textarea rows={3} className={inputClass} value={form.tipText} onChange={e => setField("tipText", e.target.value)} placeholder="Escribe el consejo que aparecerá destacado en el artículo." />}
+          </div>
           <div className="space-y-2 sm:col-span-2">
             <span className="block text-xs font-semibold uppercase text-gray-600">Portada</span>
             <div className="flex flex-wrap items-center gap-3">
