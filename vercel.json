@@ -1,5 +1,5 @@
 {
-  "buildCommand": "prisma migrate deploy && prisma generate && next build",
+  "buildCommand": "prisma db execute --file prisma/migrations/20261015112000_create_blog_post/migration.sql --schema prisma/schema.prisma && prisma generate && next build",
   "installCommand": "npm install",
   "crons": [
     {
