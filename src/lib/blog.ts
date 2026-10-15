@@ -1,3 +1,6 @@
+import { Prisma } from "@prisma/client";
+import { db } from "@/db";
+
 export interface BlogPost {
   slug: string;
   title: string;
@@ -8,7 +11,16 @@ export interface BlogPost {
   category: string;
   readTime: number;
   content: string;
+  showComparisonTable: boolean;
+  comparisonTable: ComparisonTableData | null;
+  tipText: string | null;
 }
+
+export type ComparisonTableData = {
+  title: string;
+  headers: [string, string, string];
+  rows: Array<[string, string, string]>;
+};
 
 export const blogPosts: BlogPost[] = [
   {
@@ -99,6 +111,9 @@ export const blogPosts: BlogPost[] = [
 <h2>Conclusión</h2>
 <p>Tanto los sistemas <strong>Split</strong> como los <strong>Multisplit</strong> tienen su lugar en 2026. Un Split es ideal para espacios individuales y con menor coste inicial, mientras que un Multisplit es perfecto si necesitas climatizar varias estancias y buscas eficiencia energética y estética exterior.</p>
     `.trim(),
+    showComparisonTable: false,
+    comparisonTable: null,
+    tipText: null,
   },
 ];
 
@@ -108,4 +123,60 @@ export function getPostBySlug(slug: string): BlogPost | undefined {
 
 export function getAllPosts(): BlogPost[] {
   return [...blogPosts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
+
+function fromDatabase(post: {
+  slug: string; title: string; excerpt: string; coverImage: string | null;
+  coverGradient: string; date: Date; category: string; readTime: number; content: string;
+  showComparisonTable: boolean; tipText: string | null;
+  comparisonTable: string | null;
+}): BlogPost {
+  return {
+    ...post,
+    date: post.date.toISOString().slice(0, 10),
+    comparisonTable: parseComparisonTable(post.comparisonTable),
+  };
+}
+
+function parseComparisonTable(value: string | null): ComparisonTableData | null {
+  if (!value) return null;
+  try {
+    const parsed = JSON.parse(value) as ComparisonTableData;
+    if (!parsed.title || !Array.isArray(parsed.headers) || !Array.isArray(parsed.rows)) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+export async function getPublishedPosts(): Promise<BlogPost[]> {
+  if (!process.env.DATABASE_URL) return getAllPosts();
+  let posts;
+  try {
+    posts = await db.blogPost.findMany({
+      orderBy: { date: "desc" },
+    });
+  } catch (error) {
+    if (isMissingBlogTableError(error)) return getAllPosts();
+    throw error;
+  }
+  const databasePosts = posts.filter(post => post.isPublished).map(fromDatabase);
+  const databaseSlugs = new Set(posts.map(post => post.slug));
+  return [...databasePosts, ...getAllPosts().filter(post => !databaseSlugs.has(post.slug))]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
+
+export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | undefined> {
+  if (!process.env.DATABASE_URL) return getPostBySlug(slug);
+  try {
+    const post = await db.blogPost.findFirst({ where: { slug } });
+    return post?.isPublished ? fromDatabase(post) : post ? undefined : getPostBySlug(slug);
+  } catch (error) {
+    if (isMissingBlogTableError(error)) return getPostBySlug(slug);
+    throw error;
+  }
+}
+
+function isMissingBlogTableError(error: unknown): boolean {
+  return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2021";
 }

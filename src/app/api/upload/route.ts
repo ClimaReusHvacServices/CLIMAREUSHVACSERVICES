@@ -32,7 +32,8 @@ export async function POST(req: NextRequest) {
     }
 
     const ext = file.name.split(".").pop() ?? "jpg";
-    const filename = `products/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const folder = formData.get("folder") === "blog" && session.user.role === "admin" ? "blog" : "products";
+    const filename = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
     const blob = await put(filename, file, { access: "public" });
 

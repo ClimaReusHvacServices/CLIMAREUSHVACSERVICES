@@ -1,11 +1,13 @@
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
-import { getPostBySlug, getAllPosts } from "@/lib/blog";
+import { getPublishedPostBySlug, getPublishedPosts } from "@/lib/blog";
 import Footer from "@/components/landing/Footer";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { Calendar, Clock, ArrowLeft, Phone } from "lucide-react";
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
+import type { ComparisonTableData } from "@/lib/blog";
 
 const Navbar = dynamic(() => import("@/components/landing/Navbar"));
 const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton"));
@@ -13,12 +15,13 @@ const WhatsAppButton = dynamic(() => import("@/components/landing/WhatsAppButton
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
 export async function generateStaticParams() {
-  return getAllPosts().map(p => ({ slug: p.slug }));
+  const posts = await getPublishedPosts();
+  return posts.map(p => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPublishedPostBySlug(slug);
   if (!post) return {};
   return {
     title: `${post.title} | Clima HVAC Service`,
@@ -33,10 +36,33 @@ function formatDate(dateStr: string, locale: string): string {
   );
 }
 
+function renderArticleContent(content: string): ReactNode {
+  if (content.includes("<p>") || content.includes("<h2>") || content.includes("<ul>")) {
+    return <div dangerouslySetInnerHTML={{ __html: content }} />;
+  }
+
+  return content
+    .split(/\n{2,}/)
+    .map((paragraph, index) => (
+      <p key={index} className="mb-4 last:mb-0 whitespace-pre-line">{paragraph}</p>
+    ));
+}
+
+function ComparisonTable({ table }: { table: ComparisonTableData }) {
+  return (
+    <div className="mt-8">
+      <h2>{table.title}</h2>
+      <table><thead><tr>{table.headers.map(header => <th key={header}>{header}</th>)}</tr></thead>
+        <tbody>{table.rows.map((row, rowIndex) => <tr key={rowIndex}>{row.map((cell, index) => index === 0 ? <td key={index}><strong>{cell}</strong></td> : <td key={index}>{cell}</td>)}</tr>)}</tbody>
+      </table>
+    </div>
+  );
+}
+
 export default async function BlogPostPage({ params }: Props) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
-  const [t, post] = await Promise.all([getTranslations("landing"), Promise.resolve(getPostBySlug(slug))]);
+  const [t, post] = await Promise.all([getTranslations("landing"), getPublishedPostBySlug(slug)]);
   if (!post) notFound();
 
   return (
@@ -77,10 +103,11 @@ export default async function BlogPostPage({ params }: Props) {
       {/* Cuerpo del artículo */}
       <div data-logo="green">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
-          <div
-            className="bg-white rounded-2xl shadow-sm p-6 sm:p-10 blog-content"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
+          <div className="bg-white rounded-2xl shadow-sm p-6 sm:p-10 blog-content">
+            {renderArticleContent(post.content)}
+            {post.showComparisonTable && post.comparisonTable && <ComparisonTable table={post.comparisonTable} />}
+            {post.tipText && <div className="nota-final"><p>{post.tipText}</p></div>}
+          </div>
 
           {/* Botón volver */}
           <div className="mt-8">
