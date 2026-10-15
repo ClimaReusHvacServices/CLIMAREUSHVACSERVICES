@@ -4,6 +4,7 @@ import { auth } from "@/auth/config";
 import { db } from "@/db";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
+import { getPostBySlug } from "@/lib/blog";
 
 type BlogPostData = {
   title: string;
@@ -92,7 +93,34 @@ export async function updateBlogPost(id: string, data: BlogPostData) {
 }
 
 export async function deleteBlogPost(id: string) {
-  await checkAdmin();
+  const authorId = await checkAdmin();
+  if (id.startsWith("static:")) {
+    const slug = id.slice("static:".length);
+    const post = getPostBySlug(slug);
+    if (!post) throw new Error("El artículo no existe");
+    try {
+      await db.blogPost.create({
+        data: {
+          slug: post.slug,
+          title: post.title,
+          excerpt: post.excerpt,
+          content: post.content,
+          coverImage: post.coverImage,
+          coverGradient: post.coverGradient,
+          date: new Date(`${post.date}T12:00:00`),
+          category: post.category,
+          readTime: post.readTime,
+          isPublished: false,
+          authorId,
+        },
+      });
+    } catch (error) {
+      if (isMissingBlogTableError(error)) throw new Error("La tabla del blog aún no existe en la base de datos de Preview.");
+      throw error;
+    }
+    revalidateBlog();
+    return;
+  }
   try {
     await db.blogPost.delete({ where: { id } });
   } catch (error) {

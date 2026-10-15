@@ -125,15 +125,14 @@ export async function getPublishedPosts(): Promise<BlogPost[]> {
   let posts;
   try {
     posts = await db.blogPost.findMany({
-      where: { isPublished: true },
       orderBy: { date: "desc" },
     });
   } catch (error) {
     if (isMissingBlogTableError(error)) return getAllPosts();
     throw error;
   }
-  const databasePosts = posts.map(fromDatabase);
-  const databaseSlugs = new Set(databasePosts.map(post => post.slug));
+  const databasePosts = posts.filter(post => post.isPublished).map(fromDatabase);
+  const databaseSlugs = new Set(posts.map(post => post.slug));
   return [...databasePosts, ...getAllPosts().filter(post => !databaseSlugs.has(post.slug))]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
@@ -141,8 +140,8 @@ export async function getPublishedPosts(): Promise<BlogPost[]> {
 export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | undefined> {
   if (!process.env.DATABASE_URL) return getPostBySlug(slug);
   try {
-    const post = await db.blogPost.findFirst({ where: { slug, isPublished: true } });
-    return post ? fromDatabase(post) : getPostBySlug(slug);
+    const post = await db.blogPost.findFirst({ where: { slug } });
+    return post?.isPublished ? fromDatabase(post) : post ? undefined : getPostBySlug(slug);
   } catch (error) {
     if (isMissingBlogTableError(error)) return getPostBySlug(slug);
     throw error;

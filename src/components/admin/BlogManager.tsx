@@ -112,7 +112,7 @@ export function BlogManager({ posts, databaseReady = true }: { posts: Post[]; da
               <p className="text-xs text-gray-500">{post.category} · {post.date} · {post.isPublished ? "Publicado" : "Borrador"}</p>
             </div>
             <button onClick={() => openEdit(post)} className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-primary-600" aria-label="Editar"><Pencil size={16} /></button>
-            {!post.id.startsWith("static:") && <button onClick={() => remove(post)} className="rounded-lg p-2 text-gray-500 hover:bg-red-50 hover:text-red-600" aria-label="Eliminar"><Trash2 size={16} /></button>}
+            <button onClick={() => remove(post)} className="rounded-lg p-2 text-gray-500 hover:bg-red-50 hover:text-red-600" aria-label="Eliminar"><Trash2 size={16} /></button>
           </div>
         ))}
       </div>
