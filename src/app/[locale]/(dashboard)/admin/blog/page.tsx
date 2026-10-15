@@ -6,6 +6,7 @@ import { BookOpen } from "lucide-react";
 import { BackButton } from "@/components/common/BackButton";
 import { BlogManager } from "@/components/admin/BlogManager";
 import { getAllPosts } from "@/lib/blog";
+import { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,26 @@ export default async function AdminBlogPage({ params }: { params: Promise<{ loca
   const session = await auth();
   if (!session || session.user?.role !== "admin") redirect("/");
 
-  const databasePosts = await db.blogPost.findMany({ orderBy: { date: "desc" } });
+  let databasePosts: Array<{
+    id: string;
+    slug: string;
+    title: string;
+    excerpt: string;
+    content: string;
+    coverImage: string | null;
+    coverGradient: string;
+    date: Date;
+    category: string;
+    readTime: number;
+    isPublished: boolean;
+  }> = [];
+  let databaseReady = true;
+  try {
+    databasePosts = await db.blogPost.findMany({ orderBy: { date: "desc" } });
+  } catch (error) {
+    if (!isMissingBlogTableError(error)) throw error;
+    databaseReady = false;
+  }
   const databaseSlugs = new Set(databasePosts.map(post => post.slug));
   const posts = [
     ...databasePosts.map(post => ({ ...post, date: post.date.toISOString().slice(0, 10) })),
@@ -34,7 +54,11 @@ export default async function AdminBlogPage({ params }: { params: Promise<{ loca
         </h1>
         <p className="text-sm text-gray-500 mt-1">Crea, edita y publica artículos con texto e imagen de portada.</p>
       </div>
-      <BlogManager posts={posts} />
+      <BlogManager posts={posts} databaseReady={databaseReady} />
     </div>
   );
+}
+
+function isMissingBlogTableError(error: unknown): boolean {
+  return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2021";
 }

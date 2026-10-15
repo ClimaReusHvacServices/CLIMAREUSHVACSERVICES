@@ -3,6 +3,7 @@
 import { auth } from "@/auth/config";
 import { db } from "@/db";
 import { revalidatePath } from "next/cache";
+import { Prisma } from "@prisma/client";
 
 type BlogPostData = {
   title: string;
@@ -60,7 +61,12 @@ function revalidateBlog() {
 
 export async function createBlogPost(data: BlogPostData) {
   const authorId = await checkAdmin();
-  await db.blogPost.create({ data: { ...normalizeData(data), authorId } });
+  try {
+    await db.blogPost.create({ data: { ...normalizeData(data), authorId } });
+  } catch (error) {
+    if (isMissingBlogTableError(error)) throw new Error("La tabla del blog aún no existe en la base de datos de Preview.");
+    throw error;
+  }
   revalidateBlog();
 }
 
@@ -68,15 +74,34 @@ export async function updateBlogPost(id: string, data: BlogPostData) {
   const authorId = await checkAdmin();
   const normalized = normalizeData(data);
   if (id.startsWith("static:")) {
-    await db.blogPost.create({ data: { ...normalized, authorId } });
+    try {
+      await db.blogPost.create({ data: { ...normalized, authorId } });
+    } catch (error) {
+      if (isMissingBlogTableError(error)) throw new Error("La tabla del blog aún no existe en la base de datos de Preview.");
+      throw error;
+    }
   } else {
-    await db.blogPost.update({ where: { id }, data: normalized });
+    try {
+      await db.blogPost.update({ where: { id }, data: normalized });
+    } catch (error) {
+      if (isMissingBlogTableError(error)) throw new Error("La tabla del blog aún no existe en la base de datos de Preview.");
+      throw error;
+    }
   }
   revalidateBlog();
 }
 
 export async function deleteBlogPost(id: string) {
   await checkAdmin();
-  await db.blogPost.delete({ where: { id } });
+  try {
+    await db.blogPost.delete({ where: { id } });
+  } catch (error) {
+    if (isMissingBlogTableError(error)) throw new Error("La tabla del blog aún no existe en la base de datos de Preview.");
+    throw error;
+  }
   revalidateBlog();
+}
+
+function isMissingBlogTableError(error: unknown): boolean {
+  return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2021";
 }

@@ -19,7 +19,7 @@ const emptyPost = {
 };
 const inputClass = "w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-accent-400 focus:outline-none focus:ring-1 focus:ring-accent-100";
 
-export function BlogManager({ posts }: { posts: Post[] }) {
+export function BlogManager({ posts, databaseReady = true }: { posts: Post[]; databaseReady?: boolean }) {
   const router = useRouter();
   const [editing, setEditing] = useState<Post | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -81,10 +81,15 @@ export function BlogManager({ posts }: { posts: Post[] }) {
   return (
     <>
       <div className="flex justify-end">
-        <button onClick={openCreate} className="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700">
+        <button onClick={openCreate} disabled={!databaseReady} className="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50">
           <Plus size={16} /> Nuevo artículo
         </button>
       </div>
+      {!databaseReady && (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+          La base de datos de Preview todavía no tiene la tabla del blog. Ejecuta el cambio Prisma sobre la base de datos de Preview y vuelve a desplegar para activar la creación y edición de artículos.
+        </div>
+      )}
       <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
         {posts.length === 0 ? <p className="p-8 text-center text-sm text-gray-400">Todavía no hay artículos administrables.</p> : posts.map(post => (
           <div key={post.id} className="flex items-center gap-4 border-b border-gray-100 p-4 last:border-0">
