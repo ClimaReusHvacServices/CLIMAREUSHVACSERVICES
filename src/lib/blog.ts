@@ -12,8 +12,15 @@ export interface BlogPost {
   readTime: number;
   content: string;
   showComparisonTable: boolean;
+  comparisonTable: ComparisonTableData | null;
   tipText: string | null;
 }
+
+export type ComparisonTableData = {
+  title: string;
+  headers: [string, string, string];
+  rows: Array<[string, string, string]>;
+};
 
 export const blogPosts: BlogPost[] = [
   {
@@ -105,6 +112,7 @@ export const blogPosts: BlogPost[] = [
 <p>Tanto los sistemas <strong>Split</strong> como los <strong>Multisplit</strong> tienen su lugar en 2026. Un Split es ideal para espacios individuales y con menor coste inicial, mientras que un Multisplit es perfecto si necesitas climatizar varias estancias y buscas eficiencia energética y estética exterior.</p>
     `.trim(),
     showComparisonTable: false,
+    comparisonTable: null,
     tipText: null,
   },
 ];
@@ -121,8 +129,24 @@ function fromDatabase(post: {
   slug: string; title: string; excerpt: string; coverImage: string | null;
   coverGradient: string; date: Date; category: string; readTime: number; content: string;
   showComparisonTable: boolean; tipText: string | null;
+  comparisonTable: string | null;
 }): BlogPost {
-  return { ...post, date: post.date.toISOString().slice(0, 10) };
+  return {
+    ...post,
+    date: post.date.toISOString().slice(0, 10),
+    comparisonTable: parseComparisonTable(post.comparisonTable),
+  };
+}
+
+function parseComparisonTable(value: string | null): ComparisonTableData | null {
+  if (!value) return null;
+  try {
+    const parsed = JSON.parse(value) as ComparisonTableData;
+    if (!parsed.title || !Array.isArray(parsed.headers) || !Array.isArray(parsed.rows)) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
 }
 
 export async function getPublishedPosts(): Promise<BlogPost[]> {

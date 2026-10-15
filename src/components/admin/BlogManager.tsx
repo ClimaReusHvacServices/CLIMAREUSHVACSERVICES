@@ -5,19 +5,26 @@ import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
 import { BookOpen, ImagePlus, Pencil, Plus, Trash2, X } from "lucide-react";
 import { createBlogPost, deleteBlogPost, updateBlogPost } from "@/app/[locale]/(dashboard)/admin/blog/actions";
+import type { ComparisonTableData } from "@/lib/blog";
 
 type Post = {
   id: string; title: string; slug: string; excerpt: string; content: string;
   coverImage: string | null; coverGradient: string; date: string;
   category: string; readTime: number; isPublished: boolean;
-  showComparisonTable: boolean; tipText: string | null;
+  showComparisonTable: boolean; comparisonTable: ComparisonTableData | null; tipText: string | null;
 };
 
+const defaultTable: ComparisonTableData = {
+  title: "Comparativa",
+  headers: ["Característica", "Opción 1", "Opción 2"],
+  rows: [["", "", ""]],
+};
 const emptyPost = {
   title: "", slug: "", excerpt: "", content: "", coverImage: "",
   coverGradient: "linear-gradient(135deg, #0d3c4d 0%, #1d7291 55%, #008f65 100%)",
   date: new Date().toISOString().slice(0, 10), category: "Guías", readTime: 5, isPublished: true,
   showComparisonTable: false, tipText: "",
+  comparisonTable: defaultTable,
 };
 const inputClass = "w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-accent-400 focus:outline-none focus:ring-1 focus:ring-accent-100";
 
@@ -39,10 +46,16 @@ export function BlogManager({ posts, databaseReady = true }: { posts: Post[]; da
   const openCreate = () => { setEditing(null); setForm({ ...emptyPost }); setModalOpen(true); };
   const openEdit = (post: Post) => {
     setEditing(post);
-    setForm({ ...post, content: plainTextFromContent(post.content), coverImage: post.coverImage ?? "", tipText: post.tipText ?? "" });
+    setForm({
+      ...post,
+      content: plainTextFromContent(post.content),
+      coverImage: post.coverImage ?? "",
+      tipText: post.tipText ?? "",
+      comparisonTable: post.comparisonTable ?? defaultTable,
+    });
     setModalOpen(true);
   };
-  const setField = (field: keyof typeof form, value: string | number | boolean) =>
+  const setField = (field: keyof typeof form, value: string | number | boolean | ComparisonTableData | null) =>
     setForm(current => ({ ...current, [field]: value }));
 
   async function uploadCover(file: File) {
@@ -126,7 +139,7 @@ export function BlogManager({ posts, databaseReady = true }: { posts: Post[]; da
 
 function EditorModal({ form, editing, loading, uploading, setField, uploadCover, onClose, onSubmit }: {
   form: typeof emptyPost; editing: Post | null; loading: boolean; uploading: boolean;
-  setField: (field: keyof typeof emptyPost, value: string | number | boolean) => void;
+  setField: (field: keyof typeof emptyPost, value: string | number | boolean | ComparisonTableData | null) => void;
   uploadCover: (file: File) => Promise<void>; onClose: () => void; onSubmit: (event: React.FormEvent) => Promise<void>;
 }) {
   return (
@@ -150,6 +163,7 @@ function EditorModal({ form, editing, loading, uploading, setField, uploadCover,
               Añadir tabla comparativa Split vs Multisplit
             </label>
             <p className="text-xs text-gray-500">La tabla se mostrará automáticamente al final del contenido del artículo.</p>
+            {form.showComparisonTable && <TableEditor table={form.comparisonTable ?? defaultTable} setField={setField} />}
           </div>
           <div className="space-y-2 sm:col-span-2">
             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
@@ -176,6 +190,38 @@ function EditorModal({ form, editing, loading, uploading, setField, uploadCover,
           <button disabled={loading || uploading} className="rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">{loading ? "Guardando..." : editing ? "Guardar cambios" : "Publicar artículo"}</button>
         </div>
       </form>
+    </div>
+  );
+}
+
+function TableEditor({ table, setField }: {
+  table: ComparisonTableData;
+  setField: (field: keyof typeof emptyPost, value: string | number | boolean | ComparisonTableData | null) => void;
+}) {
+  const updateTable = (next: ComparisonTableData) => setField("comparisonTable", next);
+  const updateHeader = (index: number, value: string) => {
+    const headers = [...table.headers] as ComparisonTableData["headers"];
+    headers[index] = value;
+    updateTable({ ...table, headers });
+  };
+  const updateCell = (rowIndex: number, cellIndex: number, value: string) => {
+    const rows = table.rows.map(row => [...row] as ComparisonTableData["rows"][number]);
+    rows[rowIndex][cellIndex] = value;
+    updateTable({ ...table, rows });
+  };
+  return (
+    <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-3">
+      <input className={inputClass} value={table.title} onChange={e => updateTable({ ...table, title: e.target.value })} placeholder="Título de la tabla" />
+      <div className="grid grid-cols-3 gap-2">
+        {table.headers.map((header, index) => <input key={index} className={inputClass} value={header} onChange={e => updateHeader(index, e.target.value)} placeholder={`Título columna ${index + 1}`} />)}
+      </div>
+      {table.rows.map((row, rowIndex) => (
+        <div key={rowIndex} className="grid grid-cols-3 gap-2">
+          {row.map((cell, cellIndex) => <input key={cellIndex} className={inputClass} value={cell} onChange={e => updateCell(rowIndex, cellIndex, e.target.value)} placeholder={`Fila ${rowIndex + 1}`} />)}
+          <button type="button" className="col-span-3 text-left text-xs text-red-600 hover:underline" onClick={() => updateTable({ ...table, rows: table.rows.filter((_, index) => index !== rowIndex) })}>Eliminar fila</button>
+        </div>
+      ))}
+      <button type="button" className="text-sm font-semibold text-primary-700 hover:underline" onClick={() => updateTable({ ...table, rows: [...table.rows, ["", "", ""]] })}>+ Añadir fila</button>
     </div>
   );
 }

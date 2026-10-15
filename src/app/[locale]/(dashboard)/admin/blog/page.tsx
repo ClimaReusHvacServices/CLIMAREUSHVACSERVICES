@@ -7,6 +7,7 @@ import { BackButton } from "@/components/common/BackButton";
 import { BlogManager } from "@/components/admin/BlogManager";
 import { getAllPosts } from "@/lib/blog";
 import { Prisma } from "@prisma/client";
+import type { ComparisonTableData } from "@/lib/blog";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,7 @@ export default async function AdminBlogPage({ params }: { params: Promise<{ loca
     readTime: number;
     isPublished: boolean;
     showComparisonTable: boolean;
+    comparisonTable: string | null;
     tipText: string | null;
   }> = [];
   let databaseReady = true;
@@ -40,7 +42,11 @@ export default async function AdminBlogPage({ params }: { params: Promise<{ loca
   }
   const databaseSlugs = new Set(databasePosts.map(post => post.slug));
   const posts = [
-    ...databasePosts.map(post => ({ ...post, date: post.date.toISOString().slice(0, 10) })),
+    ...databasePosts.map(post => ({
+      ...post,
+      date: post.date.toISOString().slice(0, 10),
+      comparisonTable: parseComparisonTable(post.comparisonTable),
+    })),
     ...getAllPosts()
       .filter(post => !databaseSlugs.has(post.slug))
       .map(post => ({ ...post, id: `static:${post.slug}`, date: post.date, isPublished: true })),
@@ -63,4 +69,14 @@ export default async function AdminBlogPage({ params }: { params: Promise<{ loca
 
 function isMissingBlogTableError(error: unknown): boolean {
   return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2021";
+}
+
+function parseComparisonTable(value: string | null): ComparisonTableData | null {
+  if (!value) return null;
+  try {
+    const parsed = JSON.parse(value) as ComparisonTableData;
+    return parsed.title && parsed.headers.length === 3 && Array.isArray(parsed.rows) ? parsed : null;
+  } catch {
+    return null;
+  }
 }

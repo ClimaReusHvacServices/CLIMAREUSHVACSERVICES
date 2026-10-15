@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { getPostBySlug } from "@/lib/blog";
+import type { ComparisonTableData } from "@/lib/blog";
 
 type BlogPostData = {
   title: string;
@@ -18,6 +19,7 @@ type BlogPostData = {
   readTime: number;
   isPublished: boolean;
   showComparisonTable: boolean;
+  comparisonTable: ComparisonTableData | null;
   tipText?: string;
 };
 
@@ -54,6 +56,7 @@ function normalizeData(data: BlogPostData) {
     readTime: data.readTime,
     isPublished: data.isPublished,
     showComparisonTable: data.showComparisonTable,
+    comparisonTable: data.showComparisonTable && data.comparisonTable ? JSON.stringify(data.comparisonTable) : null,
     tipText: data.tipText?.trim() || null,
   };
 }
@@ -116,6 +119,7 @@ export async function deleteBlogPost(id: string) {
           readTime: post.readTime,
           isPublished: false,
           showComparisonTable: post.showComparisonTable,
+          comparisonTable: post.comparisonTable ? JSON.stringify(post.comparisonTable) : null,
           tipText: post.tipText,
           authorId,
         },

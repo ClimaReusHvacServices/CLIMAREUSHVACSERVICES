@@ -117,6 +117,7 @@ model BlogPost {
   readTime    Int      @default(5)
   isPublished Boolean  @default(true)
   showComparisonTable Boolean @default(false)
+  comparisonTable String? @db.Text
   tipText     String?  @db.Text
   authorId    String?
   author      User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
