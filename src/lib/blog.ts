@@ -178,7 +178,16 @@ export async function getPublishedPosts(): Promise<BlogPost[]> {
     }
     throw error;
   }
-  const databasePosts = posts.filter(post => post.isPublished).map(fromDatabase);
+  const databasePosts = posts
+    .filter(post => post.isPublished)
+    .flatMap(post => {
+      try {
+        return [fromDatabase(post)];
+      } catch (error) {
+        console.error(`Se omitió el artículo ${post.slug} por datos inválidos.`, error);
+        return [];
+      }
+    });
   const databaseSlugs = new Set(posts.map(post => post.slug));
   return [...databasePosts, ...getAllPosts().filter(post => !databaseSlugs.has(post.slug))]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -199,8 +208,12 @@ export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | u
 }
 
 function isRecoverableBlogReadError(error: unknown): boolean {
-  if (error instanceof Prisma.PrismaClientKnownRequestError) {
-    return error.code === "P2021" || error.code === "P2022" || error.code === "P2023" || error.code === "P2024";
+  if (
+    error instanceof Prisma.PrismaClientKnownRequestError
+    || error instanceof Prisma.PrismaClientUnknownRequestError
+    || error instanceof Prisma.PrismaClientValidationError
+  ) {
+    return true;
   }
   if (error instanceof Prisma.PrismaClientInitializationError) {
     return error.errorCode === "P1001" || error.errorCode === "P1002";
