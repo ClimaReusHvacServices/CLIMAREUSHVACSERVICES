@@ -64,7 +64,6 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
                           src={post.coverImage}
                           alt={post.title}
                           className="absolute inset-0 w-full h-full object-cover"
-                          onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
                         />
                       )}
                       {/* Decoración visual sobre el gradiente */}
