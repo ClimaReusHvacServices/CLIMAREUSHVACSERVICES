@@ -43,6 +43,9 @@ function normalizeData(data: BlogPostData) {
     throw new Error("El slug solo puede contener letras minúsculas, números y guiones");
   }
   if (data.readTime < 1 || data.readTime > 120) throw new Error("El tiempo de lectura no es válido");
+  if (data.showComparisonTable && !isComparisonTableData(data.comparisonTable)) {
+    throw new Error("Completa correctamente la tabla comparativa");
+  }
 
   return {
     title,
@@ -59,6 +62,17 @@ function normalizeData(data: BlogPostData) {
     comparisonTable: data.showComparisonTable && data.comparisonTable ? JSON.stringify(data.comparisonTable) : null,
     tipText: data.tipText?.trim() || null,
   };
+}
+
+function isComparisonTableData(value: ComparisonTableData | null): value is ComparisonTableData {
+  if (!value) return false;
+  return typeof value.title === "string"
+    && value.headers.length === 3
+    && value.headers.every(header => typeof header === "string")
+    && value.rows.every(row =>
+      row.length === 3
+      && row.every(cell => typeof cell === "string")
+    );
 }
 
 function revalidateBlog() {

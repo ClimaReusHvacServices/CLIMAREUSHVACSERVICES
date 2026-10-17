@@ -141,12 +141,27 @@ function fromDatabase(post: {
 function parseComparisonTable(value: string | null): ComparisonTableData | null {
   if (!value) return null;
   try {
-    const parsed = JSON.parse(value) as ComparisonTableData;
-    if (!parsed.title || !Array.isArray(parsed.headers) || !Array.isArray(parsed.rows)) return null;
+    const parsed: unknown = JSON.parse(value);
+    if (!isComparisonTableData(parsed)) return null;
     return parsed;
   } catch {
     return null;
   }
+}
+
+function isComparisonTableData(value: unknown): value is ComparisonTableData {
+  if (!value || typeof value !== "object") return false;
+  const table = value as Partial<ComparisonTableData>;
+  return typeof table.title === "string"
+    && Array.isArray(table.headers)
+    && table.headers.length === 3
+    && table.headers.every(header => typeof header === "string")
+    && Array.isArray(table.rows)
+    && table.rows.every(row =>
+      Array.isArray(row)
+      && row.length === 3
+      && row.every(cell => typeof cell === "string")
+    );
 }
 
 export async function getPublishedPosts(): Promise<BlogPost[]> {

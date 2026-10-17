@@ -74,8 +74,22 @@ function isMissingBlogTableError(error: unknown): boolean {
 function parseComparisonTable(value: string | null): ComparisonTableData | null {
   if (!value) return null;
   try {
-    const parsed = JSON.parse(value) as ComparisonTableData;
-    return parsed.title && parsed.headers.length === 3 && Array.isArray(parsed.rows) ? parsed : null;
+    const parsed: unknown = JSON.parse(value);
+    if (!parsed || typeof parsed !== "object") return null;
+    const table = parsed as Partial<ComparisonTableData>;
+    if (
+      typeof table.title !== "string"
+      || !Array.isArray(table.headers)
+      || table.headers.length !== 3
+      || !table.headers.every(header => typeof header === "string")
+      || !Array.isArray(table.rows)
+      || !table.rows.every(row =>
+        Array.isArray(row)
+        && row.length === 3
+        && row.every(cell => typeof cell === "string")
+      )
+    ) return null;
+    return parsed as ComparisonTableData;
   } catch {
     return null;
   }
