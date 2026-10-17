@@ -172,7 +172,10 @@ export async function getPublishedPosts(): Promise<BlogPost[]> {
       orderBy: { date: "desc" },
     });
   } catch (error) {
-    if (isMissingBlogTableError(error)) return getAllPosts();
+    if (isRecoverableBlogReadError(error)) {
+      console.error("No se pudieron leer los artículos del blog; se usa el contenido de respaldo.", error);
+      return getAllPosts();
+    }
     throw error;
   }
   const databasePosts = posts.filter(post => post.isPublished).map(fromDatabase);
@@ -187,11 +190,20 @@ export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | u
     const post = await db.blogPost.findFirst({ where: { slug } });
     return post?.isPublished ? fromDatabase(post) : post ? undefined : getPostBySlug(slug);
   } catch (error) {
-    if (isMissingBlogTableError(error)) return getPostBySlug(slug);
+    if (isRecoverableBlogReadError(error)) {
+      console.error("No se pudo leer el artículo del blog; se usa el contenido de respaldo.", error);
+      return getPostBySlug(slug);
+    }
     throw error;
   }
 }
 
-function isMissingBlogTableError(error: unknown): boolean {
-  return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2021";
+function isRecoverableBlogReadError(error: unknown): boolean {
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    return error.code === "P2021" || error.code === "P2022" || error.code === "P2023" || error.code === "P2024";
+  }
+  if (error instanceof Prisma.PrismaClientInitializationError) {
+    return error.errorCode === "P1001" || error.errorCode === "P1002";
+  }
+  return false;
 }
