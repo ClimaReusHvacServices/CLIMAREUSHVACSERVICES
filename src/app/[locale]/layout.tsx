@@ -8,6 +8,7 @@ import { routing } from "@/i18n/routing";
 import { CartProvider } from "@/store/cart";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { CookieConsent } from "@/components/common/CookieConsent";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
@@ -42,6 +43,7 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <NextIntlClientProvider locale={locale} messages={messages}>
             <CartProvider>
+              <GoogleAnalytics />
               <CartDrawer />
               <div className="min-h-screen flex flex-col">{children}</div>
               <Toaster />
